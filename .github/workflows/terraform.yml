@@ -31,7 +31,7 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check -recursive
+        run: terraform fmt -check -recursive -diff
         working-directory: ${{ env.TF_WORKING_DIR }}
         continue-on-error: true
 
