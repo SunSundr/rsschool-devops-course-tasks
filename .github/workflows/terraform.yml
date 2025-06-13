@@ -45,9 +45,12 @@ jobs:
     needs: terraform-check
     environment: prod
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - uses: ./.github/actions/terraform-setup
         with:
-          aws-role-arn: ${{ env.AWS_ROLE_ARN }}
+          aws-role-arn: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
           working-dir: ${{ env.TF_WORKING_DIR }}
 
@@ -97,9 +100,12 @@ jobs:
     environment: prod
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - uses: ./.github/actions/terraform-setup
         with:
-          aws-role-arn: ${{ env.AWS_ROLE_ARN }}
+          aws-role-arn: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
           working-dir: ${{ env.TF_WORKING_DIR }}
 
