@@ -1,0 +1,37 @@
+name: 'Terraform Setup'
+description: 'Sets up Terraform and AWS credentials'
+
+inputs:
+  aws-role-arn:
+    description: 'AWS IAM Role ARN to assume'
+    required: true
+  aws-region:
+    description: 'AWS Region'
+    required: true
+    default: 'eu-north-1'
+  working-dir:
+    description: 'Terraform working directory'
+    required: false
+    default: '.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-role-arn }}
+        aws-region: ${{ inputs.aws-region }}
+        
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      
+    - name: Terraform Init
+      shell: bash
+      run: terraform init
+      working-directory: ${{ inputs.working-dir }}

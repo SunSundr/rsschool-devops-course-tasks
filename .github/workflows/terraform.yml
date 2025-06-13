@@ -43,23 +43,13 @@ jobs:
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     needs: terraform-check
-    environment: production
+    environment: prod
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: ./.github/actions/terraform-setup
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
+          aws-role-arn: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
+          working-dir: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Validate
         run: terraform validate
@@ -104,24 +94,14 @@ jobs:
     name: "Terraform Apply"
     runs-on: ubuntu-latest
     needs: terraform-plan
-    environment: production
+    environment: prod
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: ./.github/actions/terraform-setup
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
+          aws-role-arn: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
+          working-dir: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
