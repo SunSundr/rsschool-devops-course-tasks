@@ -4,6 +4,6 @@ terraform {
     key            = "global/terraform.tfstate"
     region         = "eu-north-1"
     encrypt        = true
-    dynamodb_table = ""
+    use_lockfile   = true
   }
 }
