@@ -4,7 +4,7 @@ terraform {
 
 # test S3 bucket infrastructure:
 module "test_bucket" {
-  source     = "./modules/s3_bucket"
+  source      = "./modules/s3_bucket"
   bucket_name = "test-bucket-${random_id.this.hex}"
   tags = {
     Environment = "Test"
@@ -14,4 +14,3 @@ module "test_bucket" {
 resource "random_id" "this" {
   byte_length = 8
 }
-
