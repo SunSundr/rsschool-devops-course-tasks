@@ -27,13 +27,14 @@ module "vpc" {
 module "networking" {
   source = "./modules/networking"
 
-  vpc_id               = module.vpc.vpc_id
-  vpc_cidr             = var.vpc_cidr
-  public_subnet_cidrs  = var.public_subnet_cidrs
-  private_subnet_cidrs = var.private_subnet_cidrs
-  project              = var.project
-  igw_id               = module.vpc.igw_id
-  create_nat_route     = false # Don't create NAT route yet
+  vpc_id                = module.vpc.vpc_id
+  vpc_cidr              = var.vpc_cidr
+  public_subnet_cidrs   = var.public_subnet_cidrs
+  private_subnet_cidrs  = var.private_subnet_cidrs
+  project               = var.project
+  igw_id                = module.vpc.igw_id
+  public_route_table_id = module.vpc.public_route_table_id
+  create_nat_route      = false # Don't create NAT route yet
 }
 
 module "security" {
@@ -62,4 +63,44 @@ resource "aws_route" "private_nat" {
   route_table_id         = module.networking.private_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = module.compute.nat_instance_eni_id
+}
+
+# -------------------------------------------------------
+# Add test instances (temp)
+variable "enable_test_instances" {
+  description = "Whether to create test instances"
+  type        = bool
+  default     = false
+}
+
+module "tests" {
+  source = "./modules/tests"
+  count  = var.enable_test_instances ? 1 : 0
+
+  project            = var.project
+  public_subnet_id   = module.networking.public_subnet_ids[0]
+  private_subnet_ids = module.networking.private_subnet_ids
+  public_sg_id       = module.security.public_sg_id
+  private_sg_id      = module.security.private_sg_id
+  key_name           = module.compute.key_name
+}
+
+output "test_public_ip" {
+  description = "Public IP of test public instance"
+  value       = var.enable_test_instances ? module.tests[0].test_public_ip : null
+}
+
+# output "test_private_ip" {
+#   description = "Private IP of test private instance"
+#   value       = var.enable_test_instances ? module.tests[0].test_private_ip : null
+# }
+
+output "test_private_az1_ip" {
+  description = "Private IP of test private app server in AZ1"
+  value       = var.enable_test_instances ? module.tests[0].test_private_az1_ip : null
+}
+
+output "test_private_az2_ip" {
+  description = "Private IP of test private db server in AZ2"
+  value       = var.enable_test_instances ? module.tests[0].test_private_az2_ip : null
 }

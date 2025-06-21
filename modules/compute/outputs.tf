@@ -17,3 +17,8 @@ output "nat_instance_eni_id" {
   description = "Network Interface ID of NAT instance"
   value       = aws_instance.nat.primary_network_interface_id
 }
+
+output "key_name" {
+  description = "Name of the SSH key pair"
+  value       = aws_key_pair.main.key_name
+}

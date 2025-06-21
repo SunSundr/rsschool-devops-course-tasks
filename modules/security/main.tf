@@ -48,16 +48,79 @@ resource "aws_security_group" "nat" {
   }
 }
 
+# Security group for public instances
+resource "aws_security_group" "public" {
+  name        = "${var.project}-public-sg"
+  description = "Security group for public instances"
+  vpc_id      = var.vpc_id
+
+  # Allow all traffic (temp)
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # ingress {
+  #   from_port   = 22
+  #   to_port     = 22
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"] # Restrict to IP in production
+  # }
+
+  # ingress {
+  #   from_port   = 80
+  #   to_port     = 80
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+
+  # ingress {
+  #   from_port   = 443
+  #   to_port     = 443
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+
+  # egress {
+  #   from_port   = 0
+  #   to_port     = 0
+  #   protocol    = "-1"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+
+  tags = {
+    Name = "${var.project}-public-sg"
+  }
+}
+
+
 # Security group for private instances
 resource "aws_security_group" "private" {
   name        = "${var.project}-private-sg"
   description = "Security group for private instances"
   vpc_id      = var.vpc_id
 
+  # ingress {
+  #   from_port       = 22
+  #   to_port         = 22
+  #   protocol        = "tcp"
+  #   security_groups = [aws_security_group.bastion.id]
+  # }
+
+  # Allow all traffic (temp)
   ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     security_groups = [aws_security_group.bastion.id]
   }
 

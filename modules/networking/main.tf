@@ -29,18 +29,18 @@ resource "aws_subnet" "private" {
 }
 
 # Public route table
-resource "aws_route_table" "public" {
-  vpc_id = var.vpc_id
+# resource "aws_route_table" "public" {
+#   vpc_id = var.vpc_id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = var.igw_id
-  }
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = var.igw_id
+#   }
 
-  tags = {
-    Name = "${var.project}-public-rt"
-  }
-}
+#   tags = {
+#     Name = "${var.project}-public-rt"
+#   }
+# }
 
 # Private route table (without NAT route)
 resource "aws_route_table" "private" {
@@ -52,10 +52,15 @@ resource "aws_route_table" "private" {
 }
 
 # Associate public subnets with public route table
+# resource "aws_route_table_association" "public" {
+#   count          = length(var.public_subnet_cidrs)
+#   subnet_id      = aws_subnet.public[count.index].id
+#   route_table_id = aws_route_table.public.id
+# }
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnet_cidrs)
   subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public.id
+  route_table_id = var.public_route_table_id
 }
 
 # Associate private subnets with private route table

@@ -42,6 +42,13 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids = [var.bastion_sg_id]
   key_name               = aws_key_pair.main.key_name
 
+ # enable IMDSv2
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
   tags = {
     Name = "${var.project}-bastion"
   }
@@ -61,6 +68,13 @@ resource "aws_instance" "nat" {
               sysctl -w net.ipv4.ip_forward=1
               /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
               EOF
+
+  # enable IMDSv2
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
   tags = {
     Name = "${var.project}-nat"
