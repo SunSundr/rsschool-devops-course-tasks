@@ -39,25 +39,6 @@ resource "aws_instance" "test_public" {
   }
 }
 
-# # Test private instance
-# resource "aws_instance" "test_private" {
-#   ami                    = data.aws_ami.amazon_linux.id
-#   instance_type          = "t3.micro"
-#   subnet_id              = var.private_subnet_id
-#   vpc_security_group_ids = [var.private_sg_id]
-#   key_name               = var.key_name
-  
-#   user_data = <<-EOF
-#               #!/bin/bash
-#               echo "Hello from private instance" > /home/ec2-user/test.txt
-#               yum update -y
-#               EOF
-
-#   tags = {
-#     Name = "${var.project}-test-private"
-#   }
-# }
-
 # Test private instance in first AZ
 resource "aws_instance" "test_private_az1" {
   ami                    = data.aws_ami.amazon_linux.id

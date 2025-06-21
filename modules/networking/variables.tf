@@ -26,13 +26,13 @@ variable "project" {
 variable "nat_instance_id" {
   description = "ID of the NAT instance"
   type        = string
-  default     = null # Make it optional
+  default     = null
 }
 
 variable "nat_instance_eni_id" {
   description = "Network Interface ID of the NAT instance"
   type        = string
-  default     = null # Make it optional
+  default     = null
 }
 
 variable "igw_id" {

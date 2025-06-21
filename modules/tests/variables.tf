@@ -8,11 +8,6 @@ variable "public_subnet_id" {
   type        = string
 }
 
-# variable "private_subnet_id" {
-#   description = "ID of private subnet for test instance"
-#   type        = string
-# }
-
 variable "private_subnet_ids" {
   description = "IDs of private subnets for test instances"
   type        = list(string)

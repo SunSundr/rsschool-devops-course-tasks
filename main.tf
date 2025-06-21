@@ -2,20 +2,6 @@ terraform {
   required_version = ">= 1.0"
 }
 
-# test S3 bucket infrastructure:
-module "test_bucket" {
-  source      = "./modules/s3_bucket"
-  bucket_name = "test-bucket-${random_id.this.hex}"
-  tags = {
-    Environment = "Test"
-  }
-}
-
-resource "random_id" "this" {
-  byte_length = 8
-}
-
-#--------------------------------
 module "vpc" {
   source = "./modules/vpc"
 
@@ -65,7 +51,21 @@ resource "aws_route" "private_nat" {
   network_interface_id   = module.compute.nat_instance_eni_id
 }
 
-# -------------------------------------------------------
+# TEST INFRASTRUCTURE
+
+# test S3 bucket infrastructure:
+module "test_bucket" {
+  source      = "./modules/s3_bucket"
+  bucket_name = "test-bucket-${random_id.this.hex}"
+  tags = {
+    Environment = "Test"
+  }
+}
+
+resource "random_id" "this" {
+  byte_length = 8
+}
+
 # Add test instances (temp)
 variable "enable_test_instances" {
   description = "Whether to create test instances"
@@ -89,11 +89,6 @@ output "test_public_ip" {
   description = "Public IP of test public instance"
   value       = var.enable_test_instances ? module.tests[0].test_public_ip : null
 }
-
-# output "test_private_ip" {
-#   description = "Private IP of test private instance"
-#   value       = var.enable_test_instances ? module.tests[0].test_private_ip : null
-# }
 
 output "test_private_az1_ip" {
   description = "Private IP of test private app server in AZ1"

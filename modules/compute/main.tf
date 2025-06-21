@@ -9,12 +9,6 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# # SSH key pair
-# resource "aws_key_pair" "main" {
-#   key_name   = "${var.project}-key"
-#   public_key = file("~/.ssh/id_rsa.pub") # Replace with your public key path
-# }
-
 # Generate SSH key pair
 resource "tls_private_key" "ssh" {
   algorithm = "RSA"
