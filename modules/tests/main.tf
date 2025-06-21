@@ -16,7 +16,7 @@ resource "aws_instance" "test_public" {
   vpc_security_group_ids      = [var.public_sg_id]
   key_name                    = var.key_name
   associate_public_ip_address = true
-  
+
   user_data = <<-EOF
               #!/bin/bash
               echo "Hello from public instance" > /home/ec2-user/test.txt
@@ -46,7 +46,7 @@ resource "aws_instance" "test_private_az1" {
   subnet_id              = var.private_subnet_ids[0]
   vpc_security_group_ids = [var.private_sg_id]
   key_name               = var.key_name
-  
+
   user_data = <<-EOF
               #!/bin/bash
               echo "Hello from private instance in AZ1" > /home/ec2-user/test.txt
@@ -65,7 +65,7 @@ resource "aws_instance" "test_private_az2" {
   subnet_id              = var.private_subnet_ids[1]
   vpc_security_group_ids = [var.private_sg_id]
   key_name               = var.key_name
-  
+
   user_data = <<-EOF
               #!/bin/bash
               echo "Hello from private instance in AZ2" > /home/ec2-user/test.txt

@@ -36,7 +36,7 @@ resource "aws_instance" "bastion" {
   vpc_security_group_ids = [var.bastion_sg_id]
   key_name               = aws_key_pair.main.key_name
 
- # enable IMDSv2
+  # enable IMDSv2
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
