@@ -1,6 +1,6 @@
 # Terraform AWS Infrastructure Automation
 
-This repository provides a Terraform configuration designed to deploy and manage AWS infrastructure on AWS using GitHub Actions for continuous integration and continuous deployment (CI/CD).
+This repository provides a Terraform configuration designed to deploy and manage AWS infrastructure including a Kubernetes (K3s) cluster using GitHub Actions for continuous integration and continuous deployment (CI/CD).
 
 ## Table of Contents
 
@@ -9,7 +9,8 @@ This repository provides a Terraform configuration designed to deploy and manage
   - [Project Overview](#project-overview)
   - [Prerequisites](#prerequisites)
   - [AWS IAM Setup](#aws-iam-setup)
-  - [Test Infrastructure Components](#test-infrastructure-components)
+  - [Infrastructure Components](#infrastructure-components)
+  - [K3s Kubernetes Cluster](#k3s-kubernetes-cluster)
   - [Terraform Configuration Files](#terraform-configuration-files)
   - [CI/CD Workflow](#cicd-workflow)
   - [Usage](#usage)
@@ -42,7 +43,7 @@ To allow GitHub Actions to securely interact with your AWS environment, you need
 
     These resources are defined in `iam.tf` and are provisioned during the initial Terraform apply process.
 
-## Test Infrastructure Components
+## Infrastructure Components
 
 The infrastructure created by this project includes:
 
@@ -64,7 +65,35 @@ The infrastructure created by this project includes:
     *   Instances in public subnets can reach addresses outside the VPC and vice-versa
     *   Private subnet instances can access the internet through the NAT instance
 *   **Storage**:
-    *   S3 bucket for Terraform state storage
+    *   S3 bucket for Terraform state storage with lockfile-based state locking
+
+## K3s Kubernetes Cluster
+
+The project includes a fully functional K3s Kubernetes cluster deployed in private subnets:
+
+*   **Cluster Architecture**:
+    *   K3s master node in private subnet (AZ1)
+    *   K3s worker node in private subnet (AZ2)
+    *   Both nodes use Amazon Linux 2 for consistency
+    *   IMDSv2 enabled for enhanced security
+
+*   **Network Configuration**:
+    *   Cluster nodes communicate through private networking
+    *   Internet access via custom NAT instance for downloading K3s
+    *   Security groups configured for K3s API (6443), Flannel VXLAN (8472), and Kubelet (10250)
+    *   Access from bastion host for cluster management
+
+*   **Cluster Features**:
+    *   Automatic node joining with token-based authentication
+    *   kubectl access configured on bastion host
+    *   Ready to deploy workloads and services
+    *   Supports standard Kubernetes manifests
+
+*   **Management**:
+    *   Access cluster via bastion host: `ssh -i key.pem ec2-user@<bastion-ip>`
+    *   Check cluster status: `kubectl get nodes`
+    *   Deploy workloads: `kubectl apply -f manifest.yaml`
+    *   View all resources: `kubectl get all --all-namespaces`
 
 ## Terraform Configuration Files
 
@@ -78,11 +107,12 @@ The Terraform configuration is structured into several key files and modules:
     *   `iam.tf`: Contains the AWS IAM role and OIDC provider resources for GitHub Actions.
     *   `data.tf`: Defines data sources to retrieve information from AWS, such as the current AWS account ID and region.
 *   **Infrastructure Modules**:
-    *   `modules/vpc`: VPC and Internet Gateway resources.
-    *   `modules/networking`: Subnets and routing configuration.
-    *   `modules/security`: Security groups and network ACLs.
-    *   `modules/compute`: Bastion host and NAT instance.
-    *   `modules/tests`: Optional test instances for infrastructure validation.
+    *   `modules/vpc`: VPC and Internet Gateway resources
+    *   `modules/networking`: Subnets and routing configuration
+    *   `modules/security`: Security groups and network ACLs
+    *   `modules/compute`: Bastion host and NAT instance
+    *   `modules/k3s`: K3s Kubernetes cluster (master and worker nodes)
+    *   `modules/tests`: Optional test instances for infrastructure validation
 
 ## CI/CD Workflow
 
@@ -117,6 +147,23 @@ To minimize redundancy, a reusable composite action located at `.github/actions/
     terraform apply -target=aws_iam_role.github_actions -target=aws_iam_openid_connect_provider.github_actions
     # Or, if applying everything for the first time:
     # terraform apply
+    ```
+
+4.  **Deploy K3s Cluster (Optional)**:
+
+    ```bash
+    # Deploy the complete infrastructure including K3s cluster
+    terraform apply -var="enable_k3s_cluster=true"
+    
+    # Access the cluster via bastion host
+    ssh -i modules/compute/keys/<project>-key.pem ec2-user@<bastion-public-ip>
+    
+    # Check cluster status
+    kubectl get nodes
+    
+    # Deploy a test workload
+    kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml
+    kubectl get pods
     ```
 
 ### Development Workflow (via GitHub Actions)
