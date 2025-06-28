@@ -1,6 +1,6 @@
 # Terraform AWS Infrastructure Automation
 
-This repository provides a Terraform configuration designed to deploy and manage AWS infrastructure using GitHub Actions for continuous integration and continuous deployment (CI/CD).
+This repository provides a Terraform configuration designed to deploy and manage AWS infrastructure on AWS using GitHub Actions for continuous integration and continuous deployment (CI/CD).
 
 ## Table of Contents
 
@@ -9,6 +9,7 @@ This repository provides a Terraform configuration designed to deploy and manage
   - [Project Overview](#project-overview)
   - [Prerequisites](#prerequisites)
   - [AWS IAM Setup](#aws-iam-setup)
+  - [Test Infrastructure Components](#test-infrastructure-components)
   - [Terraform Configuration Files](#terraform-configuration-files)
   - [CI/CD Workflow](#cicd-workflow)
   - [Usage](#usage)
@@ -18,7 +19,7 @@ This repository provides a Terraform configuration designed to deploy and manage
 
 ## Project Overview
 
-This project utilizes Terraform to define and provision AWS resources as Infrastructure as Code (IaC). A GitHub Actions CI/CD pipeline automates the process of validating, planning, and applying infrastructure changes, ensuring consistent and reliable deployments.  The focus is on modularity and maintainability. Configuration is driven through `variables.tf`, promoting reusability and reducing hardcoded values.
+This project utilizes Terraform to define and provision AWS resources as Infrastructure as Code (IaC). A GitHub Actions CI/CD pipeline automates the process of validating, planning, and applying infrastructure changes, ensuring consistent and reliable deployments.
 
 ## Prerequisites
 
@@ -33,31 +34,62 @@ Before you begin, ensure you have the following:
 
 To allow GitHub Actions to securely interact with your AWS environment, you need to configure an IAM role and an OpenID Connect (OIDC) provider in AWS.
 
-1.  **IAM Role (`GithubActionsRole`)**:  This role grants GitHub Actions the necessary permissions to manage AWS resources. The role includes policies for common AWS services such as EC2, Route53, S3, IAM, VPC, SQS, and EventBridge. It also incorporates an inline policy to enable DynamoDB state locking for Terraform state management.
+1.  **IAM Role (`GithubActionsRole`)**: This role grants GitHub Actions the necessary permissions to manage AWS resources. The role includes policies for common AWS services such as EC2, Route53, S3, IAM, VPC, SQS, and EventBridge. It also incorporates an inline policy to enable DynamoDB state locking for Terraform state management.
 
     The role's trust policy is configured to allow `token.actions.githubusercontent.com` to assume it, with a condition ensuring that the `sub` claim matches the target GitHub repository, enhancing security.
 
-2.  **IAM OIDC Provider**:  Configured to trust `https://token.actions.githubusercontent.com`. This enables GitHub Actions to authenticate with AWS using short-lived tokens.
+2.  **IAM OIDC Provider**: Configured to trust `https://token.actions.githubusercontent.com`. This enables GitHub Actions to authenticate with AWS using short-lived tokens.
 
     These resources are defined in `iam.tf` and are provisioned during the initial Terraform apply process.
 
+## Test Infrastructure Components
+
+The infrastructure created by this project includes:
+
+*   **VPC Architecture**:
+    *   A VPC with 4 subnets across 2 different Availability Zones (AZs)
+    *   2 public subnets in different AZs
+    *   2 private subnets in different AZs
+    *   Internet Gateway for public internet access
+*   **Network Security**:
+    *   Security groups for different instance types (bastion, NAT, public, private)
+    *   Network ACLs for public and private subnets
+    *   IMDSv2 required on all instances for enhanced security
+*   **Compute Resources**:
+    *   Bastion host - configured as an access point for instances inside the VPC
+    *   NAT instance - enables outbound internet access for private subnet instances
+    *   Test instances (optional) - 1 in a public subnet, 2 in different private subnets
+*   **Routing Configuration**:
+    *   Instances in all subnets can reach each other
+    *   Instances in public subnets can reach addresses outside the VPC and vice-versa
+    *   Private subnet instances can access the internet through the NAT instance
+*   **Storage**:
+    *   S3 bucket for Terraform state storage
+
 ## Terraform Configuration Files
 
-The Terraform configuration is structured into several key files:
+The Terraform configuration is structured into several key files and modules:
 
-*   `main.tf`: Specifies the required Terraform version and any necessary provider dependencies.
-*   `variables.tf`: Declares all configurable variables used throughout the Terraform code. This promotes reuse and simplifies configuration changes.  This is the primary file for adjusting infrastructure settings.
-*   `providers.tf`: Configures the AWS provider, specifying the region and potentially other provider-specific settings.
-*   `backend.tf`:  Configures the S3 bucket for storing the Terraform state file and DynamoDB for state locking, ensuring collaborative access and preventing conflicts.
-*   `data.tf`: Defines data sources to retrieve information from AWS, such as the current AWS account ID and region.
-*   `iam.tf`: Contains the AWS IAM role and OIDC provider resources necessary for GitHub Actions authentication.
+*   **Root Module**:
+    *   `main.tf`: Specifies the required Terraform version and module configurations.
+    *   `variables.tf`: Declares all configurable variables used throughout the Terraform code.
+    *   `providers.tf`: Configures the AWS provider, specifying the region and other settings.
+    *   `backend.tf`: Configures the S3 bucket for storing the Terraform state file.
+    *   `iam.tf`: Contains the AWS IAM role and OIDC provider resources for GitHub Actions.
+    *   `data.tf`: Defines data sources to retrieve information from AWS, such as the current AWS account ID and region.
+*   **Infrastructure Modules**:
+    *   `modules/vpc`: VPC and Internet Gateway resources.
+    *   `modules/networking`: Subnets and routing configuration.
+    *   `modules/security`: Security groups and network ACLs.
+    *   `modules/compute`: Bastion host and NAT instance.
+    *   `modules/tests`: Optional test instances for infrastructure validation.
 
 ## CI/CD Workflow
 
 The CI/CD pipeline is defined in `.github/workflows/terraform.yml` and comprises the following stages:
 
 *   **`terraform-check`**: Executes `terraform fmt -check -recursive` to enforce consistent code formatting across the project.
-*   **`terraform-plan`**: Initializes Terraform and generates a detailed execution plan outlining the proposed infrastructure changes.  This job requires the `terraform-check` job to complete successfully.
+*   **`terraform-plan`**: Initializes Terraform and generates a detailed execution plan outlining the proposed infrastructure changes. This job requires the `terraform-check` job to complete successfully.
 *   **`terraform-apply`**: Applies the Terraform changes to your AWS environment. This job is triggered by `push` events to the `main` branch, only after `terraform-plan` has succeeded, and may require manual approval depending on your configuration.
 
 To minimize redundancy, a reusable composite action located at `.github/actions/terraform-setup/action.yml` encapsulates common setup steps, including checking out the code, configuring AWS credentials, and setting up the Terraform CLI.
@@ -89,16 +121,15 @@ To minimize redundancy, a reusable composite action located at `.github/actions/
 
 ### Development Workflow (via GitHub Actions)
 
-1.  **Modify Terraform Configuration**:  Make any necessary changes to your Terraform `.tf` files, primarily focusing on `variables.tf` to adjust settings.
-2.  **Commit and Push**: Commit your changes and push them to a branch in your repository.  This will automatically trigger the `terraform-check` and `terraform-plan` jobs in GitHub Actions.
-3.  **Create a Pull Request (Recommended)**:  Opening a pull request will trigger the `terraform-check` and `terraform-plan` jobs. This allows you to review the proposed infrastructure changes before merging. The plan output will be visible in the pull request, giving you confidence in the changes being applied.
-4.  **Merge to `main`**:  Pushing or merging changes to the `main` branch will trigger the `terraform-apply` job, automatically applying your infrastructure changes to AWS, provided all previous checks have passed.
+1.  **Modify Terraform Configuration**: Make any necessary changes to your Terraform `.tf` files, primarily focusing on `variables.tf` to adjust settings.
+2.  **Commit and Push**: Commit your changes and push them to a branch in your repository. This will automatically trigger the `terraform-check` and `terraform-plan` jobs in GitHub Actions.
+3.  **Create a Pull Request (Recommended)**: Opening a pull request will trigger the `terraform-check` and `terraform-plan` jobs. This allows you to review the proposed infrastructure changes before merging. The plan output will be visible in the pull request, giving you confidence in the changes being applied.
+4.  **Merge to `main`**: Pushing or merging changes to the `main` branch will trigger the `terraform-apply` job, automatically applying your infrastructure changes to AWS, provided all previous checks have passed.
 
 ## Security Considerations
 
 *   **No Secrets in Repository**: This repository relies on environment variables and IAM roles for authentication and authorization, avoiding the storage of sensitive credentials within the code.
-*   **IAM Least Privilege**:  The IAM role granted to GitHub Actions should be configured with the least amount of permissions necessary to perform its tasks, reducing the potential impact of a compromised token.
-*   **OIDC Trust Configuration**: The OIDC provider trust configuration should be carefully reviewed to ensure that only authorized repositories can assume the IAM role.
-*   **State File Security**:  The S3 bucket used for storing the Terraform state file should be properly secured with encryption and access controls to prevent unauthorized access.  Enforce encryption at rest and in transit.
-*   **Review Terraform Plans**: Always carefully review the Terraform execution plan before applying changes to your infrastructure to identify any unexpected or potentially harmful actions.
-*   **Variable Security**: Never store secret values directly in `variables.tf`. Use mechanisms like AWS Secrets Manager or environment variables passed through GitHub Actions to provide sensitive data to Terraform.  This repository does not demonstrate this, but it is crucial for secure deployments.
+*   **IAM Least Privilege**: The IAM role provided by GitHub Actions is configured with the minimum number of permissions necessary to perform its tasks, which will reduce the potential impact of a compromised token..
+*   **OIDC Trust Configuration**: The OIDC provider trust configuration ensures that only authorized repositories can assume the IAM role..
+*   **State File Security**: The S3 bucket used to store the Terraform state file is securely protected with encryption and access controls.
+*   **IMDSv2 Required**: All EC2 instances are configured to require IMDSv2, enhancing security against SSRF vulnerabilities.
