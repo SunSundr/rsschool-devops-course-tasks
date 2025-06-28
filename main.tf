@@ -49,7 +49,10 @@ resource "aws_route" "private_nat" {
   route_table_id         = module.networking.private_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = module.compute.nat_instance_eni_id
+  # nat_gateway_id         = module.networking.nat_gateway_id
 }
+
+
 
 # TEST INFRASTRUCTURE
 

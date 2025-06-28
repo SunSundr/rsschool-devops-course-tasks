@@ -116,12 +116,20 @@ resource "aws_security_group" "private" {
   #   security_groups = [aws_security_group.bastion.id]
   # }
 
-  # Allow all traffic (temp)
+  # Allow all traffic from bastion
   ingress {
     from_port       = 0
     to_port         = 0
     protocol        = "-1"
     security_groups = [aws_security_group.bastion.id]
+  }
+
+   # Allow all traffic from NAT instance
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.nat.id]
   }
 
   egress {
@@ -173,7 +181,8 @@ resource "aws_network_acl" "private" {
     protocol   = "-1"
     rule_no    = 100
     action     = "allow"
-    cidr_block = var.vpc_cidr
+    # cidr_block = var.vpc_cidr # This only allows VPC traffic!
+    cidr_block = "0.0.0.0/0"
     from_port  = 0
     to_port    = 0
   }
@@ -206,7 +215,15 @@ resource "aws_security_group" "k3s" {
     security_groups = [aws_security_group.bastion.id]
   }
 
-  # K3s API server
+  # K3s API server - ADD ACCESS FROM BASTION
+  ingress {
+    from_port       = 6443
+    to_port         = 6443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]  # Allow bastion access
+  }
+
+  # K3s API server - between nodes
   ingress {
     from_port = 6443
     to_port   = 6443
@@ -214,7 +231,6 @@ resource "aws_security_group" "k3s" {
     self      = true
   }
 
-  # Flannel VXLAN
   ingress {
     from_port = 8472
     to_port   = 8472
@@ -222,7 +238,6 @@ resource "aws_security_group" "k3s" {
     self      = true
   }
 
-  # Kubelet metrics
   ingress {
     from_port = 10250
     to_port   = 10250
@@ -230,7 +245,6 @@ resource "aws_security_group" "k3s" {
     self      = true
   }
 
-  # NodePort services
   ingress {
     from_port = 30000
     to_port   = 32767

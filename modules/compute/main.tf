@@ -61,6 +61,33 @@ resource "aws_instance" "bastion" {
 }
 
 # NAT instance
+# resource "aws_instance" "nat" {
+#   ami                    = data.aws_ami.amazon_linux.id
+#   instance_type          = var.nat_instance_type
+#   subnet_id              = var.public_subnet_id
+#   vpc_security_group_ids = [var.nat_sg_id]
+#   source_dest_check      = false # Required for NAT functionality
+#   key_name               = aws_key_pair.main.key_name
+
+#   user_data = <<-EOF
+#               #!/bin/bash
+#               sysctl -w net.ipv4.ip_forward=1
+#               /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+#               EOF
+
+#   # enable IMDSv2
+#   metadata_options {
+#     http_endpoint               = "enabled"
+#     http_tokens                 = "required"
+#     http_put_response_hop_limit = 1
+#   }
+
+#   tags = {
+#     Name = "${var.project}-nat"
+#   }
+# }
+
+# NAT instance
 resource "aws_instance" "nat" {
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.nat_instance_type
@@ -71,8 +98,34 @@ resource "aws_instance" "nat" {
 
   user_data = <<-EOF
               #!/bin/bash
+              # Enable IP forwarding permanently
+              echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
               sysctl -w net.ipv4.ip_forward=1
-              /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+              
+              # Get the primary interface name (works on both eth0 and ens5)
+              INTERFACE=$(ip route | grep default | awk '{print $5}')
+              
+              # Set up NAT with iptables
+              /sbin/iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
+              /sbin/iptables -A FORWARD -i $INTERFACE -o $INTERFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
+              /sbin/iptables -A FORWARD -i $INTERFACE -o $INTERFACE -j ACCEPT
+
+              # iptables -t nat -A POSTROUTING -s 10.0.0.0/16 -o eth0 -j MASQUERADE
+              # iptables -A FORWARD -s 10.0.0.0/16 -j ACCEPT
+              # iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+              
+              # Save iptables rules permanently
+              # /sbin/service iptables save
+
+              systemctl enable iptables
+              systemctl start iptables
+              iptables-save > /etc/sysconfig/iptables
+              
+              # Enable iptables service to start on boot
+              /sbin/chkconfig iptables on
+              
+              # Update system
+              # yum update -y
               EOF
 
   # enable IMDSv2
