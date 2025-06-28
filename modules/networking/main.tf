@@ -69,7 +69,7 @@ resource "aws_route_table_association" "private" {
 # NAT Gateway
 # resource "aws_eip" "nat" {
 #   domain = "vpc"
-  
+
 #   tags = {
 #     Name = "${var.project}-nat-eip"
 #   }
@@ -78,10 +78,10 @@ resource "aws_route_table_association" "private" {
 # resource "aws_nat_gateway" "main" {
 #   allocation_id = aws_eip.nat.id
 #   subnet_id     = aws_subnet.public[0].id
-  
+
 #   tags = {
 #     Name = "${var.project}-nat-gateway"
 #   }
-  
+
 #   depends_on = [var.igw_id]
 # }

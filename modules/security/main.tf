@@ -109,13 +109,6 @@ resource "aws_security_group" "private" {
   description = "Security group for private instances"
   vpc_id      = var.vpc_id
 
-  # ingress {
-  #   from_port       = 22
-  #   to_port         = 22
-  #   protocol        = "tcp"
-  #   security_groups = [aws_security_group.bastion.id]
-  # }
-
   # Allow all traffic from bastion
   ingress {
     from_port       = 0
@@ -124,7 +117,7 @@ resource "aws_security_group" "private" {
     security_groups = [aws_security_group.bastion.id]
   }
 
-   # Allow all traffic from NAT instance
+  # Allow all traffic from NAT instance
   ingress {
     from_port       = 0
     to_port         = 0
@@ -178,9 +171,9 @@ resource "aws_network_acl" "private" {
   subnet_ids = var.private_subnet_ids
 
   ingress {
-    protocol   = "-1"
-    rule_no    = 100
-    action     = "allow"
+    protocol = "-1"
+    rule_no  = 100
+    action   = "allow"
     # cidr_block = var.vpc_cidr # This only allows VPC traffic!
     cidr_block = "0.0.0.0/0"
     from_port  = 0
@@ -220,7 +213,7 @@ resource "aws_security_group" "k3s" {
     from_port       = 6443
     to_port         = 6443
     protocol        = "tcp"
-    security_groups = [aws_security_group.bastion.id]  # Allow bastion access
+    security_groups = [aws_security_group.bastion.id] # Allow bastion access
   }
 
   # K3s API server - between nodes
