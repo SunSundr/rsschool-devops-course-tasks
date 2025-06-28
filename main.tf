@@ -66,6 +66,26 @@ resource "random_id" "this" {
   byte_length = 8
 }
 
+#---------------------------------------------------------
+# K3s Cluster
+variable "enable_k3s_cluster" {
+  description = "Whether to create K3s cluster"
+  type        = bool
+  default     = false
+}
+
+module "k3s" {
+  source = "./modules/k3s"
+  count  = var.enable_k3s_cluster ? 1 : 0
+
+  project            = var.project
+  private_subnet_ids = module.networking.private_subnet_ids
+  k3s_sg_id          = module.security.k3s_sg_id
+  key_name           = module.compute.key_name
+  instance_type      = "t3.micro"
+}
+
+#---------------------------------------------------------
 # Add test instances (temp)
 variable "enable_test_instances" {
   description = "Whether to create test instances"

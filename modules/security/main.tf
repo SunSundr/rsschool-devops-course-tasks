@@ -191,3 +191,61 @@ resource "aws_network_acl" "private" {
     Name = "${var.project}-private-nacl"
   }
 }
+
+# Security group for K3s cluster
+resource "aws_security_group" "k3s" {
+  name        = "${var.project}-k3s-sg"
+  description = "Security group for K3s cluster"
+  vpc_id      = var.vpc_id
+
+  # SSH from bastion
+  ingress {
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    security_groups = [aws_security_group.bastion.id]
+  }
+
+  # K3s API server
+  ingress {
+    from_port = 6443
+    to_port   = 6443
+    protocol  = "tcp"
+    self      = true
+  }
+
+  # Flannel VXLAN
+  ingress {
+    from_port = 8472
+    to_port   = 8472
+    protocol  = "udp"
+    self      = true
+  }
+
+  # Kubelet metrics
+  ingress {
+    from_port = 10250
+    to_port   = 10250
+    protocol  = "tcp"
+    self      = true
+  }
+
+  # NodePort services
+  ingress {
+    from_port = 30000
+    to_port   = 32767
+    protocol  = "tcp"
+    self      = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project}-k3s-sg"
+  }
+}

@@ -43,6 +43,18 @@ resource "aws_instance" "bastion" {
     http_put_response_hop_limit = 1
   }
 
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              # Install kubectl
+              curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+              chmod +x kubectl
+              mv kubectl /usr/local/bin/
+              # Create .kube directory for ec2-user
+              mkdir -p /home/ec2-user/.kube
+              chown ec2-user:ec2-user /home/ec2-user/.kube
+              EOF
+
   tags = {
     Name = "${var.project}-bastion"
   }

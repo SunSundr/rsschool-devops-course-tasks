@@ -28,3 +28,13 @@ output "nat_public_ip" {
   description = "Public IP of NAT instance"
   value       = module.compute.nat_public_ip
 }
+
+output "k3s_master_ip" {
+  description = "Private IP of K3s master node"
+  value       = var.enable_k3s_cluster ? module.k3s[0].k3s_master_ip : null
+}
+
+output "k3s_worker_ip" {
+  description = "Private IP of K3s worker node"
+  value       = var.enable_k3s_cluster ? module.k3s[0].k3s_worker_ip : null
+}
