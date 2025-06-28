@@ -37,11 +37,25 @@ resource "aws_route_table" "private" {
   }
 }
 
+# Default route table
+resource "aws_default_route_table" "public" {
+  default_route_table_id = var.default_route_table_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = var.igw_id
+  }
+
+  tags = {
+    Name = "${var.project}-public-rt"
+  }
+}
+
 # Associate public subnets with public route table
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnet_cidrs)
   subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = var.public_route_table_id
+  route_table_id = aws_default_route_table.public.id
 }
 
 # Associate private subnets with private route table

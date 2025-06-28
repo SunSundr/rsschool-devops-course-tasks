@@ -46,7 +46,7 @@ variable "create_nat_route" {
   default     = false
 }
 
-variable "public_route_table_id" {
-  description = "ID of the public route table"
+variable "default_route_table_id" {
+  description = "ID of the default route table"
   type        = string
 }

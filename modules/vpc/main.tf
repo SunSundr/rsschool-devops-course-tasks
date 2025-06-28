@@ -15,16 +15,3 @@ resource "aws_internet_gateway" "main" {
     Name = "${var.project}-igw"
   }
 }
-
-resource "aws_default_route_table" "public" {
-  default_route_table_id = aws_vpc.main.default_route_table_id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-
-  tags = {
-    Name = "${var.project}-public-rt"
-  }
-}

@@ -13,14 +13,14 @@ module "vpc" {
 module "networking" {
   source = "./modules/networking"
 
-  vpc_id                = module.vpc.vpc_id
-  vpc_cidr              = var.vpc_cidr
-  public_subnet_cidrs   = var.public_subnet_cidrs
-  private_subnet_cidrs  = var.private_subnet_cidrs
-  project               = var.project
-  igw_id                = module.vpc.igw_id
-  public_route_table_id = module.vpc.public_route_table_id
-  create_nat_route      = false # Don't create NAT route yet
+  vpc_id                 = module.vpc.vpc_id
+  vpc_cidr               = var.vpc_cidr
+  public_subnet_cidrs    = var.public_subnet_cidrs
+  private_subnet_cidrs   = var.private_subnet_cidrs
+  project                = var.project
+  igw_id                 = module.vpc.igw_id
+  default_route_table_id = module.vpc.default_route_table_id
+  create_nat_route       = false # Don't create NAT route yet
 }
 
 module "security" {

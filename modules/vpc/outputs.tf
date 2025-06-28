@@ -8,7 +8,7 @@ output "igw_id" {
   value       = aws_internet_gateway.main.id
 }
 
-output "public_route_table_id" {
-  description = "ID of the public (default) route table"
-  value       = aws_default_route_table.public.id
+output "default_route_table_id" {
+  description = "ID of the default route table"
+  value       = aws_vpc.main.default_route_table_id
 }

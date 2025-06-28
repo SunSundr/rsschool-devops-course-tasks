@@ -12,3 +12,8 @@ output "private_route_table_id" {
   description = "ID of private route table"
   value       = aws_route_table.private.id
 }
+
+output "public_route_table_id" {
+  description = "ID of the public (default) route table"
+  value       = aws_default_route_table.public.id
+}
