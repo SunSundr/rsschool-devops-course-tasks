@@ -43,6 +43,18 @@ resource "aws_instance" "bastion" {
     http_put_response_hop_limit = 1
   }
 
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              # Install kubectl
+              curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+              chmod +x kubectl
+              mv kubectl /usr/local/bin/
+              # Create .kube directory for ec2-user
+              mkdir -p /home/ec2-user/.kube
+              chown ec2-user:ec2-user /home/ec2-user/.kube
+              EOF
+
   tags = {
     Name = "${var.project}-bastion"
   }
@@ -59,8 +71,28 @@ resource "aws_instance" "nat" {
 
   user_data = <<-EOF
               #!/bin/bash
+              # Enable IP forwarding permanently
+              echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
               sysctl -w net.ipv4.ip_forward=1
-              /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+              
+              # Get the primary interface name (works on both eth0 and ens5)
+              INTERFACE=$(ip route | grep default | awk '{print $5}')
+              
+              # Set up NAT with iptables
+              /sbin/iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
+              /sbin/iptables -A FORWARD -i $INTERFACE -o $INTERFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
+              /sbin/iptables -A FORWARD -i $INTERFACE -o $INTERFACE -j ACCEPT
+              
+              # Save iptables rules permanently
+              systemctl enable iptables
+              systemctl start iptables
+              iptables-save > /etc/sysconfig/iptables
+              
+              # Enable iptables service to start on boot
+              /sbin/chkconfig iptables on
+              
+              # Update system
+              # yum update -y
               EOF
 
   # enable IMDSv2
