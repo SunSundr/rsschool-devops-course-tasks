@@ -1,0 +1,12 @@
+# Cloud-specific storage class for dynamic EBS provisioning
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: jenkins-storage-dynamic
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp3  # Modern EBS type
+  fsType: ext4
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
