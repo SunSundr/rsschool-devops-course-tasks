@@ -1,4 +1,16 @@
+# Environment files with secrets
+.env
+
+# Terraform files
+*.tfstate
+*.tfstate.*
 .terraform/
-*.bak
-*.backup
-*.pem
+.terraform.lock.hcl
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

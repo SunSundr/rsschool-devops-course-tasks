@@ -1,0 +1,8 @@
+# Minikube-specific overrides
+controller:
+  serviceType: NodePort
+  nodePort: 32000
+  
+  # Minikube-specific ingress (optional)
+  ingress:
+    enabled: false

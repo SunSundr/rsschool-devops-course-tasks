@@ -12,9 +12,9 @@ kubectl apply -f k8s/common/
 
 # Apply storage class based on deployment type
 if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
-    echo "Using Minikube configuration with static PV (2Gi)..."
-    kubectl apply -f k8s/jenkins/minikube/  # Apply PV first
-    kubectl apply -f k8s/jenkins/base/      # Then PVC
+    echo "Using Minikube default storage (2Gi)..."
+    # Apply PVC only (Helm will create ServiceAccount)
+    kubectl apply -f k8s/jenkins/base/pvc.yaml
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Using Cloud configuration with dynamic EBS (5Gi)..."
     kubectl apply -f k8s/jenkins/cloud/storage-class-cloud.yaml  # Dynamic provisioning

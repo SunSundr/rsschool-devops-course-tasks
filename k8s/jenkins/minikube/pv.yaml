@@ -10,4 +10,4 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: jenkins-storage
   hostPath:
-    path: /tmp/jenkins-data  # Minikube local path
+    path: /data/jenkins-data  # Minikube local path

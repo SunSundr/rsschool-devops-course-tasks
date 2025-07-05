@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: jenkins-storage
+  storageClassName: standard  # Use Minikube's default storage class
   resources:
     requests:
       storage: 2Gi  # Minimal size - will match available PV
