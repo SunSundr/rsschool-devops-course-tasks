@@ -1,12 +1,10 @@
-# Simplified Jenkins values for basic installation
+# Absolute minimal Jenkins configuration
 controller:
   admin:
-    # Credentials will be provided via Kubernetes Secret
     existingSecret: "jenkins-admin-secret"
     userKey: "username"
     passwordKey: "password"
   
-  # Minimal resources
   resources:
     requests:
       cpu: "50m"
@@ -15,19 +13,31 @@ controller:
       cpu: "1000m"
       memory: "2Gi"
   
-  # Use existing PVC
   persistence:
     enabled: true
     existingClaim: "jenkins-pvc"
   
-  # Service configuration
   serviceType: NodePort
   nodePort: 32000
   
-  # ServiceAccount
   serviceAccount:
     create: true
+  
+  # Install Kubernetes plugin for agents
+  installPlugins:
+    - kubernetes:4203.v1dd44f5b_1cf9
+    - configuration-as-code:1971.vf9280461ea_89
+  
+  # Master has executors but agents preferred
+  numExecutors: 2
 
-# Disable agent for minimal setup
+# Enable agents for distributed builds
 agent:
-  enabled: false
+  enabled: true
+  resources:
+    requests:
+      cpu: "512m"
+      memory: "512Mi"
+    limits:
+      cpu: "512m"
+      memory: "512Mi"

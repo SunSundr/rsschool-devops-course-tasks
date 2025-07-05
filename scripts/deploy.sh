@@ -7,14 +7,12 @@ DEPLOYMENT_TYPE=${1:-minikube}
 
 echo "Deploying Jenkins for: $DEPLOYMENT_TYPE"
 
-# Apply common resources
-kubectl apply -f k8s/common/
-
 # Apply storage class based on deployment type
 if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
     echo "Using Minikube default storage (2Gi)..."
-    # Apply PVC only (Helm will create ServiceAccount)
+    # Apply PVC and RBAC
     kubectl apply -f k8s/jenkins/base/pvc.yaml
+    kubectl apply -f k8s/jenkins/base/rbac.yaml
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Using Cloud configuration with dynamic EBS (5Gi)..."
     kubectl apply -f k8s/jenkins/cloud/storage-class-cloud.yaml  # Dynamic provisioning
