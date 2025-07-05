@@ -55,8 +55,8 @@ elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Installing Jenkins for Cloud..."
     helm install jenkins jenkins/jenkins \
         --namespace jenkins \
-        --values k8s/jenkins/base/values.yaml \
-        --values k8s/jenkins/cloud/values-cloud.yaml \
+        --values ../k8s/jenkins/base/values.yaml \
+        --values ../k8s/jenkins/cloud/values-cloud.yaml \
         --wait --timeout=10m
         
     echo "Jenkins installed! Get LoadBalancer IP:"

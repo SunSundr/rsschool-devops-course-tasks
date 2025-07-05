@@ -2,6 +2,11 @@
 .env
 secret-file
 
+# SSH Keys
+*.pem
+*.pub
+modules/compute/keys/
+
 # Terraform files
 *.tfstate
 *.tfstate.*
@@ -15,3 +20,6 @@ secret-file
 # OS files
 .DS_Store
 Thumbs.db
+
+*.bak
+commands.txt

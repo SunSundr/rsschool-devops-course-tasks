@@ -1,10 +1,10 @@
-# Absolute minimal Jenkins configuration
+# Base Jenkins configuration
 controller:
   admin:
     existingSecret: "jenkins-admin-secret"
     userKey: "username"
     passwordKey: "password"
-  
+
   resources:
     requests:
       cpu: "50m"
@@ -12,28 +12,53 @@ controller:
     limits:
       cpu: "1000m"
       memory: "2Gi"
-  
+
   persistence:
     enabled: true
     existingClaim: "jenkins-pvc"
-  
+    # Disable default PVC creation
+    storageClass: "-"
+    size: false
+ 
   serviceType: NodePort
   nodePort: 32000
   
+  # Agent listener service (disabled - using custom service)
+  agentListenerEnabled: false
+
   serviceAccount:
     create: true
+    name: jenkins
+    annotations: {}
   
+  # RBAC configuration
+  rbac:
+    create: true
+    readSecrets: false
+
   # Install Kubernetes plugin for agents
   installPlugins:
-    - kubernetes:4203.v1dd44f5b_1cf9
+    - kubernetes:4358.vcfd9c5a_0a_f51
+    - workflow-aggregator:608.v67378e9d3db_1
+    - git:5.7.0
     - configuration-as-code:1971.vf9280461ea_89
+    - credentials:1415.v831096eb_5534 # is default ?
+    - job-dsl:1.93
+    - structs:350.v3b_30f09f2363 # is default ?
+    - script-security:1373.vb_b_4a_a_c26fa_00 # is default ?
+    - eddsa-api:0.3.0.1-19.vc432d923e5ee # is default ?
+
+  numExecutors: 0
+  executorMode: "NORMAL"
   
-  # Master has executors but agents preferred
-  numExecutors: 2
+  # JCasC Configuration (based on working setup)
+  JCasC:
+    defaultConfig: true
 
 # Enable agents for distributed builds
 agent:
   enabled: true
+  
   resources:
     requests:
       cpu: "512m"
@@ -41,3 +66,34 @@ agent:
     limits:
       cpu: "512m"
       memory: "512Mi"
+  
+  # Agent pod settings
+  containerCap: 10
+  instanceCap: 2147483647
+  podRetention: "Never"
+  showRawYaml: true
+  
+  # Use existing service account created by controller
+  useDefaultServiceAccount: true
+  
+  # Agent connection settings
+  kubernetesConnectTimeout: 5
+  kubernetesReadTimeout: 15
+  maxRequestsPerHostStr: "32"
+  retentionTimeout: 5
+  waitForPodSec: 600
+  
+  # Agent image
+  image:
+    registry: ""
+    repository: "jenkins/inbound-agent"
+    tag: "3309.v27b_9314fd1a_4-6"
+  
+  workingDir: "/home/jenkins/agent"
+  nodeUsageMode: "NORMAL"
+  componentName: "jenkins-agent"
+  
+  # Connection settings
+  args: "${computer.jnlpmac} ${computer.name}"
+  sideContainerName: "jnlp"
+  connectTimeout: 100
