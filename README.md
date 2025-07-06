@@ -173,6 +173,216 @@ To minimize redundancy, a reusable composite action located at `.github/actions/
 3.  **Create a Pull Request (Recommended)**: Opening a pull request will trigger the `terraform-check` and `terraform-plan` jobs. This allows you to review the proposed infrastructure changes before merging. The plan output will be visible in the pull request, giving you confidence in the changes being applied.
 4.  **Merge to `main`**: Pushing or merging changes to the `main` branch will trigger the `terraform-apply` job, automatically applying your infrastructure changes to AWS, provided all previous checks have passed.
 
+## Jenkins CI/CD Setup
+
+This project includes a complete Jenkins setup with Configuration as Code (JCasC) and Kubernetes agents for distributed builds.
+
+### Prerequisites for Jenkins
+
+*   **Minikube** installed and running with Docker driver
+*   **kubectl** configured to access your Minikube cluster
+*   **Helm** package manager installed
+*   **Environment variables** configured (see `.env.example`)
+
+### Jenkins Installation (Minikube)
+
+#### 1. Environment Setup
+
+Copy the example environment file and configure your credentials:
+
+```bash
+cp .env.example .env
+# Edit .env with your preferred Jenkins admin credentials
+```
+
+#### 2. Start Minikube
+
+```bash
+# Start Minikube with sufficient resources
+minikube start --driver=docker --memory=4096 --cpus=2
+
+# Verify Minikube is running
+minikube status
+```
+
+#### 3. Install Jenkins
+
+```bash
+# Run the automated installation script
+./install-jenkins.sh minikube
+
+# Wait for Jenkins to be ready (may take 3-5 minutes)
+kubectl get pods -n jenkins -w
+```
+
+#### 4. Access Jenkins
+
+```bash
+# Access Jenkins via Minikube service
+minikube service jenkins --namespace jenkins
+
+# Alternative: Use port-forward
+kubectl port-forward svc/jenkins 8080:8080 -n jenkins
+```
+
+**Login Credentials:**
+- Username: `admin` (or value from `.env`)
+- Password: Value from your `.env` file
+
+### Jenkins Configuration
+
+#### Automated Configuration (JCasC)
+
+Jenkins is automatically configured with:
+
+*   **Security**: Authentication and authorization via JCasC
+*   **Plugins**: Kubernetes, Configuration as Code, Job DSL, and Workflow plugins
+*   **Kubernetes Cloud**: Configured for distributed builds with agents
+*   **RBAC**: Proper permissions for Jenkins to manage Kubernetes pods
+
+#### Manual Kubernetes Cloud Setup (if needed)
+
+If the automated cloud configuration doesn't work, configure manually:
+
+1. **Go to**: Manage Jenkins → Clouds → Add a new cloud → Kubernetes
+2. **Configure**:
+   - **Name**: `kubernetes`
+   - **Kubernetes URL**: `https://kubernetes.default`
+   - **Kubernetes Namespace**: `jenkins`
+   - **Jenkins URL**: `http://jenkins.jenkins.svc.cluster.local:8080`
+   - **Jenkins tunnel**: `jenkins-agent-nodeport.jenkins.svc.cluster.local:50000`
+
+3. **Pod Template**:
+   - **Name**: `default`
+   - **Namespace**: `jenkins`
+   - **Labels**: `jenkins-agent`
+   - **Usage**: Use this node as much as possible
+   - **Container Template**:
+     - **Name**: `jnlp`
+     - **Docker Image**: `jenkins/inbound-agent:latest`
+     - **Working directory**: `/home/jenkins/agent`
+
+4. **Test Connection** should show "Connected to Kubernetes"
+
+### Jenkins Features
+
+#### Kubernetes Agents
+
+*   **Distributed Builds**: Jobs run on dynamically created agent pods
+*   **Resource Isolation**: Each build runs in its own container
+*   **Auto-scaling**: Agents are created on-demand and destroyed after use
+*   **No Manual Setup**: Agents are managed automatically by Jenkins
+
+#### Persistent Storage
+
+*   **Custom PVC**: 2Gi persistent volume for Jenkins data
+*   **Data Persistence**: Jenkins configuration and job history survive pod restarts
+*   **Minikube Storage**: Uses Minikube's default storage class
+
+#### Security
+
+*   **Authentication**: Local user database with admin account
+*   **Authorization**: Logged-in users can perform all actions
+*   **RBAC**: Jenkins service account has permissions to manage pods
+*   **Secrets Management**: Admin credentials stored in Kubernetes secrets
+
+### Testing Jenkins
+
+#### Automatic Test Job
+
+A `hello-world` job is **automatically created** during Jenkins installation via JCasC configuration. This job demonstrates:
+
+- Kubernetes agent execution
+- Basic shell commands
+- Build output logging
+
+**To run the automatic job:**
+1. Go to Jenkins dashboard
+2. Click on `hello-world` job
+3. Click **Build Now**
+4. Check **Console Output** for results
+
+#### Create Additional Jobs (Manual)
+
+You can create additional jobs manually:
+
+1. **New Item** → **Freestyle project** → Name: `my-custom-job`
+2. **Build Steps** → **Execute shell**:
+   ```bash
+   echo "Hello World from Jenkins!"
+   echo "Current date: $(date)"
+   echo "Running on: $(hostname)"
+   echo "Kubernetes agent working!"
+   ```
+3. **Save** and **Build Now**
+
+#### Verify Agent Execution
+
+```bash
+# Watch agent pods being created
+kubectl get pods -n jenkins -w
+
+# Check agent logs
+kubectl logs <agent-pod-name> -n jenkins
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+**Jenkins Pod Not Starting:**
+```bash
+# Check pod status
+kubectl describe pod jenkins-0 -n jenkins
+
+# Check logs
+kubectl logs jenkins-0 -n jenkins -c jenkins
+```
+
+**Agent Connection Issues:**
+```bash
+# Verify services
+kubectl get svc -n jenkins
+
+# Check RBAC permissions
+kubectl get role,rolebinding -n jenkins
+
+# Test Kubernetes cloud connection in Jenkins UI
+```
+
+**Plugin Issues:**
+- Update plugins via Jenkins UI: Manage Jenkins → Plugins
+- Restart Jenkins: `kubectl rollout restart statefulset/jenkins -n jenkins`
+
+### Cloud Deployment
+
+**Note**: Cloud deployment configuration is included but not tested. The setup includes:
+
+*   **AWS EBS Storage**: Dynamic provisioning with 5Gi volumes
+*   **LoadBalancer Service**: For external access in cloud environments
+*   **Cloud-specific Values**: Separate configuration files for cloud deployment
+
+**To deploy on cloud** (untested):
+```bash
+./install-jenkins.sh cloud
+```
+
+### File Structure
+
+```
+k8s/jenkins/
+├── base/
+│   ├── values.yaml              # Main Jenkins configuration
+│   ├── pvc.yaml                 # Persistent volume claim
+│   ├── rbac.yaml                # RBAC permissions
+│   └── agent-service.yaml       # Agent listener service
+├── minikube/
+│   └── values-minikube.yaml     # Minikube-specific overrides
+└── cloud/
+    ├── values-cloud.yaml        # Cloud-specific overrides
+    └── pv.yaml                  # Cloud persistent volume
+```
+
 ## Security Considerations
 
 *   **No Secrets in Repository**: This repository relies on environment variables and IAM roles for authentication and authorization, avoiding the storage of sensitive credentials within the code.
@@ -180,3 +390,4 @@ To minimize redundancy, a reusable composite action located at `.github/actions/
 *   **OIDC Trust Configuration**: The OIDC provider trust configuration ensures that only authorized repositories can assume the IAM role..
 *   **State File Security**: The S3 bucket used to store the Terraform state file is securely protected with encryption and access controls.
 *   **IMDSv2 Required**: All EC2 instances are configured to require IMDSv2, enhancing security against SSRF vulnerabilities.
+*   **Jenkins Security**: Admin credentials managed via Kubernetes secrets, RBAC permissions properly configured.
