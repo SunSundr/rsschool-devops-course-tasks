@@ -5,7 +5,7 @@ controller:
     userKey: "username"
     passwordKey: "password"
 
-  resources:
+  # resources:
     requests:
       cpu: "50m"
       memory: "256Mi"
@@ -13,13 +13,6 @@ controller:
       cpu: "1000m"
       memory: "2Gi"
 
-  persistence:
-    enabled: true
-    existingClaim: "jenkins-pvc"
-    # Disable default PVC creation
-    storageClass: "-"
-    size: false
- 
   serviceType: NodePort
   nodePort: 32000
   
@@ -55,6 +48,18 @@ controller:
   JCasC:
     defaultConfig: true
 
+persistence:
+  enabled: true
+  storageClass: jenkins-storage
+  annotations: {}
+  labels: {}
+  accessMode: "ReadWriteOnce"
+  size: "4Gi"
+  dataSource: {}
+  subPath:
+  volumes: []
+  mounts: []
+
 # Enable agents for distributed builds
 agent:
   enabled: true
@@ -74,7 +79,7 @@ agent:
   showRawYaml: true
   
   # Use existing service account created by controller
-  useDefaultServiceAccount: true
+  # useDefaultServiceAccount: true
   
   # Agent connection settings
   kubernetesConnectTimeout: 5

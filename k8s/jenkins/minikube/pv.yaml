@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jenkins-pv-minikube
+  name: jenkins-storage
+  namespace: jenkins
 spec:
   capacity:
-    storage: 2Gi  # Minimal size for local testing
+    storage: 4Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: jenkins-storage
   hostPath:
-    path: /data/jenkins-data  # Minikube local path
+    path: /mnt/data/jenkins-data  # Minikube's persistent mount (or `/tmp/jenkins-data` custom path)

@@ -1,3 +1,4 @@
+# not used (helm uses storageClass with custom PV)
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -6,7 +7,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard  # Use Minikube's default storage class
+  storageClassName: standard
   resources:
     requests:
-      storage: 2Gi  # Minimal size - will match available PV
+      storage: 4Gi

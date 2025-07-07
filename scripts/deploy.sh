@@ -12,11 +12,18 @@ kubectl create namespace jenkins --dry-run=client -o yaml | kubectl apply -f -
 
 # Apply storage class based on deployment type
 if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
-    echo "Using Minikube default storage (2Gi)..."
-    # Apply PVC, RBAC, and agent service
-    kubectl apply -f k8s/jenkins/base/pvc.yaml
+    echo "Setting up Jenkins data directory in Minikube..."
+    minikube ssh "sudo rm -rf /mnt/data/jenkins-data"
+    minikube ssh "sudo mkdir -p /mnt/data/jenkins-data"
+    minikube ssh "sudo chown -R 1000:1000 /mnt/data/jenkins-data"
+    minikube ssh "sudo chmod -R 775 /mnt/data/jenkins-data"
+    echo "Jenkins data directory setup completed."
+
+    kubectl apply -f k8s/jenkins/minikube/storage-class.yaml
+    kubectl apply -f k8s/jenkins/minikube/pv.yaml
+    # kubectl apply -f k8s/jenkins/base/pvc.yaml # not used
     kubectl apply -f k8s/jenkins/base/rbac.yaml
-    kubectl apply -f k8s/jenkins/base/agent-service.yaml
+    # kubectl apply -f k8s/jenkins/base/agent-service.yaml # not used
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Using Cloud configuration with dynamic EBS (5Gi)..."
     kubectl apply -f k8s/jenkins/cloud/storage-class-cloud.yaml  # Dynamic provisioning

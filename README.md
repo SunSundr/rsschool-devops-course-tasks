@@ -275,9 +275,11 @@ If the automated cloud configuration doesn't work, configure manually:
 
 #### Persistent Storage
 
-*   **Custom PVC**: 2Gi persistent volume for Jenkins data
-*   **Data Persistence**: Jenkins configuration and job history survive pod restarts
-*   **Minikube Storage**: Uses Minikube's default storage class
+*   **Custom Persistent Volume**: 4Gi persistent volume with custom storage class `jenkins-storage`
+*   **Retain Policy**: `persistentVolumeReclaimPolicy: Retain` - data persists even after Jenkins deletion
+*   **Minikube Integration**: Uses `/mnt/data/jenkins-data` path inside Minikube container
+*   **Automated Setup**: Directory permissions (1000:1000, 775) configured automatically during installation
+*   **Data Persistence**: Jenkins configuration, job history, and plugins survive pod restarts and Minikube restarts
 
 #### Security
 

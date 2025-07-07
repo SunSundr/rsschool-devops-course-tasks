@@ -12,18 +12,10 @@ controller:
       cpu: "2000m"
       memory: "4096Mi"
 
-  persistence:
-    enabled: true
-    existingClaim: "jenkins-pvc"
-    # Disable default PVC creation
-    storageClass: "-"
-    size: false
-
   # Agent listener service
   agentListenerEnabled: true
   agentListenerPort: 50000
   agentListenerServiceType: "NodePort"
-  # agentListenerNodePort: 50000
 
   # Prevent plugin updates that cause compatibility issues
   installLatestPlugins: false
@@ -70,38 +62,13 @@ controller:
 
 # Enable agents for builds
 agent:  
-  # Agent configuration
-  containerCap: 10
-  instanceCap: 2147483647
   podRetention: "OnFailure"  # Keep successful pods for debugging
-  showRawYaml: true
   idleMinutes: 1  # Keep agents alive for 1 minute after job completion
 
   # Use default service account
   useDefaultServiceAccount: true
 
-  # Agent connection settings
-  kubernetesConnectTimeout: 5
-  kubernetesReadTimeout: 15
-  maxRequestsPerHostStr: "32"
-  retentionTimeout: 5
-  waitForPodSec: 600
-
   # Kubernetes cluster connection (fix for Minikube)
   jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
-  jenkinsTunnel: "jenkins-agent-nodeport.jenkins.svc.cluster.local:50000"
-
-  # Agent image
-  image:
-    registry: ""
-    repository: "jenkins/inbound-agent"
-    tag: "3309.v27b_9314fd1a_4-6"
-
-  workingDir: "/home/jenkins/agent"
-  nodeUsageMode: "NORMAL"
-  componentName: "jenkins-agent"
-
-  # Connection settings
-  args: "${computer.jnlpmac} ${computer.name}"
-  sideContainerName: "jnlp"
-  connectTimeout: 100
+  # jenkinsTunnel: "jenkins-agent-nodeport.jenkins.svc.cluster.local:50000"
+  jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"
