@@ -375,14 +375,15 @@ kubectl get role,rolebinding -n jenkins
 k8s/jenkins/
 ├── base/
 │   ├── values.yaml              # Main Jenkins configuration
-│   ├── pvc.yaml                 # Persistent volume claim
-│   ├── rbac.yaml                # RBAC permissions
-│   └── agent-service.yaml       # Agent listener service
+│   └── rbac.yaml                # RBAC permissions
 ├── minikube/
-│   └── values-minikube.yaml     # Minikube-specific overrides
+│   ├── values-minikube.yaml     # Minikube-specific overrides
+│   ├── pv.yaml                  # Custom persistent volume (4Gi)
+│   └── storage-class.yaml       # Custom storage class (jenkins-storage)
 └── cloud/
-    ├── values-cloud.yaml        # Cloud-specific overrides
-    └── pv.yaml                  # Cloud persistent volume
+    ├── values-cloud.yaml        # Cloud-specific overrides (untested)
+    ├── pv.yaml                  # Cloud persistent volume (untested)
+    └── storage-class-cloud.yaml # Cloud storage class (untested)
 ```
 
 ## Security Considerations
