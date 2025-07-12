@@ -1,4 +1,25 @@
-.terraform/
-*.bak
-*.backup
+# Environment files with secrets
+.env
+secret-file
+
+# SSH Keys
 *.pem
+*.pub
+modules/compute/keys/
+
+# Terraform files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+*.bak
+commands.txt

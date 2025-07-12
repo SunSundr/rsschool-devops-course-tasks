@@ -1,0 +1,9 @@
+# Cloud-specific overrides
+controller:
+  serviceType: LoadBalancer  # Use LoadBalancer for cloud access
+  
+  # Cloud-specific ingress
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    hostname: "jenkins.local"

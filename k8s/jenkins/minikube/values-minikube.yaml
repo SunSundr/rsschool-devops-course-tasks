@@ -1,0 +1,74 @@
+controller:
+  admin:
+    existingSecret: "jenkins-admin-secret"
+    userKey: "username"
+    passwordKey: "password"
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "256Mi"
+    limits:
+      cpu: "2000m"
+      memory: "4096Mi"
+
+  # Agent listener service
+  agentListenerEnabled: true
+  agentListenerPort: 50000
+  agentListenerServiceType: "NodePort"
+
+  # Prevent plugin updates that cause compatibility issues
+  installLatestPlugins: false
+  installLatestSpecifiedPlugins: false
+  overwritePlugins: true
+
+  JCasC:
+    defaultConfig: true
+    overwriteConfiguration: false
+    configUrls: []
+    configScripts:
+      hello-job: |
+        jobs:
+          - script: >
+              job('hello-world') {
+                description('Simple Hello World job created via JCasC')
+                steps {
+                  shell('echo "Hello World from Jenkins!"')
+                  shell('echo "Current date: $(date)"')
+                  shell('echo "Jenkins JCasC is working!"')
+                  shell('echo "Job completed successfully!"')
+                }
+              }
+
+    # Security configuration
+    security:
+      apiToken:
+        creationOfLegacyTokenEnabled: false
+        tokenGenerationOnCreationEnabled: false
+        usageStatisticsEnabled: true
+
+    securityRealm: |
+      local:
+        allowsSignup: false
+        enableCaptcha: false
+        users:
+        - id: "${chart-admin-username}"
+          name: "Jenkins Admin"
+          password: "${chart-admin-password}"
+
+    authorizationStrategy: |
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
+
+# Enable agents for builds
+agent:  
+  podRetention: "OnFailure"  # Keep successful pods for debugging
+  idleMinutes: 1  # Keep agents alive for 1 minute after job completion
+
+  # Use default service account
+  useDefaultServiceAccount: true
+
+  # Kubernetes cluster connection (fix for Minikube)
+  jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
+  # jenkinsTunnel: "jenkins-agent-nodeport.jenkins.svc.cluster.local:50000"
+  jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"

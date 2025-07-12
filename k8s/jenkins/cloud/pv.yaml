@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv-cloud
+spec:
+  capacity:
+    storage: 5Gi  # Minimal size for cloud (EBS minimum is usually 1Gi, but 5Gi is safer)
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: jenkins-storage
+  awsElasticBlockStore:
+    volumeID: aws://eu-north-1a/vol-xxxxxxxxx  # Will be replaced by dynamic provisioning
+    fsType: ext4
