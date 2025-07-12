@@ -11,19 +11,18 @@ NAMESPACE="flask-app"
 
 echo "Deploying Flask app for: $DEPLOYMENT_TYPE"
 
-# Change to flask_app directory
 cd "$(dirname "$0")/.."
 
-# Create namespace
+# Create namespace:
 kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
 
 if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
     echo "Deploying to Minikube..."
     
-    # Build image first
+    # Build image:
     ./scripts/build-image.sh minikube
     
-    # Deploy with Minikube values
+    # Deploy:
     helm upgrade --install $RELEASE_NAME $CHART_PATH \
         --namespace $NAMESPACE \
         --values $CHART_PATH/values-minikube.yaml \
@@ -35,10 +34,10 @@ if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Deploying to Cloud..."
     
-    # Build and push image first
+    # Build and push image:
     ./scripts/build-image.sh cloud $DOCKER_USERNAME
     
-    # Deploy with Cloud values
+    # Deploy:
     helm upgrade --install $RELEASE_NAME $CHART_PATH \
         --namespace $NAMESPACE \
         --values $CHART_PATH/values-cloud.yaml \

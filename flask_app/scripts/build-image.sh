@@ -10,24 +10,24 @@ IMAGE_TAG="latest"
 
 echo "Building Flask app image for: $DEPLOYMENT_TYPE"
 
-# Change to flask_app directory
 cd "$(dirname "$0")/.."
 
 if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
     echo "Building image for Minikube..."
-    # Use Minikube's Docker daemon
-    eval $(minikube docker-env)
+
+    eval $(minikube docker-env) # Use Minikube's Docker daemon
+
     docker build -t $IMAGE_NAME:$IMAGE_TAG .
     echo "Image built for Minikube: $IMAGE_NAME:$IMAGE_TAG"
     
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Building and pushing image for Cloud..."
     FULL_IMAGE_NAME="$DOCKER_USERNAME/$IMAGE_NAME:$IMAGE_TAG"
-    
-    # Build image
+
     docker build -t $FULL_IMAGE_NAME .
     
-    # Push to registry
+    # Push to DockerHub:
+    docker login
     echo "Pushing image to DockerHub..."
     docker push $FULL_IMAGE_NAME
     echo "Image pushed: $FULL_IMAGE_NAME"

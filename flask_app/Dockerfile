@@ -1,20 +1,17 @@
-# Use Python 3.9 slim image
-FROM python:3.9-slim
+FROM python:3.14.0b4-alpine3.22
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apk del .build-deps
 
-# Copy application code
-COPY main.py .
+COPY . .
 
-# Expose port 5000
-EXPOSE 5000
+ENV FLASK_APP=main.py
 
-# Run the application
-CMD ["python", "main.py"]
+EXPOSE 8080
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
