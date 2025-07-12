@@ -1,0 +1,28 @@
+image:
+  repository: flask-app
+  tag: latest
+  pullPolicy: Never  # Use local image in Minikube
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 5000
+  nodePort: 32080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+replicaCount: 1
+
+# Disable ingress for Minikube
+ingress:
+  enabled: false
+
+# Disable autoscaling for Minikube
+autoscaling:
+  enabled: false
