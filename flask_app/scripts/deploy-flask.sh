@@ -34,18 +34,22 @@ if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
 elif [ "$DEPLOYMENT_TYPE" = "cloud" ]; then
     echo "Deploying to Cloud..."
     
-    # Build and push image:
-    ./scripts/build-image.sh cloud $DOCKER_USERNAME
+    # Note: Docker image should be built and pushed from local machine first
+    echo "Make sure to run './scripts/build-image.sh cloud $DOCKER_USERNAME' from local machine first!"
     
-    # Deploy:
+    # Update values file with correct repository
+    ./scripts/update-cloud-values.sh $DOCKER_USERNAME
+    
+    # Deploy
     helm upgrade --install $RELEASE_NAME $CHART_PATH \
         --namespace $NAMESPACE \
         --values $CHART_PATH/values-cloud.yaml \
-        --set image.repository=$DOCKER_USERNAME/flask-app \
         --wait
     
     echo "Flask app deployed to Cloud!"
-    echo "Check LoadBalancer IP: kubectl get svc flask-app -n flask-app"
+    echo "Fix NodePort if needed: kubectl patch svc flask-app -n flask-app -p '{\"spec\":{\"ports\":[{\"port\":8080,\"targetPort\":8080,\"nodePort\":30080,\"protocol\":\"TCP\"}]}}'"
+    echo "Access via port-forward: kubectl port-forward --address 0.0.0.0 svc/flask-app 8080:8080 -n flask-app &"
+    echo "Or check service: kubectl get svc flask-app -n flask-app"
     
 else
     echo "Invalid deployment type. Use 'minikube' or 'cloud'"
