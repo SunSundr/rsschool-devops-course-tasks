@@ -11,6 +11,15 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"] # Restrict to IP in production
   }
 
+  # Port 8080 for Flask app port-forward access
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Public access to Flask app via port-forward"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -238,11 +247,21 @@ resource "aws_security_group" "k3s" {
     self      = true
   }
 
+  # NodePort range - internal cluster communication
   ingress {
     from_port = 30000
     to_port   = 32767
     protocol  = "tcp"
     self      = true
+  }
+
+  # NodePort range - public access for Flask app (fixed port)
+  ingress {
+    from_port   = 30080
+    to_port     = 30080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Public access to Flask app via NodePort"
   }
 
   egress {

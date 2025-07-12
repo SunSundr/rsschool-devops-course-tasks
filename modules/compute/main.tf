@@ -9,23 +9,43 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# Generate SSH key pair
-resource "tls_private_key" "ssh" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+# Simple directory-based key management
+locals {
+  keys_dir   = "${path.module}/keys"
+  keys_exist = can(fileset(local.keys_dir, "*")) # Returns `false` if dir doesn't exist
 }
 
-# Store private key locally
-resource "local_file" "private_key" {
-  content         = tls_private_key.ssh.private_key_pem
-  filename        = "${path.module}/keys/${var.project}-key.pem"
-  file_permission = "0600"
+resource "null_resource" "setup_keys" {
+  count = local.keys_exist ? 0 : 1
+
+  triggers = {
+    keys_dir = local.keys_dir
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p "${local.keys_dir}" 2>/dev/null || true
+      ssh-keygen -t rsa -b 4096 -m PEM -f "${local.keys_dir}/${var.project}-key.pem" -N ""
+      if [ "$(uname -s)" != "Windows_NT" ]; then
+        chmod 600 "${local.keys_dir}/${var.project}-key.pem"
+        chmod 644 "${local.keys_dir}/${var.project}-key.pem.pub"
+      fi
+    EOT
+
+    interpreter = ["/bin/sh", "-c"]
+  }
+}
+
+# Read existing public key
+data "local_file" "public_key" {
+  filename   = "${local.keys_dir}/${var.project}-key.pem.pub"
+  depends_on = [null_resource.setup_keys]
 }
 
 # Create AWS key pair
 resource "aws_key_pair" "main" {
   key_name   = "${var.project}-key"
-  public_key = tls_private_key.ssh.public_key_openssh
+  public_key = data.local_file.public_key.content
 }
 
 # Bastion host
