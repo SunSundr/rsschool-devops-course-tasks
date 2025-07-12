@@ -11,8 +11,9 @@ data "aws_ami" "amazon_linux" {
 
 # Simple directory-based key management
 locals {
-  keys_dir   = "${path.module}/keys"
-  keys_exist = can(fileset(local.keys_dir, "*")) # Returns `false` if dir doesn't exist
+  keys_dir        = "${path.module}/keys"
+  public_key_path = "${local.keys_dir}/${var.project}-key.pem.pub"
+  keys_exist      = can(fileset(local.keys_dir, "*")) && fileexists(local.public_key_path)
 }
 
 resource "null_resource" "setup_keys" {
@@ -36,25 +37,28 @@ resource "null_resource" "setup_keys" {
   }
 }
 
-# Read existing public key
+# Read existing public key (only if it exists)
 data "local_file" "public_key" {
-  filename   = "${local.keys_dir}/${var.project}-key.pem.pub"
+  count      = local.keys_exist ? 1 : 0
+  filename   = local.public_key_path
   depends_on = [null_resource.setup_keys]
 }
 
-# Create AWS key pair
+# Create AWS key pair (only if keys exist locally)
 resource "aws_key_pair" "main" {
+  count      = local.keys_exist ? 1 : 0
   key_name   = "${var.project}-key"
-  public_key = data.local_file.public_key.content
+  public_key = data.local_file.public_key[0].content
 }
 
-# Bastion host
+# Bastion host (only if keys exist)
 resource "aws_instance" "bastion" {
+  count                  = local.keys_exist ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.bastion_instance_type
   subnet_id              = var.public_subnet_id
   vpc_security_group_ids = [var.bastion_sg_id]
-  key_name               = aws_key_pair.main.key_name
+  key_name               = aws_key_pair.main[0].key_name
 
   # enable IMDSv2
   metadata_options {
@@ -80,14 +84,15 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# NAT instance
+# NAT instance (only if keys exist)
 resource "aws_instance" "nat" {
+  count                  = local.keys_exist ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.nat_instance_type
   subnet_id              = var.public_subnet_id
   vpc_security_group_ids = [var.nat_sg_id]
   source_dest_check      = false # Required for NAT functionality
-  key_name               = aws_key_pair.main.key_name
+  key_name               = aws_key_pair.main[0].key_name
 
   user_data = <<-EOF
               #!/bin/bash
