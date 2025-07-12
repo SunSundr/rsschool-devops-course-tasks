@@ -60,7 +60,9 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -var="enable_k3s_cluster=true"
+        run: |
+          terraform plan -no-color -var="enable_k3s_cluster=true" -detailed-exitcode
+          echo "Plan exit code: $?"
         working-directory: ${{ env.TF_WORKING_DIR }}
         continue-on-error: true
 
@@ -89,9 +91,18 @@ jobs:
               body: output
             })
 
+      - name: Show Plan Output
+        if: always()
+        run: |
+          echo "Plan outcome: ${{ steps.plan.outcome }}"
+          echo "Plan outputs: ${{ steps.plan.outputs.stdout }}"
+          echo "Plan stderr: ${{ steps.plan.outputs.stderr }}"
+      
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
-        run: exit 1
+        run: |
+          echo "Terraform plan failed!"
+          exit 1
 
   terraform-apply:
     name: "Terraform Apply"

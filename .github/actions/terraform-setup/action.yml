@@ -28,5 +28,5 @@ runs:
       
     - name: Terraform Init
       shell: bash
-      run: terraform init
+      run: terraform init -upgrade
       working-directory: ${{ inputs.working-dir }}
