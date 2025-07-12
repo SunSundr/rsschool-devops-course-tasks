@@ -1,0 +1,30 @@
+image:
+  repository: your-dockerhub-username/flask-app
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 5000
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+replicaCount: 2
+
+# Enable ingress for cloud (optional)
+ingress:
+  enabled: false
+
+# Enable autoscaling for cloud
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
