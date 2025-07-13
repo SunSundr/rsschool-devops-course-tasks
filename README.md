@@ -262,6 +262,122 @@ kubectl logs -n flask-app deployment/flask-app
 - NodePort 30080 is configured in security groups for direct cluster access
 - All communication uses encrypted SSH tunnels and HTTPS where applicable
 
+## Flask App Infrastructure (CloudFront + Custom Domain)
+
+For production deployment, the Flask app can be served through CloudFront CDN with a custom domain and SSL certificate.
+
+### Architecture Overview
+
+- **Custom Domain**: `https://flask.your-domain.com`
+- **SSL Certificate**: AWS Certificate Manager (ACM) in us-east-1
+- **CDN**: CloudFront distribution for global content delivery
+- **Origin**: Bastion host with port-forward to K3s cluster
+- **DNS**: Route53 hosted zone management
+
+### Infrastructure Components
+
+- **CloudFront Distribution**:
+  - Custom domain alias configuration
+  - SSL certificate integration
+  - Origin pointing to bastion host (port 8080)
+  - Cache policies optimized for dynamic content
+
+- **SSL Certificate (ACM)**:
+  - Domain validation via DNS
+  - Automatic renewal
+  - Must be created in us-east-1 region for CloudFront compatibility
+
+- **Route53 DNS Records**:
+  - Origin subdomain: `flask-origin.your-domain.com` → Bastion IP
+  - Main domain: `flask.your-domain.com` → CloudFront distribution
+  - Certificate validation CNAME records
+
+### Deployment Steps
+
+#### 1. Manual SSL Certificate Creation (Required)
+
+**⚠️ Important**: The SSL certificate must be created manually in AWS Console before Terraform deployment.
+
+1. Go to **AWS Certificate Manager** in **us-east-1** region
+2. Click **Request a certificate** → **Request a public certificate**
+3. Domain name: `flask.your-domain.com`
+4. Validation method: **DNS validation**
+5. Click **Request**
+6. Copy the **CNAME record** from certificate details
+7. Go to **Route53** → Your hosted zone
+8. Create the CNAME record for validation
+9. Wait for certificate status to become **Issued** (5-10 minutes)
+
+#### 2. Deploy CloudFront Infrastructure
+
+```bash
+# Deploy infrastructure with CloudFront enabled
+terraform apply -var="enable_k3s_cluster=true" -var="enable_cloudfront=true"
+```
+
+#### 3. Update Flask App Image
+
+```bash
+# Build and push updated Flask image (local machine)
+cd flask_app
+./scripts/build-image.sh cloud <your-dockerhub-username>
+
+# Update Kubernetes deployment (from bastion)
+ssh -A -i modules/compute/keys/rss-key.pem ec2-user@<bastion-ip>
+kubectl rollout restart deployment flask-app -n flask-app
+kubectl rollout status deployment flask-app -n flask-app
+
+# Restart port-forward for CloudFront origin
+kubectl port-forward --address 0.0.0.0 svc/flask-app 8080:8080 -n flask-app &
+```
+
+#### 4. CloudFront Cache Invalidation
+
+```bash
+# Option 1: AWS Console
+# Go to CloudFront → Distributions → Select your distribution
+# Invalidations tab → Create invalidation → Paths: /*
+
+# Option 2: AWS CLI
+aws cloudfront create-invalidation --distribution-id <DISTRIBUTION_ID> --paths "/*"
+```
+
+### Flask App Features
+
+The deployed Flask application includes:
+
+- **Professional Web Interface**: HTML5 with CSS styling and responsive design
+- **System Information Display**: Hostname, timestamp, environment details
+- **Infrastructure Overview**: Complete tech stack information
+- **Health Monitoring Endpoints**:
+  - `/health` - Application health status (JSON)
+  - `/info` - System information and versions (JSON)
+- **External Links**: GitHub repository and documentation
+
+### Access Methods
+
+1. **Production (CloudFront)**: `https://flask.your-domain.com`
+2. **Direct (Bastion)**: `http://<bastion-ip>:8080`
+3. **Internal (NodePort)**: `http://<k3s-master-ip>:30080`
+4. **Local Tunnel**: `http://localhost:8080` (via SSH tunnel)
+
+### Monitoring and Maintenance
+
+```bash
+# Check application status
+kubectl get pods -n flask-app
+kubectl logs -n flask-app deployment/flask-app
+
+# Test health endpoints
+curl https://flask.your-domain.com/health
+curl https://flask.your-domain.com/info
+
+# Update application
+./scripts/build-image.sh cloud <username>
+kubectl rollout restart deployment flask-app -n flask-app
+aws cloudfront create-invalidation --distribution-id <ID> --paths "/*"
+```
+
 ## Terraform Configuration Files
 
 The Terraform configuration is structured into several key files and modules:
