@@ -60,7 +60,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -var="enable_k3s_cluster=true"
         working-directory: ${{ env.TF_WORKING_DIR }}
         continue-on-error: true
 
@@ -110,5 +110,5 @@ jobs:
           working-dir: ${{ env.TF_WORKING_DIR }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var="enable_k3s_cluster=true"
         working-directory: ${{ env.TF_WORKING_DIR }}

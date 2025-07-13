@@ -44,15 +44,14 @@ module "compute" {
   nat_instance_type     = var.nat_instance_type
 }
 
-# Now create the NAT route
+# Now create the NAT route (only if NAT instance exists)
 resource "aws_route" "private_nat" {
+  count                  = module.compute.nat_instance_eni_id != null ? 1 : 0
   route_table_id         = module.networking.private_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = module.compute.nat_instance_eni_id
   # nat_gateway_id         = module.networking.nat_gateway_id
 }
-
-
 
 # TEST INFRASTRUCTURE
 
@@ -121,4 +120,29 @@ output "test_private_az1_ip" {
 output "test_private_az2_ip" {
   description = "Private IP of test private db server in AZ2"
   value       = var.enable_test_instances ? module.tests[0].test_private_az2_ip : null
+}
+
+#---------------------------------------------------------
+# CloudFront for Flask App
+variable "enable_cloudfront" {
+  description = "Whether to create CloudFront distribution for Flask app"
+  type        = bool
+  default     = false
+}
+
+module "cloudfront" {
+  source = "./modules/cloudfront"
+
+  project           = var.project
+  bastion_public_ip = module.compute.bastion_public_ip
+  enable_cloudfront = var.enable_cloudfront
+
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+}
+
+output "flask_app_url" {
+  description = "Flask app custom domain URL"
+  value       = module.cloudfront.flask_app_url
 }

@@ -11,11 +11,38 @@ This repository provides a Terraform configuration designed to deploy and manage
   - [AWS IAM Setup](#aws-iam-setup)
   - [Infrastructure Components](#infrastructure-components)
   - [K3s Kubernetes Cluster](#k3s-kubernetes-cluster)
+    - [Flask App Deployment on K3s (Cloud)](#flask-app-deployment-on-k3s-cloud)
+      - [Prerequisites](#prerequisites-1)
+      - [Step-by-Step Deployment](#step-by-step-deployment)
+      - [Verification](#verification)
+      - [Troubleshooting](#troubleshooting)
   - [Terraform Configuration Files](#terraform-configuration-files)
   - [CI/CD Workflow](#cicd-workflow)
   - [Usage](#usage)
     - [Initial Setup (Manual, One-time)](#initial-setup-manual-one-time)
     - [Development Workflow (via GitHub Actions)](#development-workflow-via-github-actions)
+  - [Jenkins CI/CD Setup](#jenkins-cicd-setup)
+    - [Prerequisites for Jenkins](#prerequisites-for-jenkins)
+    - [Jenkins Installation (Minikube)](#jenkins-installation-minikube)
+      - [1. Environment Setup](#1-environment-setup)
+      - [2. Start Minikube](#2-start-minikube)
+      - [3. Install Jenkins](#3-install-jenkins)
+      - [4. Access Jenkins](#4-access-jenkins)
+    - [Jenkins Configuration](#jenkins-configuration)
+      - [Automated Configuration (JCasC)](#automated-configuration-jcasc)
+      - [Manual Kubernetes Cloud Setup (if needed)](#manual-kubernetes-cloud-setup-if-needed)
+    - [Jenkins Features](#jenkins-features)
+      - [Kubernetes Agents](#kubernetes-agents)
+      - [Persistent Storage](#persistent-storage)
+      - [Security](#security)
+    - [Testing Jenkins](#testing-jenkins)
+      - [Automatic Test Job](#automatic-test-job)
+      - [Create Additional Jobs (Manual)](#create-additional-jobs-manual)
+      - [Verify Agent Execution](#verify-agent-execution)
+    - [Troubleshooting](#troubleshooting-1)
+      - [Common Issues](#common-issues)
+    - [Cloud Deployment](#cloud-deployment)
+    - [File Structure](#file-structure)
   - [Security Considerations](#security-considerations)
 
 ## Project Overview
@@ -26,10 +53,10 @@ This project utilizes Terraform to define and provision AWS resources as Infrast
 
 Before you begin, ensure you have the following:
 
-*   An active AWS account.
-*   AWS CLI configured with appropriate permissions to create initial resources (IAM roles/OIDC).
-*   Terraform CLI installed (version >= 1.4).
-*   A GitHub repository to host the Terraform code and workflow.
+- An active AWS account.
+- AWS CLI configured with appropriate permissions to create initial resources (IAM roles/OIDC).
+- Terraform CLI installed (version >= 1.4).
+- A GitHub repository to host the Terraform code and workflow.
 
 ## AWS IAM Setup
 
@@ -47,80 +74,336 @@ To allow GitHub Actions to securely interact with your AWS environment, you need
 
 The infrastructure created by this project includes:
 
-*   **VPC Architecture**:
-    *   A VPC with 4 subnets across 2 different Availability Zones (AZs)
-    *   2 public subnets in different AZs
-    *   2 private subnets in different AZs
-    *   Internet Gateway for public internet access
-*   **Network Security**:
-    *   Security groups for different instance types (bastion, NAT, public, private)
-    *   Network ACLs for public and private subnets
-    *   IMDSv2 required on all instances for enhanced security
-*   **Compute Resources**:
-    *   Bastion host - configured as an access point for instances inside the VPC
-    *   NAT instance - enables outbound internet access for private subnet instances
-    *   Test instances (optional) - 1 in a public subnet, 2 in different private subnets
-*   **Routing Configuration**:
-    *   Instances in all subnets can reach each other
-    *   Instances in public subnets can reach addresses outside the VPC and vice-versa
-    *   Private subnet instances can access the internet through the NAT instance
-*   **Storage**:
-    *   S3 bucket for Terraform state storage with lockfile-based state locking
+- **VPC Architecture**:
+  - A VPC with 4 subnets across 2 different Availability Zones (AZs)
+  - 2 public subnets in different AZs
+  - 2 private subnets in different AZs
+  - Internet Gateway for public internet access
+- **Network Security**:
+  - Security groups for different instance types (bastion, NAT, public, private)
+  - Network ACLs for public and private subnets
+  - IMDSv2 required on all instances for enhanced security
+- **Compute Resources**:
+  - Bastion host - configured as an access point for instances inside the VPC
+  - NAT instance - enables outbound internet access for private subnet instances
+  - Test instances (optional) - 1 in a public subnet, 2 in different private subnets
+- **Routing Configuration**:
+  - Instances in all subnets can reach each other
+  - Instances in public subnets can reach addresses outside the VPC and vice-versa
+  - Private subnet instances can access the internet through the NAT instance
+- **Storage**:
+  - S3 bucket for Terraform state storage with lockfile-based state locking
 
 ## K3s Kubernetes Cluster
 
 The project includes a fully functional K3s Kubernetes cluster deployed in private subnets:
 
-*   **Cluster Architecture**:
-    *   K3s master node in private subnet (AZ1)
-    *   K3s worker node in private subnet (AZ2)
-    *   Both nodes use Amazon Linux 2 for consistency
-    *   IMDSv2 enabled for enhanced security
+- **Cluster Architecture**:
+  - K3s master node in private subnet (AZ1)
+  - K3s worker node in private subnet (AZ2)
+  - Both nodes use Amazon Linux 2 for consistency
+  - IMDSv2 enabled for enhanced security
 
-*   **Network Configuration**:
-    *   Cluster nodes communicate through private networking
-    *   Internet access via custom NAT instance for downloading K3s
-    *   Security groups configured for K3s API (6443), Flannel VXLAN (8472), and Kubelet (10250)
-    *   Access from bastion host for cluster management
+- **Network Configuration**:
+  - Cluster nodes communicate through private networking
+  - Internet access via custom NAT instance for downloading K3s
+  - Security groups configured for K3s API (6443), Flannel VXLAN (8472), and Kubelet (10250)
+  - Access from bastion host for cluster management
 
-*   **Cluster Features**:
-    *   Automatic node joining with token-based authentication
-    *   kubectl access configured on bastion host
-    *   Ready to deploy workloads and services
-    *   Supports standard Kubernetes manifests
+- **Cluster Features**:
+  - Automatic node joining with token-based authentication
+  - kubectl access configured on bastion host
+  - Ready to deploy workloads and services
+  - Supports standard Kubernetes manifests
 
-*   **Management**:
-    *   Access cluster via bastion host: `ssh -i key.pem ec2-user@<bastion-ip>`
-    *   Check cluster status: `kubectl get nodes`
-    *   Deploy workloads: `kubectl apply -f manifest.yaml`
-    *   View all resources: `kubectl get all --all-namespaces`
+- **Management**:
+  - Access cluster via bastion host: `ssh -i key.pem ec2-user@<bastion-ip>`
+  - Check cluster status: `kubectl get nodes`
+  - Deploy workloads: `kubectl apply -f manifest.yaml`
+  - View all resources: `kubectl get all --all-namespaces`
+
+### Flask App Deployment on K3s (Cloud)
+
+This section covers deploying the Flask application to the K3s cluster in AWS cloud environment.
+
+#### Prerequisites
+
+- **K3s cluster deployed** via Terraform (`terraform apply -var="enable_k3s_cluster=true"`)
+- **DockerHub account** for image registry
+- **SSH agent** configured for key forwarding
+
+#### Step-by-Step Deployment
+
+**1. Setup SSH Agent and Access**
+
+```bash
+# Start SSH agent
+eval "$(ssh-agent -s)"
+
+# Add your private key
+ssh-add modules/compute/keys/rss-key.pem
+
+# Connect to bastion with agent forwarding
+ssh -A -i modules/compute/keys/rss-key.pem ec2-user@<bastion-public-ip>
+```
+
+**2. Configure kubectl Access**
+
+```bash
+# From bastion, copy kubeconfig from K3s master
+scp ec2-user@<k3s-master-private-ip>:~/.kube/config ~/.kube/config
+
+# Fix server URL for bastion access
+sed -i 's/127.0.0.1:6443/<k3s-master-private-ip>:6443/g' ~/.kube/config
+
+# Verify kubectl works
+kubectl get nodes
+```
+
+**3. Build and Push Docker Image**
+
+```bash
+# From your local machine (NOT from bastion - Docker required)
+docker login
+
+# Build and push Flask image
+cd flask_app
+./scripts/build-image.sh cloud <your-dockerhub-username>
+
+# The script will:
+# - Check if Docker is available
+# - Build the image with your DockerHub username
+# - Push to DockerHub registry
+```
+
+**4. Deploy Flask App**
+
+```bash
+# Copy Flask app to bastion
+scp -r -A -i modules/compute/keys/rss-key.pem flask_app/ ec2-user@<bastion-ip>:~/
+
+# SSH to bastion and install Helm
+ssh -A -i modules/compute/keys/rss-key.pem ec2-user@<bastion-ip>
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Deploy Flask app (automatically updates repository and provides helpful commands)
+cd flask_app
+./scripts/deploy-flask.sh cloud <your-dockerhub-username>
+
+# The script will:
+# - Update values-cloud.yaml with your DockerHub username
+# - Deploy the Flask app using Helm
+# - Show commands for NodePort fixing and port-forwarding
+```
+
+**5. Fix NodePort (if needed)**
+
+```bash
+# The deploy script provides this command - copy and run it:
+kubectl patch svc flask-app -n flask-app -p '{"spec":{"ports":[{"port":8080,"targetPort":8080,"nodePort":30080,"protocol":"TCP"}]}}'
+
+# Verify the change
+kubectl get svc flask-app -n flask-app
+# Should show: 8080:30080/TCP
+```
+
+**6. Access Flask App**
+
+_Option A: Via Port-Forward (Recommended)_
+
+```bash
+# From bastion - forward to public interface
+kubectl port-forward --address 0.0.0.0 svc/flask-app 8080:8080 -n flask-app &
+
+# Access via: http://<bastion-public-ip>:8080
+```
+
+_Option B: Via SSH Tunnel_
+
+```bash
+# From local machine - create tunnel through bastion
+ssh -L 8080:localhost:8080 -i modules/compute/keys/rss-key.pem ec2-user@<bastion-ip>
+
+# Access via: http://localhost:8080
+```
+
+_Option C: Direct NodePort (Internal)_
+
+```bash
+# From bastion - test internal access
+curl http://<k3s-master-ip>:30080
+# Should return: Hello, World!
+```
+
+#### Verification
+
+```bash
+# Check deployment status
+kubectl get pods -n flask-app
+kubectl get svc -n flask-app
+kubectl get deployment flask-app -n flask-app
+
+# View application logs
+kubectl logs -n flask-app deployment/flask-app
+```
+
+#### Troubleshooting
+
+**Common Issues:**
+
+- **kubectl connection refused**: Fix kubeconfig server URL to use K3s master IP
+- **NodePort not fixed**: Use kubectl patch command to set specific port
+- **Image pull errors**: Ensure DockerHub image is public or credentials are configured
+- **SSH key issues**: Use SSH agent forwarding (`-A` flag) for bastion access
+
+**Security Notes:**
+
+- Flask app is accessible via bastion host (port 8080) for public access
+- NodePort 30080 is configured in security groups for direct cluster access
+- All communication uses encrypted SSH tunnels and HTTPS where applicable
+
+## Flask App Infrastructure (CloudFront + Custom Domain)
+
+For production deployment, the Flask app can be served through CloudFront CDN with a custom domain and SSL certificate.
+
+### Architecture Overview
+
+- **Custom Domain**: `https://flask.your-domain.com`
+- **SSL Certificate**: AWS Certificate Manager (ACM) in us-east-1
+- **CDN**: CloudFront distribution for global content delivery
+- **Origin**: Bastion host with port-forward to K3s cluster
+- **DNS**: Route53 hosted zone management
+
+### Infrastructure Components
+
+- **CloudFront Distribution**:
+  - Custom domain alias configuration
+  - SSL certificate integration
+  - Origin pointing to bastion host (port 8080)
+  - Cache policies optimized for dynamic content
+
+- **SSL Certificate (ACM)**:
+  - Domain validation via DNS
+  - Automatic renewal
+  - Must be created in us-east-1 region for CloudFront compatibility
+
+- **Route53 DNS Records**:
+  - Origin subdomain: `flask-origin.your-domain.com` → Bastion IP
+  - Main domain: `flask.your-domain.com` → CloudFront distribution
+  - Certificate validation CNAME records
+
+### Deployment Steps
+
+#### 1. Manual SSL Certificate Creation (Required)
+
+**⚠️ Important**: The SSL certificate must be created manually in AWS Console before Terraform deployment.
+
+1. Go to **AWS Certificate Manager** in **us-east-1** region
+2. Click **Request a certificate** → **Request a public certificate**
+3. Domain name: `flask.your-domain.com`
+4. Validation method: **DNS validation**
+5. Click **Request**
+6. Copy the **CNAME record** from certificate details
+7. Go to **Route53** → Your hosted zone
+8. Create the CNAME record for validation
+9. Wait for certificate status to become **Issued** (5-10 minutes)
+
+#### 2. Deploy CloudFront Infrastructure
+
+```bash
+# Deploy infrastructure with CloudFront enabled
+terraform apply -var="enable_k3s_cluster=true" -var="enable_cloudfront=true"
+```
+
+#### 3. Update Flask App Image
+
+```bash
+# Build and push updated Flask image (local machine)
+cd flask_app
+./scripts/build-image.sh cloud <your-dockerhub-username>
+
+# Update Kubernetes deployment (from bastion)
+ssh -A -i modules/compute/keys/rss-key.pem ec2-user@<bastion-ip>
+kubectl rollout restart deployment flask-app -n flask-app
+kubectl rollout status deployment flask-app -n flask-app
+
+# Restart port-forward for CloudFront origin
+kubectl port-forward --address 0.0.0.0 svc/flask-app 8080:8080 -n flask-app &
+```
+
+#### 4. CloudFront Cache Invalidation
+
+```bash
+# Option 1: AWS Console
+# Go to CloudFront → Distributions → Select your distribution
+# Invalidations tab → Create invalidation → Paths: /*
+
+# Option 2: AWS CLI
+aws cloudfront create-invalidation --distribution-id <DISTRIBUTION_ID> --paths "/*"
+```
+
+### Flask App Features
+
+The deployed Flask application includes:
+
+- **Professional Web Interface**: HTML5 with CSS styling and responsive design
+- **System Information Display**: Hostname, timestamp, environment details
+- **Infrastructure Overview**: Complete tech stack information
+- **Health Monitoring Endpoints**:
+  - `/health` - Application health status (JSON)
+  - `/info` - System information and versions (JSON)
+- **External Links**: GitHub repository and documentation
+
+### Access Methods
+
+1. **Production (CloudFront)**: `https://flask.your-domain.com`
+2. **Direct (Bastion)**: `http://<bastion-ip>:8080`
+3. **Internal (NodePort)**: `http://<k3s-master-ip>:30080`
+4. **Local Tunnel**: `http://localhost:8080` (via SSH tunnel)
+
+### Monitoring and Maintenance
+
+```bash
+# Check application status
+kubectl get pods -n flask-app
+kubectl logs -n flask-app deployment/flask-app
+
+# Test health endpoints
+curl https://flask.your-domain.com/health
+curl https://flask.your-domain.com/info
+
+# Update application
+./scripts/build-image.sh cloud <username>
+kubectl rollout restart deployment flask-app -n flask-app
+aws cloudfront create-invalidation --distribution-id <ID> --paths "/*"
+```
 
 ## Terraform Configuration Files
 
 The Terraform configuration is structured into several key files and modules:
 
-*   **Root Module**:
-    *   `main.tf`: Specifies the required Terraform version and module configurations.
-    *   `variables.tf`: Declares all configurable variables used throughout the Terraform code.
-    *   `providers.tf`: Configures the AWS provider, specifying the region and other settings.
-    *   `backend.tf`: Configures the S3 bucket for storing the Terraform state file.
-    *   `iam.tf`: Contains the AWS IAM role and OIDC provider resources for GitHub Actions.
-    *   `data.tf`: Defines data sources to retrieve information from AWS, such as the current AWS account ID and region.
-*   **Infrastructure Modules**:
-    *   `modules/vpc`: VPC and Internet Gateway resources
-    *   `modules/networking`: Subnets and routing configuration
-    *   `modules/security`: Security groups and network ACLs
-    *   `modules/compute`: Bastion host and NAT instance
-    *   `modules/k3s`: K3s Kubernetes cluster (master and worker nodes)
-    *   `modules/tests`: Optional test instances for infrastructure validation
+- **Root Module**:
+  - `main.tf`: Specifies the required Terraform version and module configurations.
+  - `variables.tf`: Declares all configurable variables used throughout the Terraform code.
+  - `providers.tf`: Configures the AWS provider, specifying the region and other settings.
+  - `backend.tf`: Configures the S3 bucket for storing the Terraform state file.
+  - `iam.tf`: Contains the AWS IAM role and OIDC provider resources for GitHub Actions.
+  - `data.tf`: Defines data sources to retrieve information from AWS, such as the current AWS account ID and region.
+- **Infrastructure Modules**:
+  - `modules/vpc`: VPC and Internet Gateway resources
+  - `modules/networking`: Subnets and routing configuration
+  - `modules/security`: Security groups and network ACLs
+  - `modules/compute`: Bastion host and NAT instance
+  - `modules/k3s`: K3s Kubernetes cluster (master and worker nodes)
+  - `modules/tests`: Optional test instances for infrastructure validation
 
 ## CI/CD Workflow
 
 The CI/CD pipeline is defined in `.github/workflows/terraform.yml` and comprises the following stages:
 
-*   **`terraform-check`**: Executes `terraform fmt -check -recursive` to enforce consistent code formatting across the project.
-*   **`terraform-plan`**: Initializes Terraform and generates a detailed execution plan outlining the proposed infrastructure changes. This job requires the `terraform-check` job to complete successfully.
-*   **`terraform-apply`**: Applies the Terraform changes to your AWS environment. This job is triggered by `push` events to the `main` branch, only after `terraform-plan` has succeeded, and may require manual approval depending on your configuration.
+- **`terraform-check`**: Executes `terraform fmt -check -recursive` to enforce consistent code formatting across the project.
+- **`terraform-plan`**: Initializes Terraform and generates a detailed execution plan outlining the proposed infrastructure changes. This job requires the `terraform-check` job to complete successfully.
+- **`terraform-apply`**: Applies the Terraform changes to your AWS environment. This job is triggered by `push` events to the `main` branch, only after `terraform-plan` has succeeded, and may require manual approval depending on your configuration.
 
 To minimize redundancy, a reusable composite action located at `.github/actions/terraform-setup/action.yml` encapsulates common setup steps, including checking out the code, configuring AWS credentials, and setting up the Terraform CLI.
 
@@ -154,13 +437,13 @@ To minimize redundancy, a reusable composite action located at `.github/actions/
     ```bash
     # Deploy the complete infrastructure including K3s cluster
     terraform apply -var="enable_k3s_cluster=true"
-    
+
     # Access the cluster via bastion host
     ssh -i modules/compute/keys/<project>-key.pem ec2-user@<bastion-public-ip>
-    
+
     # Check cluster status
     kubectl get nodes
-    
+
     # Deploy a test workload
     kubectl apply -f https://k8s.io/examples/pods/simple-pod.yaml
     kubectl get pods
@@ -179,10 +462,10 @@ This project includes a complete Jenkins setup with Configuration as Code (JCasC
 
 ### Prerequisites for Jenkins
 
-*   **Minikube** installed and running with Docker driver
-*   **kubectl** configured to access your Minikube cluster
-*   **Helm** package manager installed
-*   **Environment variables** configured (see `.env.example`)
+- **Minikube** installed and running with Docker driver
+- **kubectl** configured to access your Minikube cluster
+- **Helm** package manager installed
+- **Environment variables** configured (see `.env.example`)
 
 ### Jenkins Installation (Minikube)
 
@@ -226,6 +509,7 @@ kubectl port-forward svc/jenkins 8080:8080 -n jenkins
 ```
 
 **Login Credentials:**
+
 - Username: `admin` (or value from `.env`)
 - Password: Value from your `.env` file
 
@@ -235,10 +519,10 @@ kubectl port-forward svc/jenkins 8080:8080 -n jenkins
 
 Jenkins is automatically configured with:
 
-*   **Security**: Authentication and authorization via JCasC
-*   **Plugins**: Kubernetes, Configuration as Code, Job DSL, and Workflow plugins
-*   **Kubernetes Cloud**: Configured for distributed builds with agents
-*   **RBAC**: Proper permissions for Jenkins to manage Kubernetes pods
+- **Security**: Authentication and authorization via JCasC
+- **Plugins**: Kubernetes, Configuration as Code, Job DSL, and Workflow plugins
+- **Kubernetes Cloud**: Configured for distributed builds with agents
+- **RBAC**: Proper permissions for Jenkins to manage Kubernetes pods
 
 #### Manual Kubernetes Cloud Setup (if needed)
 
@@ -268,25 +552,25 @@ If the automated cloud configuration doesn't work, configure manually:
 
 #### Kubernetes Agents
 
-*   **Distributed Builds**: Jobs run on dynamically created agent pods
-*   **Resource Isolation**: Each build runs in its own container
-*   **Auto-scaling**: Agents are created on-demand and destroyed after use
-*   **No Manual Setup**: Agents are managed automatically by Jenkins
+- **Distributed Builds**: Jobs run on dynamically created agent pods
+- **Resource Isolation**: Each build runs in its own container
+- **Auto-scaling**: Agents are created on-demand and destroyed after use
+- **No Manual Setup**: Agents are managed automatically by Jenkins
 
 #### Persistent Storage
 
-*   **Custom Persistent Volume**: 4Gi persistent volume with custom storage class `jenkins-storage`
-*   **Retain Policy**: `persistentVolumeReclaimPolicy: Retain` - data persists even after Jenkins deletion
-*   **Minikube Integration**: Uses `/mnt/data/jenkins-data` path inside Minikube container
-*   **Automated Setup**: Directory permissions (1000:1000, 775) configured automatically during installation
-*   **Data Persistence**: Jenkins configuration, job history, and plugins survive pod restarts and Minikube restarts
+- **Custom Persistent Volume**: 4Gi persistent volume with custom storage class `jenkins-storage`
+- **Retain Policy**: `persistentVolumeReclaimPolicy: Retain` - data persists even after Jenkins deletion
+- **Minikube Integration**: Uses `/mnt/data/jenkins-data` path inside Minikube container
+- **Automated Setup**: Directory permissions (1000:1000, 775) configured automatically during installation
+- **Data Persistence**: Jenkins configuration, job history, and plugins survive pod restarts and Minikube restarts
 
 #### Security
 
-*   **Authentication**: Local user database with admin account
-*   **Authorization**: Logged-in users can perform all actions
-*   **RBAC**: Jenkins service account has permissions to manage pods
-*   **Secrets Management**: Admin credentials stored in Kubernetes secrets
+- **Authentication**: Local user database with admin account
+- **Authorization**: Logged-in users can perform all actions
+- **RBAC**: Jenkins service account has permissions to manage pods
+- **Secrets Management**: Admin credentials stored in Kubernetes secrets
 
 ### Testing Jenkins
 
@@ -299,6 +583,7 @@ A `hello-world` job is **automatically created** during Jenkins installation via
 - Build output logging
 
 **To run the automatic job:**
+
 1. Go to Jenkins dashboard
 2. Click on `hello-world` job
 3. Click **Build Now**
@@ -333,6 +618,7 @@ kubectl logs <agent-pod-name> -n jenkins
 #### Common Issues
 
 **Jenkins Pod Not Starting:**
+
 ```bash
 # Check pod status
 kubectl describe pod jenkins-0 -n jenkins
@@ -342,6 +628,7 @@ kubectl logs jenkins-0 -n jenkins -c jenkins
 ```
 
 **Agent Connection Issues:**
+
 ```bash
 # Verify services
 kubectl get svc -n jenkins
@@ -353,6 +640,7 @@ kubectl get role,rolebinding -n jenkins
 ```
 
 **Plugin Issues:**
+
 - Update plugins via Jenkins UI: Manage Jenkins → Plugins
 - Restart Jenkins: `kubectl rollout restart statefulset/jenkins -n jenkins`
 
@@ -360,11 +648,12 @@ kubectl get role,rolebinding -n jenkins
 
 **Note**: Cloud deployment configuration is included but not tested. The setup includes:
 
-*   **AWS EBS Storage**: Dynamic provisioning with 5Gi volumes
-*   **LoadBalancer Service**: For external access in cloud environments
-*   **Cloud-specific Values**: Separate configuration files for cloud deployment
+- **AWS EBS Storage**: Dynamic provisioning with 5Gi volumes
+- **LoadBalancer Service**: For external access in cloud environments
+- **Cloud-specific Values**: Separate configuration files for cloud deployment
 
 **To deploy on cloud** (untested):
+
 ```bash
 ./install-jenkins.sh cloud
 ```
@@ -388,9 +677,9 @@ k8s/jenkins/
 
 ## Security Considerations
 
-*   **No Secrets in Repository**: This repository relies on environment variables and IAM roles for authentication and authorization, avoiding the storage of sensitive credentials within the code.
-*   **IAM Least Privilege**: The IAM role provided by GitHub Actions is configured with the minimum number of permissions necessary to perform its tasks, which will reduce the potential impact of a compromised token..
-*   **OIDC Trust Configuration**: The OIDC provider trust configuration ensures that only authorized repositories can assume the IAM role..
-*   **State File Security**: The S3 bucket used to store the Terraform state file is securely protected with encryption and access controls.
-*   **IMDSv2 Required**: All EC2 instances are configured to require IMDSv2, enhancing security against SSRF vulnerabilities.
-*   **Jenkins Security**: Admin credentials managed via Kubernetes secrets, RBAC permissions properly configured.
+- **No Secrets in Repository**: This repository relies on environment variables and IAM roles for authentication and authorization, avoiding the storage of sensitive credentials within the code.
+- **IAM Least Privilege**: The IAM role provided by GitHub Actions is configured with the minimum number of permissions necessary to perform its tasks, which will reduce the potential impact of a compromised token..
+- **OIDC Trust Configuration**: The OIDC provider trust configuration ensures that only authorized repositories can assume the IAM role..
+- **State File Security**: The S3 bucket used to store the Terraform state file is securely protected with encryption and access controls.
+- **IMDSv2 Required**: All EC2 instances are configured to require IMDSv2, enhancing security against SSRF vulnerabilities.
+- **Jenkins Security**: Admin credentials managed via Kubernetes secrets, RBAC permissions properly configured.
