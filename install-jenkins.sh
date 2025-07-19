@@ -44,6 +44,11 @@ if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
     echo "Jenkins installation started! Checking status..."
     echo "Wait for Jenkins to be ready (this may take a few minutes):"
     echo "kubectl get pods -n jenkins -w"
+    
+    # Wait for Jenkins to be ready
+    echo "Waiting for Jenkins to be ready..."
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=jenkins-controller --timeout=300s -n jenkins
+        
     echo ""
     echo "Once ready, access Jenkins via (keep terminal open):"
     echo "minikube service jenkins --namespace jenkins"
