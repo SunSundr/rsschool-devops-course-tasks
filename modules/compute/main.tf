@@ -9,32 +9,59 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# Generate SSH key pair
-resource "tls_private_key" "ssh" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+# Simple directory-based key management
+locals {
+  keys_dir        = "${path.module}/keys"
+  public_key_path = "${local.keys_dir}/${var.project}-key.pem.pub"
+  keys_exist      = can(fileset(local.keys_dir, "*")) && fileexists(local.public_key_path)
+  # Skip compute resources in GitHub Actions environment
+  is_github_actions = can(regex("runner", path.cwd))
+  should_create     = local.keys_exist && !local.is_github_actions
 }
 
-# Store private key locally
-resource "local_file" "private_key" {
-  content         = tls_private_key.ssh.private_key_pem
-  filename        = "${path.module}/keys/${var.project}-key.pem"
-  file_permission = "0600"
+resource "null_resource" "setup_keys" {
+  count = local.should_create ? 0 : 1
+
+  triggers = {
+    keys_dir = local.keys_dir
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p "${local.keys_dir}" 2>/dev/null || true
+      ssh-keygen -t rsa -b 4096 -m PEM -f "${local.keys_dir}/${var.project}-key.pem" -N ""
+      if [ "$(uname -s)" != "Windows_NT" ]; then
+        chmod 600 "${local.keys_dir}/${var.project}-key.pem"
+        chmod 644 "${local.keys_dir}/${var.project}-key.pem.pub"
+      fi
+    EOT
+
+    interpreter = ["/bin/sh", "-c"]
+  }
 }
 
-# Create AWS key pair
+# Read existing public key (only if it exists)
+data "local_file" "public_key" {
+  count      = local.should_create ? 1 : 0
+  filename   = local.public_key_path
+  depends_on = [null_resource.setup_keys]
+}
+
+# Create AWS key pair (only if keys exist locally)
 resource "aws_key_pair" "main" {
+  count      = local.should_create ? 1 : 0
   key_name   = "${var.project}-key"
-  public_key = tls_private_key.ssh.public_key_openssh
+  public_key = data.local_file.public_key[0].content
 }
 
-# Bastion host
+# Bastion host (only if keys exist)
 resource "aws_instance" "bastion" {
+  count                  = local.should_create ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.bastion_instance_type
   subnet_id              = var.public_subnet_id
   vpc_security_group_ids = [var.bastion_sg_id]
-  key_name               = aws_key_pair.main.key_name
+  key_name               = aws_key_pair.main[0].key_name
 
   # enable IMDSv2
   metadata_options {
@@ -60,14 +87,15 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# NAT instance
+# NAT instance (only if keys exist)
 resource "aws_instance" "nat" {
+  count                  = local.should_create ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.nat_instance_type
   subnet_id              = var.public_subnet_id
   vpc_security_group_ids = [var.nat_sg_id]
   source_dest_check      = false # Required for NAT functionality
-  key_name               = aws_key_pair.main.key_name
+  key_name               = aws_key_pair.main[0].key_name
 
   user_data = <<-EOF
               #!/bin/bash

@@ -1,0 +1,31 @@
+image:
+  repository: sunsundr/flask-app
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: NodePort   # Use NodePort for public access
+  port: 8080       # Match Flask app port
+  targetPort: 8080
+  nodePort: 30080  # Fixed NodePort for consistent access
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+replicaCount: 1
+
+# Disable ingress for cloud (not needed for testing)
+ingress:
+  enabled: false
+
+# Disable autoscaling for testing (can enable later)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
