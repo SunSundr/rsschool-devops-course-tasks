@@ -14,10 +14,13 @@ locals {
   keys_dir        = "${path.module}/keys"
   public_key_path = "${local.keys_dir}/${var.project}-key.pem.pub"
   keys_exist      = can(fileset(local.keys_dir, "*")) && fileexists(local.public_key_path)
+  # Skip compute resources in GitHub Actions environment
+  is_github_actions = can(regex("runner", path.cwd))
+  should_create     = local.keys_exist && !local.is_github_actions
 }
 
 resource "null_resource" "setup_keys" {
-  count = local.keys_exist ? 0 : 1
+  count = local.should_create ? 0 : 1
 
   triggers = {
     keys_dir = local.keys_dir
@@ -39,21 +42,21 @@ resource "null_resource" "setup_keys" {
 
 # Read existing public key (only if it exists)
 data "local_file" "public_key" {
-  count      = local.keys_exist ? 1 : 0
+  count      = local.should_create ? 1 : 0
   filename   = local.public_key_path
   depends_on = [null_resource.setup_keys]
 }
 
 # Create AWS key pair (only if keys exist locally)
 resource "aws_key_pair" "main" {
-  count      = local.keys_exist ? 1 : 0
+  count      = local.should_create ? 1 : 0
   key_name   = "${var.project}-key"
   public_key = data.local_file.public_key[0].content
 }
 
 # Bastion host (only if keys exist)
 resource "aws_instance" "bastion" {
-  count                  = local.keys_exist ? 1 : 0
+  count                  = local.should_create ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.bastion_instance_type
   subnet_id              = var.public_subnet_id
@@ -86,7 +89,7 @@ resource "aws_instance" "bastion" {
 
 # NAT instance (only if keys exist)
 resource "aws_instance" "nat" {
-  count                  = local.keys_exist ? 1 : 0
+  count                  = local.should_create ? 1 : 0
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = var.nat_instance_type
   subnet_id              = var.public_subnet_id
