@@ -16,6 +16,17 @@ This repository provides a Terraform configuration designed to deploy and manage
       - [Step-by-Step Deployment](#step-by-step-deployment)
       - [Verification](#verification)
       - [Troubleshooting](#troubleshooting)
+  - [Flask App Infrastructure (CloudFront + Custom Domain)](#flask-app-infrastructure-cloudfront--custom-domain)
+    - [Architecture Overview](#architecture-overview)
+    - [Infrastructure Components](#infrastructure-components-1)
+    - [Deployment Steps](#deployment-steps)
+      - [1. Manual SSL Certificate Creation (Required)](#1-manual-ssl-certificate-creation-required)
+      - [2. Deploy CloudFront Infrastructure](#2-deploy-cloudfront-infrastructure)
+      - [3. Update Flask App Image](#3-update-flask-app-image)
+      - [4. CloudFront Cache Invalidation](#4-cloudfront-cache-invalidation)
+    - [Flask App Features](#flask-app-features)
+    - [Access Methods](#access-methods)
+    - [Monitoring and Maintenance](#monitoring-and-maintenance)
   - [Terraform Configuration Files](#terraform-configuration-files)
   - [CI/CD Workflow](#cicd-workflow)
   - [Usage](#usage)
@@ -41,6 +52,7 @@ This repository provides a Terraform configuration designed to deploy and manage
       - [Verify Agent Execution](#verify-agent-execution)
     - [Troubleshooting](#troubleshooting-1)
       - [Common Issues](#common-issues)
+    - [Jenkins Pipeline](#jenkins-pipeline)
     - [Cloud Deployment](#cloud-deployment)
     - [File Structure](#file-structure)
   - [Security Considerations](#security-considerations)
@@ -644,6 +656,12 @@ kubectl get role,rolebinding -n jenkins
 - Update plugins via Jenkins UI: Manage Jenkins → Plugins
 - Restart Jenkins: `kubectl rollout restart statefulset/jenkins -n jenkins`
 
+### Jenkins Pipeline
+
+A complete CI/CD pipeline for Flask application deployment has been implemented using Jenkins. The pipeline includes stages for building, testing, security scanning, Docker image creation, and Kubernetes deployment.
+
+For detailed instructions on setting up and using the Jenkins pipeline, see [JENKINS_PIPELINE_README.md](JENKINS_PIPELINE_README.md).
+
 ### Cloud Deployment
 
 **Note**: Cloud deployment configuration is included but not tested. The setup includes:
@@ -663,16 +681,17 @@ kubectl get role,rolebinding -n jenkins
 ```
 k8s/jenkins/
 ├── base/
-│   ├── values.yaml              # Main Jenkins configuration
-│   └── rbac.yaml                # RBAC permissions
+│   ├── values.yaml                # Main Jenkins configuration
+│   └── rbac.yaml                  # RBAC permissions
 ├── minikube/
-│   ├── values-minikube.yaml     # Minikube-specific overrides
-│   ├── pv.yaml                  # Custom persistent volume (4Gi)
-│   └── storage-class.yaml       # Custom storage class (jenkins-storage)
+│   ├── values-minikube.yaml       # Minikube-specific overrides
+│   ├── pv.yaml                    # Custom persistent volume (4Gi)
+│   ├── storage-class.yaml         # Custom storage class (jenkins-storage)
+│   └── jenkins-cluster-rbac.yaml  # RBAC configuration for Jenkins Pipeline    
 └── cloud/
-    ├── values-cloud.yaml        # Cloud-specific overrides (untested)
-    ├── pv.yaml                  # Cloud persistent volume (untested)
-    └── storage-class-cloud.yaml # Cloud storage class (untested)
+    ├── values-cloud.yaml          # Cloud-specific overrides (untested)
+    ├── pv.yaml                    # Cloud persistent volume (untested)
+    └── storage-class-cloud.yaml   # Cloud storage class (untested)
 ```
 
 ## Security Considerations

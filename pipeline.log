@@ -1,0 +1,1806 @@
+Started by an SCM change
+Obtained Jenkinsfile from git https://github.com/SunSundr/rsschool-devops-course-tasks.git
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes jenkins/flask-app-pipeline-17-8mzw9-lfm0n-ww3q6
+[PodInfo] jenkins/flask-app-pipeline-17-8mzw9-lfm0n-ww3q6
+	Container [docker] waiting [ContainerCreating] No message
+	Container [jnlp] waiting [ContainerCreating] No message
+	Container [python] waiting [ContainerCreating] No message
+	Pod [Pending][ContainersNotReady] containers with unready status: [jnlp python docker]
+Agent flask-app-pipeline-17-8mzw9-lfm0n-ww3q6 is provisioned from template flask-app-pipeline_17-8mzw9-lfm0n
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    kubernetes.jenkins.io/last-refresh: "1753067232911"
+    buildUrl: "http://jenkins.jenkins.svc.cluster.local:8080/job/flask-app-pipeline/17/"
+    runUrl: "job/flask-app-pipeline/17/"
+  labels:
+    app: "jenkins-agent"
+    version: "v1"
+    jenkins/jenkins-jenkins-agent: "true"
+    jenkins/label-digest: "0c308410bebaa23cfaa0af087a14a636d309dd0b"
+    jenkins/label: "flask-app-pipeline_17-8mzw9"
+    kubernetes.jenkins.io/controller: "http___jenkins_jenkins_svc_cluster_local_8080x"
+  name: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+  namespace: "jenkins"
+spec:
+  containers:
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_TUNNEL"
+      value: "jenkins-agent.jenkins.svc.cluster.local:50000"
+    - name: "JENKINS_AGENT_NAME"
+      value: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+    - name: "REMOTING_OPTS"
+      value: "-noReconnectAfter 1d"
+    - name: "JENKINS_NAME"
+      value: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins.jenkins.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3309.v27b_9314fd1a_4-6"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - command:
+    - "cat"
+    image: "python:3.13.5-slim"
+    name: "python"
+    tty: true
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - command:
+    - "cat"
+    image: "docker:28"
+    name: "docker"
+    tty: true
+    volumeMounts:
+    - mountPath: "/var/run/docker.sock"
+      name: "docker-sock"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - hostPath:
+      path: "/var/run/docker.sock"
+      type: "Socket"
+    name: "docker-sock"
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+
+Running on flask-app-pipeline-17-8mzw9-lfm0n-ww3q6 in /home/jenkins/agent/workspace/flask-app-pipeline
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/SunSundr/rsschool-devops-course-tasks.git
+ > git init /home/jenkins/agent/workspace/flask-app-pipeline # timeout=10
+Fetching upstream changes from https://github.com/SunSundr/rsschool-devops-course-tasks.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/SunSundr/rsschool-devops-course-tasks.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/SunSundr/rsschool-devops-course-tasks.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision c1568078247c4b1fdba1ded92b39d772c9ebb815 (refs/remotes/origin/rss-task-6)
+ > git rev-parse refs/remotes/origin/rss-task-6^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
+Commit message: "fix: update Jenkinsfile 25"
+ > git rev-list --no-walk c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withCredentials
+Masking supported pattern matches of $DOCKERHUB_CREDENTIALS or $DOCKERHUB_CREDENTIALS_PSW or $SONAR_TOKEN
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /home/jenkins/agent/workspace/flask-app-pipeline/.git # timeout=10
+ > git config remote.origin.url https://github.com/SunSundr/rsschool-devops-course-tasks.git # timeout=10
+Fetching upstream changes from https://github.com/SunSundr/rsschool-devops-course-tasks.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/SunSundr/rsschool-devops-course-tasks.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision c1568078247c4b1fdba1ded92b39d772c9ebb815 (refs/remotes/origin/rss-task-6)
+Commit message: "fix: update Jenkinsfile 25"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Application)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] sh
+ > git rev-parse refs/remotes/origin/rss-task-6^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
++ apt-get update
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8793 kB]
+Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [756 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [272 kB]
+Fetched 9320 kB in 8s (1160 kB/s)
+Reading package lists...
++ apt-get install -y gcc python3-dev
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu cpp cpp-12
+  fontconfig-config fonts-dejavu-core gcc-12 javascript-common krb5-locales
+  libabsl20220623 libaom3 libasan8 libatomic1 libavif15 libbinutils libbrotli1
+  libbsd0 libc-dev-bin libc-devtools libc6-dev libcc1-0 libcrypt-dev
+  libctf-nobfd0 libctf0 libdav1d6 libde265-0 libdeflate0 libexpat1
+  libexpat1-dev libfontconfig1 libfreetype6 libgav1-1 libgcc-12-dev libgd3
+  libgomp1 libgprofng0 libgssapi-krb5-2 libheif1 libisl23 libitm1 libjansson4
+  libjbig0 libjpeg62-turbo libjs-jquery libjs-sphinxdoc libjs-underscore
+  libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0 liblerc4 liblsan0
+  libmpc3 libmpfr6 libnsl-dev libnsl2 libnuma1 libpng16-16 libpython3-dev
+  libpython3-stdlib libpython3.11 libpython3.11-dev libpython3.11-minimal
+  libpython3.11-stdlib libquadmath0 librav1e0 libsvtav1enc1 libtiff6
+  libtirpc-common libtirpc-dev libtirpc3 libtsan2 libubsan1 libwebp7 libx11-6
+  libx11-data libx265-199 libxau6 libxcb1 libxdmcp6 libxpm4 libyuv0
+  linux-libc-dev manpages manpages-dev media-types python3 python3-distutils
+  python3-lib2to3 python3-minimal python3.11 python3.11-dev python3.11-minimal
+  rpcsvc-proto zlib1g-dev
+Suggested packages:
+  binutils-doc cpp-doc gcc-12-locales cpp-12-doc gcc-multilib make autoconf
+  automake libtool flex bison gdb gcc-doc gcc-12-multilib gcc-12-doc apache2
+  | lighttpd | httpd glibc-doc libgd-tools krb5-doc krb5-user man-browser
+  python3-doc python3-tk python3-venv python3.11-venv python3.11-doc
+  binfmt-support
+The following NEW packages will be installed:
+  binutils binutils-common binutils-x86-64-linux-gnu cpp cpp-12
+  fontconfig-config fonts-dejavu-core gcc gcc-12 javascript-common
+  krb5-locales libabsl20220623 libaom3 libasan8 libatomic1 libavif15
+  libbinutils libbrotli1 libbsd0 libc-dev-bin libc-devtools libc6-dev libcc1-0
+  libcrypt-dev libctf-nobfd0 libctf0 libdav1d6 libde265-0 libdeflate0
+  libexpat1 libexpat1-dev libfontconfig1 libfreetype6 libgav1-1 libgcc-12-dev
+  libgd3 libgomp1 libgprofng0 libgssapi-krb5-2 libheif1 libisl23 libitm1
+  libjansson4 libjbig0 libjpeg62-turbo libjs-jquery libjs-sphinxdoc
+  libjs-underscore libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0
+  liblerc4 liblsan0 libmpc3 libmpfr6 libnsl-dev libnsl2 libnuma1 libpng16-16
+  libpython3-dev libpython3-stdlib libpython3.11 libpython3.11-dev
+  libpython3.11-minimal libpython3.11-stdlib libquadmath0 librav1e0
+  libsvtav1enc1 libtiff6 libtirpc-common libtirpc-dev libtirpc3 libtsan2
+  libubsan1 libwebp7 libx11-6 libx11-data libx265-199 libxau6 libxcb1
+  libxdmcp6 libxpm4 libyuv0 linux-libc-dev manpages manpages-dev media-types
+  python3 python3-dev python3-distutils python3-lib2to3 python3-minimal
+  python3.11 python3.11-dev python3.11-minimal rpcsvc-proto zlib1g-dev
+0 upgraded, 98 newly installed, 0 to remove and 1 not upgraded.
+Need to get 82.5 MB of archives.
+After this operation, 323 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main amd64 libpython3.11-minimal amd64 3.11.2-6+deb12u6 [817 kB]
+Get:2 http://deb.debian.org/debian bookworm/main amd64 libexpat1 amd64 2.5.0-1+deb12u1 [98.9 kB]
+Get:3 http://deb.debian.org/debian bookworm/main amd64 python3.11-minimal amd64 3.11.2-6+deb12u6 [2064 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 python3-minimal amd64 3.11.2-1+b1 [26.3 kB]
+Get:5 http://deb.debian.org/debian bookworm/main amd64 media-types all 10.0.0 [26.1 kB]
+Get:6 http://deb.debian.org/debian bookworm/main amd64 libkrb5support0 amd64 1.20.1-2+deb12u3 [32.8 kB]
+Get:7 http://deb.debian.org/debian bookworm/main amd64 libk5crypto3 amd64 1.20.1-2+deb12u3 [78.9 kB]
+Get:8 http://deb.debian.org/debian bookworm/main amd64 libkeyutils1 amd64 1.6.3-2 [8808 B]
+Get:9 http://deb.debian.org/debian bookworm/main amd64 libkrb5-3 amd64 1.20.1-2+deb12u3 [332 kB]
+Get:10 http://deb.debian.org/debian bookworm/main amd64 libgssapi-krb5-2 amd64 1.20.1-2+deb12u3 [135 kB]
+Get:11 http://deb.debian.org/debian bookworm/main amd64 libtirpc-common all 1.3.3+ds-1 [14.0 kB]
+Get:12 http://deb.debian.org/debian bookworm/main amd64 libtirpc3 amd64 1.3.3+ds-1 [85.2 kB]
+Get:13 http://deb.debian.org/debian bookworm/main amd64 libnsl2 amd64 1.3.0-2 [39.5 kB]
+Get:14 http://deb.debian.org/debian bookworm/main amd64 libpython3.11-stdlib amd64 3.11.2-6+deb12u6 [1798 kB]
+Get:15 http://deb.debian.org/debian bookworm/main amd64 python3.11 amd64 3.11.2-6+deb12u6 [573 kB]
+Get:16 http://deb.debian.org/debian bookworm/main amd64 libpython3-stdlib amd64 3.11.2-1+b1 [9312 B]
+Get:17 http://deb.debian.org/debian bookworm/main amd64 python3 amd64 3.11.2-1+b1 [26.3 kB]
+Get:18 http://deb.debian.org/debian bookworm/main amd64 krb5-locales all 1.20.1-2+deb12u3 [63.1 kB]
+Get:19 http://deb.debian.org/debian bookworm/main amd64 manpages all 6.03-2 [1332 kB]
+Get:20 http://deb.debian.org/debian bookworm/main amd64 binutils-common amd64 2.40-2 [2487 kB]
+Get:21 http://deb.debian.org/debian bookworm/main amd64 libbinutils amd64 2.40-2 [572 kB]
+Get:22 http://deb.debian.org/debian bookworm/main amd64 libctf-nobfd0 amd64 2.40-2 [153 kB]
+Get:23 http://deb.debian.org/debian bookworm/main amd64 libctf0 amd64 2.40-2 [89.8 kB]
+Get:24 http://deb.debian.org/debian bookworm/main amd64 libgprofng0 amd64 2.40-2 [812 kB]
+Get:25 http://deb.debian.org/debian bookworm/main amd64 libjansson4 amd64 2.14-2 [40.8 kB]
+Get:26 http://deb.debian.org/debian bookworm/main amd64 binutils-x86-64-linux-gnu amd64 2.40-2 [2246 kB]
+Get:27 http://deb.debian.org/debian bookworm/main amd64 binutils amd64 2.40-2 [65.0 kB]
+Get:28 http://deb.debian.org/debian bookworm/main amd64 libisl23 amd64 0.25-1.1 [683 kB]
+Get:29 http://deb.debian.org/debian bookworm/main amd64 libmpfr6 amd64 4.2.0-1 [701 kB]
+Get:30 http://deb.debian.org/debian bookworm/main amd64 libmpc3 amd64 1.3.1-1 [51.5 kB]
+Get:31 http://deb.debian.org/debian bookworm/main amd64 cpp-12 amd64 12.2.0-14+deb12u1 [9768 kB]
+Get:32 http://deb.debian.org/debian bookworm/main amd64 cpp amd64 4:12.2.0-3 [6836 B]
+Get:33 http://deb.debian.org/debian bookworm/main amd64 fonts-dejavu-core all 2.37-6 [1068 kB]
+Get:34 http://deb.debian.org/debian bookworm/main amd64 fontconfig-config amd64 2.14.1-4 [315 kB]
+Get:35 http://deb.debian.org/debian bookworm/main amd64 libcc1-0 amd64 12.2.0-14+deb12u1 [41.7 kB]
+Get:36 http://deb.debian.org/debian bookworm/main amd64 libgomp1 amd64 12.2.0-14+deb12u1 [116 kB]
+Get:37 http://deb.debian.org/debian bookworm/main amd64 libitm1 amd64 12.2.0-14+deb12u1 [26.1 kB]
+Get:38 http://deb.debian.org/debian bookworm/main amd64 libatomic1 amd64 12.2.0-14+deb12u1 [9376 B]
+Get:39 http://deb.debian.org/debian bookworm/main amd64 libasan8 amd64 12.2.0-14+deb12u1 [2193 kB]
+Get:40 http://deb.debian.org/debian bookworm/main amd64 liblsan0 amd64 12.2.0-14+deb12u1 [969 kB]
+Get:41 http://deb.debian.org/debian bookworm/main amd64 libtsan2 amd64 12.2.0-14+deb12u1 [2197 kB]
+Get:42 http://deb.debian.org/debian bookworm/main amd64 libubsan1 amd64 12.2.0-14+deb12u1 [883 kB]
+Get:43 http://deb.debian.org/debian bookworm/main amd64 libquadmath0 amd64 12.2.0-14+deb12u1 [145 kB]
+Get:44 http://deb.debian.org/debian bookworm/main amd64 libgcc-12-dev amd64 12.2.0-14+deb12u1 [2437 kB]
+Get:45 http://deb.debian.org/debian bookworm/main amd64 gcc-12 amd64 12.2.0-14+deb12u1 [19.3 MB]
+Get:46 http://deb.debian.org/debian bookworm/main amd64 gcc amd64 4:12.2.0-3 [5216 B]
+Get:47 http://deb.debian.org/debian bookworm/main amd64 javascript-common all 11+nmu1 [6260 B]
+Get:48 http://deb.debian.org/debian bookworm/main amd64 libabsl20220623 amd64 20220623.1-1+deb12u2 [391 kB]
+Get:49 http://deb.debian.org/debian bookworm/main amd64 libaom3 amd64 3.6.0-1+deb12u1 [1851 kB]
+Get:50 http://deb.debian.org/debian bookworm/main amd64 libdav1d6 amd64 1.0.0-2+deb12u1 [513 kB]
+Get:51 http://deb.debian.org/debian bookworm/main amd64 libgav1-1 amd64 0.18.0-1+b1 [332 kB]
+Get:52 http://deb.debian.org/debian bookworm/main amd64 librav1e0 amd64 0.5.1-6 [763 kB]
+Get:53 http://deb.debian.org/debian bookworm/main amd64 libsvtav1enc1 amd64 1.4.1+dfsg-1 [2121 kB]
+Get:54 http://deb.debian.org/debian bookworm/main amd64 libjpeg62-turbo amd64 1:2.1.5-2 [166 kB]
+Get:55 http://deb.debian.org/debian bookworm/main amd64 libyuv0 amd64 0.0~git20230123.b2528b0-1 [168 kB]
+Get:56 http://deb.debian.org/debian-security bookworm-security/main amd64 libavif15 amd64 0.11.1-1+deb12u1 [94.4 kB]
+Get:57 http://deb.debian.org/debian bookworm/main amd64 libbrotli1 amd64 1.0.9-2+b6 [275 kB]
+Get:58 http://deb.debian.org/debian bookworm/main amd64 libbsd0 amd64 0.11.7-2 [117 kB]
+Get:59 http://deb.debian.org/debian bookworm/main amd64 libc-dev-bin amd64 2.36-9+deb12u10 [47.1 kB]
+Get:60 http://deb.debian.org/debian bookworm/main amd64 libpng16-16 amd64 1.6.39-2 [276 kB]
+Get:61 http://deb.debian.org/debian bookworm/main amd64 libfreetype6 amd64 2.12.1+dfsg-5+deb12u4 [398 kB]
+Get:62 http://deb.debian.org/debian bookworm/main amd64 libfontconfig1 amd64 2.14.1-4 [386 kB]
+Get:63 http://deb.debian.org/debian bookworm/main amd64 libde265-0 amd64 1.0.11-1+deb12u2 [185 kB]
+Get:64 http://deb.debian.org/debian bookworm/main amd64 libnuma1 amd64 2.0.16-1 [21.0 kB]
+Get:65 http://deb.debian.org/debian bookworm/main amd64 libx265-199 amd64 3.5-2+b1 [1150 kB]
+Get:66 http://deb.debian.org/debian bookworm/main amd64 libheif1 amd64 1.15.1-1+deb12u1 [215 kB]
+Get:67 http://deb.debian.org/debian bookworm/main amd64 libdeflate0 amd64 1.14-1 [61.4 kB]
+Get:68 http://deb.debian.org/debian bookworm/main amd64 libjbig0 amd64 2.1-6.1 [31.7 kB]
+Get:69 http://deb.debian.org/debian bookworm/main amd64 liblerc4 amd64 4.0.0+ds-2 [170 kB]
+Get:70 http://deb.debian.org/debian bookworm/main amd64 libwebp7 amd64 1.2.4-0.2+deb12u1 [286 kB]
+Get:71 http://deb.debian.org/debian bookworm/main amd64 libtiff6 amd64 4.5.0-6+deb12u2 [316 kB]
+Get:72 http://deb.debian.org/debian bookworm/main amd64 libxau6 amd64 1:1.0.9-1 [19.7 kB]
+Get:73 http://deb.debian.org/debian bookworm/main amd64 libxdmcp6 amd64 1:1.1.2-3 [26.3 kB]
+Get:74 http://deb.debian.org/debian bookworm/main amd64 libxcb1 amd64 1.15-1 [144 kB]
+Get:75 http://deb.debian.org/debian bookworm/main amd64 libx11-data all 2:1.8.4-2+deb12u2 [292 kB]
+Get:76 http://deb.debian.org/debian bookworm/main amd64 libx11-6 amd64 2:1.8.4-2+deb12u2 [760 kB]
+Get:77 http://deb.debian.org/debian bookworm/main amd64 libxpm4 amd64 1:3.5.12-1.1+deb12u1 [48.6 kB]
+Get:78 http://deb.debian.org/debian bookworm/main amd64 libgd3 amd64 2.3.3-9 [124 kB]
+Get:79 http://deb.debian.org/debian bookworm/main amd64 libc-devtools amd64 2.36-9+deb12u10 [54.7 kB]
+Get:80 http://deb.debian.org/debian-security bookworm-security/main amd64 linux-libc-dev amd64 6.1.140-1 [2145 kB]
+Get:81 http://deb.debian.org/debian bookworm/main amd64 libcrypt-dev amd64 1:4.4.33-2 [118 kB]
+Get:82 http://deb.debian.org/debian bookworm/main amd64 libtirpc-dev amd64 1.3.3+ds-1 [191 kB]
+Get:83 http://deb.debian.org/debian bookworm/main amd64 libnsl-dev amd64 1.3.0-2 [66.4 kB]
+Get:84 http://deb.debian.org/debian bookworm/main amd64 rpcsvc-proto amd64 1.4.3-1 [63.3 kB]
+Get:85 http://deb.debian.org/debian bookworm/main amd64 libc6-dev amd64 2.36-9+deb12u10 [1903 kB]
+Get:86 http://deb.debian.org/debian bookworm/main amd64 libexpat1-dev amd64 2.5.0-1+deb12u1 [150 kB]
+Get:87 http://deb.debian.org/debian bookworm/main amd64 libjs-jquery all 3.6.1+dfsg+~3.5.14-1 [326 kB]
+Get:88 http://deb.debian.org/debian bookworm/main amd64 libjs-underscore all 1.13.4~dfsg+~1.11.4-3 [116 kB]
+Get:89 http://deb.debian.org/debian bookworm/main amd64 libjs-sphinxdoc all 5.3.0-4 [130 kB]
+Get:90 http://deb.debian.org/debian bookworm/main amd64 libpython3.11 amd64 3.11.2-6+deb12u6 [1987 kB]
+Get:91 http://deb.debian.org/debian bookworm/main amd64 zlib1g-dev amd64 1:1.2.13.dfsg-1 [916 kB]
+Get:92 http://deb.debian.org/debian bookworm/main amd64 libpython3.11-dev amd64 3.11.2-6+deb12u6 [4742 kB]
+Get:93 http://deb.debian.org/debian bookworm/main amd64 libpython3-dev amd64 3.11.2-1+b1 [9572 B]
+Get:94 http://deb.debian.org/debian bookworm/main amd64 manpages-dev all 6.03-2 [2030 kB]
+Get:95 http://deb.debian.org/debian bookworm/main amd64 python3.11-dev amd64 3.11.2-6+deb12u6 [615 kB]
+Get:96 http://deb.debian.org/debian bookworm/main amd64 python3-lib2to3 all 3.11.2-3 [76.3 kB]
+Get:97 http://deb.debian.org/debian bookworm/main amd64 python3-distutils all 3.11.2-3 [131 kB]
+Get:98 http://deb.debian.org/debian bookworm/main amd64 python3-dev amd64 3.11.2-1+b1 [26.2 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 82.5 MB in 11s (7798 kB/s)
+Selecting previously unselected package libpython3.11-minimal:amd64.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 6632 files and directories currently installed.)
+Preparing to unpack .../libpython3.11-minimal_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking libpython3.11-minimal:amd64 (3.11.2-6+deb12u6) ...
+Selecting previously unselected package libexpat1:amd64.
+Preparing to unpack .../libexpat1_2.5.0-1+deb12u1_amd64.deb ...
+Unpacking libexpat1:amd64 (2.5.0-1+deb12u1) ...
+Selecting previously unselected package python3.11-minimal.
+Preparing to unpack .../python3.11-minimal_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking python3.11-minimal (3.11.2-6+deb12u6) ...
+Setting up libpython3.11-minimal:amd64 (3.11.2-6+deb12u6) ...
+Setting up libexpat1:amd64 (2.5.0-1+deb12u1) ...
+Setting up python3.11-minimal (3.11.2-6+deb12u6) ...
+Selecting previously unselected package python3-minimal.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 6948 files and directories currently installed.)
+Preparing to unpack .../00-python3-minimal_3.11.2-1+b1_amd64.deb ...
+Unpacking python3-minimal (3.11.2-1+b1) ...
+Selecting previously unselected package media-types.
+Preparing to unpack .../01-media-types_10.0.0_all.deb ...
+Unpacking media-types (10.0.0) ...
+Selecting previously unselected package libkrb5support0:amd64.
+Preparing to unpack .../02-libkrb5support0_1.20.1-2+deb12u3_amd64.deb ...
+Unpacking libkrb5support0:amd64 (1.20.1-2+deb12u3) ...
+Selecting previously unselected package libk5crypto3:amd64.
+Preparing to unpack .../03-libk5crypto3_1.20.1-2+deb12u3_amd64.deb ...
+Unpacking libk5crypto3:amd64 (1.20.1-2+deb12u3) ...
+Selecting previously unselected package libkeyutils1:amd64.
+Preparing to unpack .../04-libkeyutils1_1.6.3-2_amd64.deb ...
+Unpacking libkeyutils1:amd64 (1.6.3-2) ...
+Selecting previously unselected package libkrb5-3:amd64.
+Preparing to unpack .../05-libkrb5-3_1.20.1-2+deb12u3_amd64.deb ...
+Unpacking libkrb5-3:amd64 (1.20.1-2+deb12u3) ...
+Selecting previously unselected package libgssapi-krb5-2:amd64.
+Preparing to unpack .../06-libgssapi-krb5-2_1.20.1-2+deb12u3_amd64.deb ...
+Unpacking libgssapi-krb5-2:amd64 (1.20.1-2+deb12u3) ...
+Selecting previously unselected package libtirpc-common.
+Preparing to unpack .../07-libtirpc-common_1.3.3+ds-1_all.deb ...
+Unpacking libtirpc-common (1.3.3+ds-1) ...
+Selecting previously unselected package libtirpc3:amd64.
+Preparing to unpack .../08-libtirpc3_1.3.3+ds-1_amd64.deb ...
+Unpacking libtirpc3:amd64 (1.3.3+ds-1) ...
+Selecting previously unselected package libnsl2:amd64.
+Preparing to unpack .../09-libnsl2_1.3.0-2_amd64.deb ...
+Unpacking libnsl2:amd64 (1.3.0-2) ...
+Selecting previously unselected package libpython3.11-stdlib:amd64.
+Preparing to unpack .../10-libpython3.11-stdlib_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking libpython3.11-stdlib:amd64 (3.11.2-6+deb12u6) ...
+Selecting previously unselected package python3.11.
+Preparing to unpack .../11-python3.11_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking python3.11 (3.11.2-6+deb12u6) ...
+Selecting previously unselected package libpython3-stdlib:amd64.
+Preparing to unpack .../12-libpython3-stdlib_3.11.2-1+b1_amd64.deb ...
+Unpacking libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+Setting up python3-minimal (3.11.2-1+b1) ...
+Selecting previously unselected package python3.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 7414 files and directories currently installed.)
+Preparing to unpack .../00-python3_3.11.2-1+b1_amd64.deb ...
+Unpacking python3 (3.11.2-1+b1) ...
+Selecting previously unselected package krb5-locales.
+Preparing to unpack .../01-krb5-locales_1.20.1-2+deb12u3_all.deb ...
+Unpacking krb5-locales (1.20.1-2+deb12u3) ...
+Selecting previously unselected package manpages.
+Preparing to unpack .../02-manpages_6.03-2_all.deb ...
+Unpacking manpages (6.03-2) ...
+Selecting previously unselected package binutils-common:amd64.
+Preparing to unpack .../03-binutils-common_2.40-2_amd64.deb ...
+Unpacking binutils-common:amd64 (2.40-2) ...
+Selecting previously unselected package libbinutils:amd64.
+Preparing to unpack .../04-libbinutils_2.40-2_amd64.deb ...
+Unpacking libbinutils:amd64 (2.40-2) ...
+Selecting previously unselected package libctf-nobfd0:amd64.
+Preparing to unpack .../05-libctf-nobfd0_2.40-2_amd64.deb ...
+Unpacking libctf-nobfd0:amd64 (2.40-2) ...
+Selecting previously unselected package libctf0:amd64.
+Preparing to unpack .../06-libctf0_2.40-2_amd64.deb ...
+Unpacking libctf0:amd64 (2.40-2) ...
+Selecting previously unselected package libgprofng0:amd64.
+Preparing to unpack .../07-libgprofng0_2.40-2_amd64.deb ...
+Unpacking libgprofng0:amd64 (2.40-2) ...
+Selecting previously unselected package libjansson4:amd64.
+Preparing to unpack .../08-libjansson4_2.14-2_amd64.deb ...
+Unpacking libjansson4:amd64 (2.14-2) ...
+Selecting previously unselected package binutils-x86-64-linux-gnu.
+Preparing to unpack .../09-binutils-x86-64-linux-gnu_2.40-2_amd64.deb ...
+Unpacking binutils-x86-64-linux-gnu (2.40-2) ...
+Selecting previously unselected package binutils.
+Preparing to unpack .../10-binutils_2.40-2_amd64.deb ...
+Unpacking binutils (2.40-2) ...
+Selecting previously unselected package libisl23:amd64.
+Preparing to unpack .../11-libisl23_0.25-1.1_amd64.deb ...
+Unpacking libisl23:amd64 (0.25-1.1) ...
+Selecting previously unselected package libmpfr6:amd64.
+Preparing to unpack .../12-libmpfr6_4.2.0-1_amd64.deb ...
+Unpacking libmpfr6:amd64 (4.2.0-1) ...
+Selecting previously unselected package libmpc3:amd64.
+Preparing to unpack .../13-libmpc3_1.3.1-1_amd64.deb ...
+Unpacking libmpc3:amd64 (1.3.1-1) ...
+Selecting previously unselected package cpp-12.
+Preparing to unpack .../14-cpp-12_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking cpp-12 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package cpp.
+Preparing to unpack .../15-cpp_4%3a12.2.0-3_amd64.deb ...
+Unpacking cpp (4:12.2.0-3) ...
+Selecting previously unselected package fonts-dejavu-core.
+Preparing to unpack .../16-fonts-dejavu-core_2.37-6_all.deb ...
+Unpacking fonts-dejavu-core (2.37-6) ...
+Selecting previously unselected package fontconfig-config.
+Preparing to unpack .../17-fontconfig-config_2.14.1-4_amd64.deb ...
+Unpacking fontconfig-config (2.14.1-4) ...
+Selecting previously unselected package libcc1-0:amd64.
+Preparing to unpack .../18-libcc1-0_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libcc1-0:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libgomp1:amd64.
+Preparing to unpack .../19-libgomp1_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libgomp1:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libitm1:amd64.
+Preparing to unpack .../20-libitm1_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libitm1:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libatomic1:amd64.
+Preparing to unpack .../21-libatomic1_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libatomic1:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libasan8:amd64.
+Preparing to unpack .../22-libasan8_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libasan8:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package liblsan0:amd64.
+Preparing to unpack .../23-liblsan0_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking liblsan0:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libtsan2:amd64.
+Preparing to unpack .../24-libtsan2_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libtsan2:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libubsan1:amd64.
+Preparing to unpack .../25-libubsan1_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libubsan1:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libquadmath0:amd64.
+Preparing to unpack .../26-libquadmath0_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libquadmath0:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package libgcc-12-dev:amd64.
+Preparing to unpack .../27-libgcc-12-dev_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking libgcc-12-dev:amd64 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package gcc-12.
+Preparing to unpack .../28-gcc-12_12.2.0-14+deb12u1_amd64.deb ...
+Unpacking gcc-12 (12.2.0-14+deb12u1) ...
+Selecting previously unselected package gcc.
+Preparing to unpack .../29-gcc_4%3a12.2.0-3_amd64.deb ...
+Unpacking gcc (4:12.2.0-3) ...
+Selecting previously unselected package javascript-common.
+Preparing to unpack .../30-javascript-common_11+nmu1_all.deb ...
+Unpacking javascript-common (11+nmu1) ...
+Selecting previously unselected package libabsl20220623:amd64.
+Preparing to unpack .../31-libabsl20220623_20220623.1-1+deb12u2_amd64.deb ...
+Unpacking libabsl20220623:amd64 (20220623.1-1+deb12u2) ...
+Selecting previously unselected package libaom3:amd64.
+Preparing to unpack .../32-libaom3_3.6.0-1+deb12u1_amd64.deb ...
+Unpacking libaom3:amd64 (3.6.0-1+deb12u1) ...
+Selecting previously unselected package libdav1d6:amd64.
+Preparing to unpack .../33-libdav1d6_1.0.0-2+deb12u1_amd64.deb ...
+Unpacking libdav1d6:amd64 (1.0.0-2+deb12u1) ...
+Selecting previously unselected package libgav1-1:amd64.
+Preparing to unpack .../34-libgav1-1_0.18.0-1+b1_amd64.deb ...
+Unpacking libgav1-1:amd64 (0.18.0-1+b1) ...
+Selecting previously unselected package librav1e0:amd64.
+Preparing to unpack .../35-librav1e0_0.5.1-6_amd64.deb ...
+Unpacking librav1e0:amd64 (0.5.1-6) ...
+Selecting previously unselected package libsvtav1enc1:amd64.
+Preparing to unpack .../36-libsvtav1enc1_1.4.1+dfsg-1_amd64.deb ...
+Unpacking libsvtav1enc1:amd64 (1.4.1+dfsg-1) ...
+Selecting previously unselected package libjpeg62-turbo:amd64.
+Preparing to unpack .../37-libjpeg62-turbo_1%3a2.1.5-2_amd64.deb ...
+Unpacking libjpeg62-turbo:amd64 (1:2.1.5-2) ...
+Selecting previously unselected package libyuv0:amd64.
+Preparing to unpack .../38-libyuv0_0.0~git20230123.b2528b0-1_amd64.deb ...
+Unpacking libyuv0:amd64 (0.0~git20230123.b2528b0-1) ...
+Selecting previously unselected package libavif15:amd64.
+Preparing to unpack .../39-libavif15_0.11.1-1+deb12u1_amd64.deb ...
+Unpacking libavif15:amd64 (0.11.1-1+deb12u1) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../40-libbrotli1_1.0.9-2+b6_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.0.9-2+b6) ...
+Selecting previously unselected package libbsd0:amd64.
+Preparing to unpack .../41-libbsd0_0.11.7-2_amd64.deb ...
+Unpacking libbsd0:amd64 (0.11.7-2) ...
+Selecting previously unselected package libc-dev-bin.
+Preparing to unpack .../42-libc-dev-bin_2.36-9+deb12u10_amd64.deb ...
+Unpacking libc-dev-bin (2.36-9+deb12u10) ...
+Selecting previously unselected package libpng16-16:amd64.
+Preparing to unpack .../43-libpng16-16_1.6.39-2_amd64.deb ...
+Unpacking libpng16-16:amd64 (1.6.39-2) ...
+Selecting previously unselected package libfreetype6:amd64.
+Preparing to unpack .../44-libfreetype6_2.12.1+dfsg-5+deb12u4_amd64.deb ...
+Unpacking libfreetype6:amd64 (2.12.1+dfsg-5+deb12u4) ...
+Selecting previously unselected package libfontconfig1:amd64.
+Preparing to unpack .../45-libfontconfig1_2.14.1-4_amd64.deb ...
+Unpacking libfontconfig1:amd64 (2.14.1-4) ...
+Selecting previously unselected package libde265-0:amd64.
+Preparing to unpack .../46-libde265-0_1.0.11-1+deb12u2_amd64.deb ...
+Unpacking libde265-0:amd64 (1.0.11-1+deb12u2) ...
+Selecting previously unselected package libnuma1:amd64.
+Preparing to unpack .../47-libnuma1_2.0.16-1_amd64.deb ...
+Unpacking libnuma1:amd64 (2.0.16-1) ...
+Selecting previously unselected package libx265-199:amd64.
+Preparing to unpack .../48-libx265-199_3.5-2+b1_amd64.deb ...
+Unpacking libx265-199:amd64 (3.5-2+b1) ...
+Selecting previously unselected package libheif1:amd64.
+Preparing to unpack .../49-libheif1_1.15.1-1+deb12u1_amd64.deb ...
+Unpacking libheif1:amd64 (1.15.1-1+deb12u1) ...
+Selecting previously unselected package libdeflate0:amd64.
+Preparing to unpack .../50-libdeflate0_1.14-1_amd64.deb ...
+Unpacking libdeflate0:amd64 (1.14-1) ...
+Selecting previously unselected package libjbig0:amd64.
+Preparing to unpack .../51-libjbig0_2.1-6.1_amd64.deb ...
+Unpacking libjbig0:amd64 (2.1-6.1) ...
+Selecting previously unselected package liblerc4:amd64.
+Preparing to unpack .../52-liblerc4_4.0.0+ds-2_amd64.deb ...
+Unpacking liblerc4:amd64 (4.0.0+ds-2) ...
+Selecting previously unselected package libwebp7:amd64.
+Preparing to unpack .../53-libwebp7_1.2.4-0.2+deb12u1_amd64.deb ...
+Unpacking libwebp7:amd64 (1.2.4-0.2+deb12u1) ...
+Selecting previously unselected package libtiff6:amd64.
+Preparing to unpack .../54-libtiff6_4.5.0-6+deb12u2_amd64.deb ...
+Unpacking libtiff6:amd64 (4.5.0-6+deb12u2) ...
+Selecting previously unselected package libxau6:amd64.
+Preparing to unpack .../55-libxau6_1%3a1.0.9-1_amd64.deb ...
+Unpacking libxau6:amd64 (1:1.0.9-1) ...
+Selecting previously unselected package libxdmcp6:amd64.
+Preparing to unpack .../56-libxdmcp6_1%3a1.1.2-3_amd64.deb ...
+Unpacking libxdmcp6:amd64 (1:1.1.2-3) ...
+Selecting previously unselected package libxcb1:amd64.
+Preparing to unpack .../57-libxcb1_1.15-1_amd64.deb ...
+Unpacking libxcb1:amd64 (1.15-1) ...
+Selecting previously unselected package libx11-data.
+Preparing to unpack .../58-libx11-data_2%3a1.8.4-2+deb12u2_all.deb ...
+Unpacking libx11-data (2:1.8.4-2+deb12u2) ...
+Selecting previously unselected package libx11-6:amd64.
+Preparing to unpack .../59-libx11-6_2%3a1.8.4-2+deb12u2_amd64.deb ...
+Unpacking libx11-6:amd64 (2:1.8.4-2+deb12u2) ...
+Selecting previously unselected package libxpm4:amd64.
+Preparing to unpack .../60-libxpm4_1%3a3.5.12-1.1+deb12u1_amd64.deb ...
+Unpacking libxpm4:amd64 (1:3.5.12-1.1+deb12u1) ...
+Selecting previously unselected package libgd3:amd64.
+Preparing to unpack .../61-libgd3_2.3.3-9_amd64.deb ...
+Unpacking libgd3:amd64 (2.3.3-9) ...
+Selecting previously unselected package libc-devtools.
+Preparing to unpack .../62-libc-devtools_2.36-9+deb12u10_amd64.deb ...
+Unpacking libc-devtools (2.36-9+deb12u10) ...
+Selecting previously unselected package linux-libc-dev:amd64.
+Preparing to unpack .../63-linux-libc-dev_6.1.140-1_amd64.deb ...
+Unpacking linux-libc-dev:amd64 (6.1.140-1) ...
+Selecting previously unselected package libcrypt-dev:amd64.
+Preparing to unpack .../64-libcrypt-dev_1%3a4.4.33-2_amd64.deb ...
+Unpacking libcrypt-dev:amd64 (1:4.4.33-2) ...
+Selecting previously unselected package libtirpc-dev:amd64.
+Preparing to unpack .../65-libtirpc-dev_1.3.3+ds-1_amd64.deb ...
+Unpacking libtirpc-dev:amd64 (1.3.3+ds-1) ...
+Selecting previously unselected package libnsl-dev:amd64.
+Preparing to unpack .../66-libnsl-dev_1.3.0-2_amd64.deb ...
+Unpacking libnsl-dev:amd64 (1.3.0-2) ...
+Selecting previously unselected package rpcsvc-proto.
+Preparing to unpack .../67-rpcsvc-proto_1.4.3-1_amd64.deb ...
+Unpacking rpcsvc-proto (1.4.3-1) ...
+Selecting previously unselected package libc6-dev:amd64.
+Preparing to unpack .../68-libc6-dev_2.36-9+deb12u10_amd64.deb ...
+Unpacking libc6-dev:amd64 (2.36-9+deb12u10) ...
+Selecting previously unselected package libexpat1-dev:amd64.
+Preparing to unpack .../69-libexpat1-dev_2.5.0-1+deb12u1_amd64.deb ...
+Unpacking libexpat1-dev:amd64 (2.5.0-1+deb12u1) ...
+Selecting previously unselected package libjs-jquery.
+Preparing to unpack .../70-libjs-jquery_3.6.1+dfsg+~3.5.14-1_all.deb ...
+Unpacking libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+Selecting previously unselected package libjs-underscore.
+Preparing to unpack .../71-libjs-underscore_1.13.4~dfsg+~1.11.4-3_all.deb ...
+Unpacking libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+Selecting previously unselected package libjs-sphinxdoc.
+Preparing to unpack .../72-libjs-sphinxdoc_5.3.0-4_all.deb ...
+Unpacking libjs-sphinxdoc (5.3.0-4) ...
+Selecting previously unselected package libpython3.11:amd64.
+Preparing to unpack .../73-libpython3.11_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking libpython3.11:amd64 (3.11.2-6+deb12u6) ...
+Selecting previously unselected package zlib1g-dev:amd64.
+Preparing to unpack .../74-zlib1g-dev_1%3a1.2.13.dfsg-1_amd64.deb ...
+Unpacking zlib1g-dev:amd64 (1:1.2.13.dfsg-1) ...
+Selecting previously unselected package libpython3.11-dev:amd64.
+Preparing to unpack .../75-libpython3.11-dev_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking libpython3.11-dev:amd64 (3.11.2-6+deb12u6) ...
+Selecting previously unselected package libpython3-dev:amd64.
+Preparing to unpack .../76-libpython3-dev_3.11.2-1+b1_amd64.deb ...
+Unpacking libpython3-dev:amd64 (3.11.2-1+b1) ...
+Selecting previously unselected package manpages-dev.
+Preparing to unpack .../77-manpages-dev_6.03-2_all.deb ...
+Unpacking manpages-dev (6.03-2) ...
+Selecting previously unselected package python3.11-dev.
+Preparing to unpack .../78-python3.11-dev_3.11.2-6+deb12u6_amd64.deb ...
+Unpacking python3.11-dev (3.11.2-6+deb12u6) ...
+Selecting previously unselected package python3-lib2to3.
+Preparing to unpack .../79-python3-lib2to3_3.11.2-3_all.deb ...
+Unpacking python3-lib2to3 (3.11.2-3) ...
+Selecting previously unselected package python3-distutils.
+Preparing to unpack .../80-python3-distutils_3.11.2-3_all.deb ...
+Unpacking python3-distutils (3.11.2-3) ...
+Selecting previously unselected package python3-dev.
+Preparing to unpack .../81-python3-dev_3.11.2-1+b1_amd64.deb ...
+Unpacking python3-dev (3.11.2-1+b1) ...
+Setting up media-types (10.0.0) ...
+Setting up javascript-common (11+nmu1) ...
+Setting up libaom3:amd64 (3.6.0-1+deb12u1) ...
+Setting up libabsl20220623:amd64 (20220623.1-1+deb12u2) ...
+Setting up libxau6:amd64 (1:1.0.9-1) ...
+Setting up libkeyutils1:amd64 (1.6.3-2) ...
+Setting up liblerc4:amd64 (4.0.0+ds-2) ...
+Setting up manpages (6.03-2) ...
+Setting up libtirpc-common (1.3.3+ds-1) ...
+Setting up libbrotli1:amd64 (1.0.9-2+b6) ...
+Setting up binutils-common:amd64 (2.40-2) ...
+Setting up libdeflate0:amd64 (1.14-1) ...
+Setting up linux-libc-dev:amd64 (6.1.140-1) ...
+Setting up libctf-nobfd0:amd64 (2.40-2) ...
+Setting up krb5-locales (1.20.1-2+deb12u3) ...
+Setting up libsvtav1enc1:amd64 (1.4.1+dfsg-1) ...
+Setting up libgomp1:amd64 (12.2.0-14+deb12u1) ...
+Setting up libjbig0:amd64 (2.1-6.1) ...
+Setting up librav1e0:amd64 (0.5.1-6) ...
+Setting up libjansson4:amd64 (2.14-2) ...
+Setting up libkrb5support0:amd64 (1.20.1-2+deb12u3) ...
+Setting up rpcsvc-proto (1.4.3-1) ...
+Setting up libjpeg62-turbo:amd64 (1:2.1.5-2) ...
+Setting up libx11-data (2:1.8.4-2+deb12u2) ...
+Setting up libmpfr6:amd64 (4.2.0-1) ...
+Setting up libquadmath0:amd64 (12.2.0-14+deb12u1) ...
+Setting up libpng16-16:amd64 (1.6.39-2) ...
+Setting up libmpc3:amd64 (1.3.1-1) ...
+Setting up libatomic1:amd64 (12.2.0-14+deb12u1) ...
+Setting up fonts-dejavu-core (2.37-6) ...
+Setting up libgav1-1:amd64 (0.18.0-1+b1) ...
+Setting up libk5crypto3:amd64 (1.20.1-2+deb12u3) ...
+Setting up libdav1d6:amd64 (1.0.0-2+deb12u1) ...
+Setting up libwebp7:amd64 (1.2.4-0.2+deb12u1) ...
+Setting up libubsan1:amd64 (12.2.0-14+deb12u1) ...
+Setting up libnuma1:amd64 (2.0.16-1) ...
+Setting up libcrypt-dev:amd64 (1:4.4.33-2) ...
+Setting up libtiff6:amd64 (4.5.0-6+deb12u2) ...
+Setting up libasan8:amd64 (12.2.0-14+deb12u1) ...
+Setting up libkrb5-3:amd64 (1.20.1-2+deb12u3) ...
+Setting up libtsan2:amd64 (12.2.0-14+deb12u1) ...
+Setting up libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
+Setting up libbinutils:amd64 (2.40-2) ...
+Setting up libisl23:amd64 (0.25-1.1) ...
+Setting up libde265-0:amd64 (1.0.11-1+deb12u2) ...
+Setting up libc-dev-bin (2.36-9+deb12u10) ...
+Setting up libbsd0:amd64 (0.11.7-2) ...
+Setting up libyuv0:amd64 (0.0~git20230123.b2528b0-1) ...
+Setting up libcc1-0:amd64 (12.2.0-14+deb12u1) ...
+Setting up liblsan0:amd64 (12.2.0-14+deb12u1) ...
+Setting up libitm1:amd64 (12.2.0-14+deb12u1) ...
+Setting up libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
+Setting up libctf0:amd64 (2.40-2) ...
+Setting up manpages-dev (6.03-2) ...
+Setting up libxdmcp6:amd64 (1:1.1.2-3) ...
+Setting up cpp-12 (12.2.0-14+deb12u1) ...
+Setting up libxcb1:amd64 (1.15-1) ...
+Setting up libavif15:amd64 (0.11.1-1+deb12u1) ...
+Setting up fontconfig-config (2.14.1-4) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (TERM is not set, so the dialog frontend is not usable.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/x86_64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+debconf: falling back to frontend: Teletype
+Setting up libgprofng0:amd64 (2.40-2) ...
+Setting up libfreetype6:amd64 (2.12.1+dfsg-5+deb12u4) ...
+Setting up libgcc-12-dev:amd64 (12.2.0-14+deb12u1) ...
+Setting up libgssapi-krb5-2:amd64 (1.20.1-2+deb12u3) ...
+Setting up libjs-sphinxdoc (5.3.0-4) ...
+Setting up libx265-199:amd64 (3.5-2+b1) ...
+Setting up cpp (4:12.2.0-3) ...
+Setting up libx11-6:amd64 (2:1.8.4-2+deb12u2) ...
+Setting up libfontconfig1:amd64 (2.14.1-4) ...
+Setting up binutils-x86-64-linux-gnu (2.40-2) ...
+Setting up libtirpc3:amd64 (1.3.3+ds-1) ...
+Setting up libxpm4:amd64 (1:3.5.12-1.1+deb12u1) ...
+Setting up libheif1:amd64 (1.15.1-1+deb12u1) ...
+Setting up binutils (2.40-2) ...
+Setting up libtirpc-dev:amd64 (1.3.3+ds-1) ...
+Setting up gcc-12 (12.2.0-14+deb12u1) ...
+Setting up libgd3:amd64 (2.3.3-9) ...
+Setting up libnsl2:amd64 (1.3.0-2) ...
+Setting up libc-devtools (2.36-9+deb12u10) ...
+Setting up libpython3.11-stdlib:amd64 (3.11.2-6+deb12u6) ...
+Setting up gcc (4:12.2.0-3) ...
+Setting up libnsl-dev:amd64 (1.3.0-2) ...
+Setting up libc6-dev:amd64 (2.36-9+deb12u10) ...
+Setting up libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+Setting up python3.11 (3.11.2-6+deb12u6) ...
+Setting up libpython3.11:amd64 (3.11.2-6+deb12u6) ...
+Setting up python3 (3.11.2-1+b1) ...
+running python rtupdate hooks for python3.11...
+running python post-rtupdate hooks for python3.11...
+Setting up libexpat1-dev:amd64 (2.5.0-1+deb12u1) ...
+Setting up zlib1g-dev:amd64 (1:1.2.13.dfsg-1) ...
+Setting up python3-lib2to3 (3.11.2-3) ...
+Setting up python3-distutils (3.11.2-3) ...
+Setting up libpython3.11-dev:amd64 (3.11.2-6+deb12u6) ...
+Setting up libpython3-dev:amd64 (3.11.2-1+b1) ...
+Setting up python3.11-dev (3.11.2-6+deb12u6) ...
+Setting up python3-dev (3.11.2-1+b1) ...
+Processing triggers for libc-bin (2.36-9+deb12u10) ...
++ pip install -r flask_app/requirements.txt
+Collecting Flask (from -r flask_app/requirements.txt (line 1))
+  Downloading flask-3.1.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting pytest (from -r flask_app/requirements.txt (line 2))
+  Downloading pytest-8.4.1-py3-none-any.whl.metadata (7.7 kB)
+Collecting pytest-cov (from -r flask_app/requirements.txt (line 3))
+  Downloading pytest_cov-6.2.1-py3-none-any.whl.metadata (30 kB)
+Collecting blinker>=1.9.0 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting click>=8.1.3 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading click-8.2.1-py3-none-any.whl.metadata (2.5 kB)
+Collecting itsdangerous>=2.2.0 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting jinja2>=3.1.2 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting markupsafe>=2.1.1 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.0 kB)
+Collecting werkzeug>=3.1.0 (from Flask->-r flask_app/requirements.txt (line 1))
+  Downloading werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
+Collecting iniconfig>=1 (from pytest->-r flask_app/requirements.txt (line 2))
+  Downloading iniconfig-2.1.0-py3-none-any.whl.metadata (2.7 kB)
+Collecting packaging>=20 (from pytest->-r flask_app/requirements.txt (line 2))
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest->-r flask_app/requirements.txt (line 2))
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest->-r flask_app/requirements.txt (line 2))
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Collecting coverage>=7.5 (from coverage[toml]>=7.5->pytest-cov->-r flask_app/requirements.txt (line 3))
+  Downloading coverage-7.9.2-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.9 kB)
+Downloading flask-3.1.1-py3-none-any.whl (103 kB)
+Downloading pytest-8.4.1-py3-none-any.whl (365 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pytest_cov-6.2.1-py3-none-any.whl (24 kB)
+Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Downloading click-8.2.1-py3-none-any.whl (102 kB)
+Downloading coverage-7.9.2-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (244 kB)
+Downloading iniconfig-2.1.0-py3-none-any.whl (6.0 kB)
+Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (23 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 7.3 MB/s eta 0:00:00
+Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
+Installing collected packages: pygments, pluggy, packaging, markupsafe, itsdangerous, iniconfig, coverage, click, blinker, werkzeug, pytest, jinja2, pytest-cov, Flask
+
+Successfully installed Flask-3.1.1 blinker-1.9.0 click-8.2.1 coverage-7.9.2 iniconfig-2.1.0 itsdangerous-2.2.0 jinja2-3.1.6 markupsafe-3.0.2 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-8.4.1 pytest-cov-6.2.1 werkzeug-3.1.3
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
++ pip install pytest pytest-cov
+Requirement already satisfied: pytest in /usr/local/lib/python3.13/site-packages (8.4.1)
+Requirement already satisfied: pytest-cov in /usr/local/lib/python3.13/site-packages (6.2.1)
+Requirement already satisfied: iniconfig>=1 in /usr/local/lib/python3.13/site-packages (from pytest) (2.1.0)
+Requirement already satisfied: packaging>=20 in /usr/local/lib/python3.13/site-packages (from pytest) (25.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /usr/local/lib/python3.13/site-packages (from pytest) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in /usr/local/lib/python3.13/site-packages (from pytest) (2.19.2)
+Requirement already satisfied: coverage>=7.5 in /usr/local/lib/python3.13/site-packages (from coverage[toml]>=7.5->pytest-cov) (7.9.2)
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run Unit Tests)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] dir
+Running in /home/jenkins/agent/workspace/flask-app-pipeline/flask_app
+[Pipeline] {
+[Pipeline] sh
++ python -m pytest --cov=. --cov-report=xml:coverage.xml
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app
+plugins: cov-6.2.1
+collected 3 items
+
+test_app.py ...                                                          [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.5-final-0 ________________
+
+Coverage XML written to file coverage.xml
+============================== 3 passed in 0.42s ===============================
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // container
+Post stage
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Security Check)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] sh
++ pip install bandit safety
+Collecting bandit
+  Downloading bandit-1.8.6-py3-none-any.whl.metadata (6.9 kB)
+Collecting safety
+  Downloading safety-3.6.0-py3-none-any.whl.metadata (11 kB)
+Collecting PyYAML>=5.3.1 (from bandit)
+  Downloading PyYAML-6.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+Collecting stevedore>=1.20.0 (from bandit)
+  Downloading stevedore-5.4.1-py3-none-any.whl.metadata (2.3 kB)
+Collecting rich (from bandit)
+  Downloading rich-14.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting authlib>=1.2.0 (from safety)
+  Downloading authlib-1.6.1-py2.py3-none-any.whl.metadata (1.6 kB)
+Requirement already satisfied: click>=8.0.2 in /usr/local/lib/python3.13/site-packages (from safety) (8.2.1)
+Collecting dparse>=0.6.4 (from safety)
+  Downloading dparse-0.6.4-py3-none-any.whl.metadata (5.5 kB)
+Collecting filelock~=3.16.1 (from safety)
+  Downloading filelock-3.16.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting httpx (from safety)
+  Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Requirement already satisfied: jinja2>=3.1.0 in /usr/local/lib/python3.13/site-packages (from safety) (3.1.6)
+Collecting marshmallow>=3.15.0 (from safety)
+  Downloading marshmallow-4.0.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting nltk>=3.9 (from safety)
+  Downloading nltk-3.9.1-py3-none-any.whl.metadata (2.9 kB)
+Requirement already satisfied: packaging>=21.0 in /usr/local/lib/python3.13/site-packages (from safety) (25.0)
+Collecting psutil~=6.1.0 (from safety)
+  Downloading psutil-6.1.1-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (22 kB)
+Collecting pydantic<2.10.0,>=2.6.0 (from safety)
+  Downloading pydantic-2.9.2-py3-none-any.whl.metadata (149 kB)
+Collecting requests (from safety)
+  Downloading requests-2.32.4-py3-none-any.whl.metadata (4.9 kB)
+Collecting ruamel-yaml>=0.17.21 (from safety)
+  Downloading ruamel.yaml-0.18.14-py3-none-any.whl.metadata (24 kB)
+Collecting safety-schemas==0.0.14 (from safety)
+  Downloading safety_schemas-0.0.14-py3-none-any.whl.metadata (1.1 kB)
+Collecting setuptools>=65.5.1 (from safety)
+  Downloading setuptools-80.9.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting tenacity (from safety)
+  Downloading tenacity-9.1.2-py3-none-any.whl.metadata (1.2 kB)
+Collecting tomlkit (from safety)
+  Downloading tomlkit-0.13.3-py3-none-any.whl.metadata (2.8 kB)
+Collecting typer>=0.16.0 (from safety)
+  Downloading typer-0.16.0-py3-none-any.whl.metadata (15 kB)
+Collecting typing-extensions>=4.7.1 (from safety)
+  Downloading typing_extensions-4.14.1-py3-none-any.whl.metadata (3.0 kB)
+Collecting annotated-types>=0.6.0 (from pydantic<2.10.0,>=2.6.0->safety)
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.23.4 (from pydantic<2.10.0,>=2.6.0->safety)
+  Downloading pydantic_core-2.23.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting cryptography (from authlib>=1.2.0->safety)
+  Downloading cryptography-45.0.5-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.13/site-packages (from jinja2>=3.1.0->safety) (3.0.2)
+Collecting joblib (from nltk>=3.9->safety)
+  Downloading joblib-1.5.1-py3-none-any.whl.metadata (5.6 kB)
+Collecting regex>=2021.8.3 (from nltk>=3.9->safety)
+  Downloading regex-2024.11.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (40 kB)
+Collecting tqdm (from nltk>=3.9->safety)
+  Downloading tqdm-4.67.1-py3-none-any.whl.metadata (57 kB)
+Collecting ruamel.yaml.clib>=0.2.7 (from ruamel-yaml>=0.17.21->safety)
+  Downloading ruamel.yaml.clib-0.2.12-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.7 kB)
+Collecting pbr>=2.0.0 (from stevedore>=1.20.0->bandit)
+  Downloading pbr-6.1.1-py2.py3-none-any.whl.metadata (3.4 kB)
+Collecting shellingham>=1.3.0 (from typer>=0.16.0->safety)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting markdown-it-py>=2.2.0 (from rich->bandit)
+  Downloading markdown_it_py-3.0.0-py3-none-any.whl.metadata (6.9 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.13/site-packages (from rich->bandit) (2.19.2)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->bandit)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting cffi>=1.14 (from cryptography->authlib>=1.2.0->safety)
+  Downloading cffi-1.17.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting pycparser (from cffi>=1.14->cryptography->authlib>=1.2.0->safety)
+  Downloading pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+Collecting anyio (from httpx->safety)
+  Downloading anyio-4.9.0-py3-none-any.whl.metadata (4.7 kB)
+Collecting certifi (from httpx->safety)
+  Downloading certifi-2025.7.14-py3-none-any.whl.metadata (2.4 kB)
+Collecting httpcore==1.* (from httpx->safety)
+  Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx->safety)
+  Downloading idna-3.10-py3-none-any.whl.metadata (10 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx->safety)
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting sniffio>=1.1 (from anyio->httpx->safety)
+  Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting charset_normalizer<4,>=2 (from requests->safety)
+  Downloading charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (35 kB)
+Collecting urllib3<3,>=1.21.1 (from requests->safety)
+  Downloading urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
+Downloading bandit-1.8.6-py3-none-any.whl (133 kB)
+Downloading safety-3.6.0-py3-none-any.whl (285 kB)
+Downloading safety_schemas-0.0.14-py3-none-any.whl (39 kB)
+Downloading filelock-3.16.1-py3-none-any.whl (16 kB)
+Downloading psutil-6.1.1-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (287 kB)
+Downloading pydantic-2.9.2-py3-none-any.whl (434 kB)
+Downloading pydantic_core-2.23.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 3.3 MB/s eta 0:00:00
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading authlib-1.6.1-py2.py3-none-any.whl (239 kB)
+Downloading dparse-0.6.4-py3-none-any.whl (11 kB)
+Downloading marshmallow-4.0.0-py3-none-any.whl (48 kB)
+Downloading nltk-3.9.1-py3-none-any.whl (1.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 3.3 MB/s eta 0:00:00
+Downloading PyYAML-6.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (759 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 759.5/759.5 kB 590.0 kB/s eta 0:00:00
+Downloading regex-2024.11.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (796 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 796.9/796.9 kB 76.3 kB/s eta 0:00:00
+Downloading ruamel.yaml-0.18.14-py3-none-any.whl (118 kB)
+Downloading ruamel.yaml.clib-0.2.12-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (745 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 745.1/745.1 kB 1.7 MB/s eta 0:00:00
+Downloading setuptools-80.9.0-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 2.8 MB/s eta 0:00:00
+Downloading stevedore-5.4.1-py3-none-any.whl (49 kB)
+Downloading pbr-6.1.1-py2.py3-none-any.whl (108 kB)
+Downloading typer-0.16.0-py3-none-any.whl (46 kB)
+Downloading rich-14.0.0-py3-none-any.whl (243 kB)
+Downloading markdown_it_py-3.0.0-py3-none-any.whl (87 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading typing_extensions-4.14.1-py3-none-any.whl (43 kB)
+Downloading cryptography-45.0.5-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 3.4 MB/s eta 0:00:00
+Downloading cffi-1.17.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479 kB)
+Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading anyio-4.9.0-py3-none-any.whl (100 kB)
+Downloading idna-3.10-py3-none-any.whl (70 kB)
+Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+Downloading certifi-2025.7.14-py3-none-any.whl (162 kB)
+Downloading joblib-1.5.1-py3-none-any.whl (307 kB)
+Downloading pycparser-2.22-py3-none-any.whl (117 kB)
+Downloading requests-2.32.4-py3-none-any.whl (64 kB)
+Downloading charset_normalizer-3.4.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (148 kB)
+Downloading urllib3-2.5.0-py3-none-any.whl (129 kB)
+Downloading tenacity-9.1.2-py3-none-any.whl (28 kB)
+Downloading tomlkit-0.13.3-py3-none-any.whl (38 kB)
+Downloading tqdm-4.67.1-py3-none-any.whl (78 kB)
+Installing collected packages: urllib3, typing-extensions, tqdm, tomlkit, tenacity, sniffio, shellingham, setuptools, ruamel.yaml.clib, regex, PyYAML, pycparser, psutil, mdurl, marshmallow, joblib, idna, h11, filelock, dparse, charset_normalizer, certifi, annotated-types, ruamel-yaml, requests, pydantic-core, pbr, nltk, markdown-it-py, httpcore, cffi, anyio, stevedore, rich, pydantic, httpx, cryptography, typer, safety-schemas, bandit, authlib, safety
+
+Successfully installed PyYAML-6.0.2 annotated-types-0.7.0 anyio-4.9.0 authlib-1.6.1 bandit-1.8.6 certifi-2025.7.14 cffi-1.17.1 charset_normalizer-3.4.2 cryptography-45.0.5 dparse-0.6.4 filelock-3.16.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.10 joblib-1.5.1 markdown-it-py-3.0.0 marshmallow-4.0.0 mdurl-0.1.2 nltk-3.9.1 pbr-6.1.1 psutil-6.1.1 pycparser-2.22 pydantic-2.9.2 pydantic-core-2.23.4 regex-2024.11.6 requests-2.32.4 rich-14.0.0 ruamel-yaml-0.18.14 ruamel.yaml.clib-0.2.12 safety-3.6.0 safety-schemas-0.0.14 setuptools-80.9.0 shellingham-1.5.4 sniffio-1.3.1 stevedore-5.4.1 tenacity-9.1.2 tomlkit-0.13.3 tqdm-4.67.1 typer-0.16.0 typing-extensions-4.14.1 urllib3-2.5.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
++ mkdir -p reports
++ echo Running Bandit security scan...
+Running Bandit security scan...
++ cd flask_app
++ python -m bandit -r . -f txt -o ../reports/bandit-report.txt
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.13.5
+[text]	INFO	Text output written to file: ../reports/bandit-report.txt
++ true
++ echo Running Safety dependency scan...
+Running Safety dependency scan...
++ cd flask_app
+/home/jenkins/agent/workspace/flask-app-pipeline@tmp/durable-188a7150/script.sh.copy: 11: cd: can't cd to flask_app
++ true
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (SonarCloud Analysis)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] sh
++ echo Starting SonarCloud Analysis stage
+Starting SonarCloud Analysis stage
+[Pipeline] withCredentials
+Masking supported pattern matches of $SONAR_TOKEN
+[Pipeline] {
+[Pipeline] sh
++ echo Credentials loaded successfully
+Credentials loaded successfully
+[Pipeline] sh
++ apt-get update -qq
++ apt-get install -y --no-install-recommends unzip wget openjdk-17-jre-headless
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  ca-certificates-java java-common libasound2 libasound2-data libavahi-client3
+  libavahi-common-data libavahi-common3 libcups2 libdbus-1-3 libglib2.0-0
+  libgraphite2-3 libharfbuzz0b liblcms2-2 libnspr4 libnss3 libpcsclite1
+  libpsl5
+Suggested packages:
+  default-jre libasound2-plugins alsa-utils cups-common low-memory-monitor
+  liblcms2-utils pcscd libnss-mdns fonts-dejavu-extra fonts-ipafont-gothic
+  fonts-ipafont-mincho fonts-wqy-microhei | fonts-wqy-zenhei fonts-indic zip
+Recommended packages:
+  alsa-ucm-conf alsa-topology-conf dbus libglib2.0-data shared-mime-info
+  xdg-user-dirs publicsuffix
+The following NEW packages will be installed:
+  ca-certificates-java java-common libasound2 libasound2-data libavahi-client3
+  libavahi-common-data libavahi-common3 libcups2 libdbus-1-3 libglib2.0-0
+  libgraphite2-3 libharfbuzz0b liblcms2-2 libnspr4 libnss3 libpcsclite1
+  libpsl5 openjdk-17-jre-headless unzip wget
+0 upgraded, 20 newly installed, 0 to remove and 1 not upgraded.
+Need to get 51.1 MB of archives.
+After this operation, 212 MB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main amd64 libpsl5 amd64 0.21.2-1 [58.7 kB]
+Get:2 http://deb.debian.org/debian bookworm/main amd64 wget amd64 1.21.3-1+deb12u1 [937 kB]
+Get:3 http://deb.debian.org/debian bookworm/main amd64 ca-certificates-java all 20230710~deb12u1 [11.9 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 java-common all 0.74 [6388 B]
+Get:5 http://deb.debian.org/debian bookworm/main amd64 libasound2-data all 1.2.8-1 [20.5 kB]
+Get:6 http://deb.debian.org/debian bookworm/main amd64 libasound2 amd64 1.2.8-1+b1 [362 kB]
+Get:7 http://deb.debian.org/debian bookworm/main amd64 libavahi-common-data amd64 0.8-10+deb12u1 [107 kB]
+Get:8 http://deb.debian.org/debian bookworm/main amd64 libavahi-common3 amd64 0.8-10+deb12u1 [42.1 kB]
+Get:9 http://deb.debian.org/debian bookworm/main amd64 libdbus-1-3 amd64 1.14.10-1~deb12u1 [201 kB]
+Get:10 http://deb.debian.org/debian bookworm/main amd64 libavahi-client3 amd64 0.8-10+deb12u1 [45.8 kB]
+Get:11 http://deb.debian.org/debian bookworm/main amd64 libcups2 amd64 2.4.2-3+deb12u8 [246 kB]
+Get:12 http://deb.debian.org/debian bookworm/main amd64 libglib2.0-0 amd64 2.74.6-2+deb12u6 [1400 kB]
+Get:13 http://deb.debian.org/debian bookworm/main amd64 libgraphite2-3 amd64 1.3.14-1 [81.2 kB]
+Get:14 http://deb.debian.org/debian bookworm/main amd64 libharfbuzz0b amd64 6.0.0+dfsg-3 [1945 kB]
+Get:15 http://deb.debian.org/debian bookworm/main amd64 liblcms2-2 amd64 2.14-2 [154 kB]
+Get:16 http://deb.debian.org/debian bookworm/main amd64 libnspr4 amd64 2:4.35-1 [113 kB]
+Get:17 http://deb.debian.org/debian bookworm/main amd64 libnss3 amd64 2:3.87.1-1+deb12u1 [1331 kB]
+Get:18 http://deb.debian.org/debian bookworm/main amd64 libpcsclite1 amd64 1.9.9-2 [49.7 kB]
+Get:19 http://deb.debian.org/debian bookworm/main amd64 openjdk-17-jre-headless amd64 17.0.15+6-1~deb12u1 [43.8 MB]
+Get:20 http://deb.debian.org/debian bookworm/main amd64 unzip amd64 6.0-28 [166 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 51.1 MB in 7s (7418 kB/s)
+Selecting previously unselected package libpsl5:amd64.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 13615 files and directories currently installed.)
+Preparing to unpack .../00-libpsl5_0.21.2-1_amd64.deb ...
+Unpacking libpsl5:amd64 (0.21.2-1) ...
+Selecting previously unselected package wget.
+Preparing to unpack .../01-wget_1.21.3-1+deb12u1_amd64.deb ...
+Unpacking wget (1.21.3-1+deb12u1) ...
+Selecting previously unselected package ca-certificates-java.
+Preparing to unpack .../02-ca-certificates-java_20230710~deb12u1_all.deb ...
+Unpacking ca-certificates-java (20230710~deb12u1) ...
+Selecting previously unselected package java-common.
+Preparing to unpack .../03-java-common_0.74_all.deb ...
+Unpacking java-common (0.74) ...
+Selecting previously unselected package libasound2-data.
+Preparing to unpack .../04-libasound2-data_1.2.8-1_all.deb ...
+Unpacking libasound2-data (1.2.8-1) ...
+Selecting previously unselected package libasound2:amd64.
+Preparing to unpack .../05-libasound2_1.2.8-1+b1_amd64.deb ...
+Unpacking libasound2:amd64 (1.2.8-1+b1) ...
+Selecting previously unselected package libavahi-common-data:amd64.
+Preparing to unpack .../06-libavahi-common-data_0.8-10+deb12u1_amd64.deb ...
+Unpacking libavahi-common-data:amd64 (0.8-10+deb12u1) ...
+Selecting previously unselected package libavahi-common3:amd64.
+Preparing to unpack .../07-libavahi-common3_0.8-10+deb12u1_amd64.deb ...
+Unpacking libavahi-common3:amd64 (0.8-10+deb12u1) ...
+Selecting previously unselected package libdbus-1-3:amd64.
+Preparing to unpack .../08-libdbus-1-3_1.14.10-1~deb12u1_amd64.deb ...
+Unpacking libdbus-1-3:amd64 (1.14.10-1~deb12u1) ...
+Selecting previously unselected package libavahi-client3:amd64.
+Preparing to unpack .../09-libavahi-client3_0.8-10+deb12u1_amd64.deb ...
+Unpacking libavahi-client3:amd64 (0.8-10+deb12u1) ...
+Selecting previously unselected package libcups2:amd64.
+Preparing to unpack .../10-libcups2_2.4.2-3+deb12u8_amd64.deb ...
+Unpacking libcups2:amd64 (2.4.2-3+deb12u8) ...
+Selecting previously unselected package libglib2.0-0:amd64.
+Preparing to unpack .../11-libglib2.0-0_2.74.6-2+deb12u6_amd64.deb ...
+Unpacking libglib2.0-0:amd64 (2.74.6-2+deb12u6) ...
+Selecting previously unselected package libgraphite2-3:amd64.
+Preparing to unpack .../12-libgraphite2-3_1.3.14-1_amd64.deb ...
+Unpacking libgraphite2-3:amd64 (1.3.14-1) ...
+Selecting previously unselected package libharfbuzz0b:amd64.
+Preparing to unpack .../13-libharfbuzz0b_6.0.0+dfsg-3_amd64.deb ...
+Unpacking libharfbuzz0b:amd64 (6.0.0+dfsg-3) ...
+Selecting previously unselected package liblcms2-2:amd64.
+Preparing to unpack .../14-liblcms2-2_2.14-2_amd64.deb ...
+Unpacking liblcms2-2:amd64 (2.14-2) ...
+Selecting previously unselected package libnspr4:amd64.
+Preparing to unpack .../15-libnspr4_2%3a4.35-1_amd64.deb ...
+Unpacking libnspr4:amd64 (2:4.35-1) ...
+Selecting previously unselected package libnss3:amd64.
+Preparing to unpack .../16-libnss3_2%3a3.87.1-1+deb12u1_amd64.deb ...
+Unpacking libnss3:amd64 (2:3.87.1-1+deb12u1) ...
+Selecting previously unselected package libpcsclite1:amd64.
+Preparing to unpack .../17-libpcsclite1_1.9.9-2_amd64.deb ...
+Unpacking libpcsclite1:amd64 (1.9.9-2) ...
+Selecting previously unselected package openjdk-17-jre-headless:amd64.
+Preparing to unpack .../18-openjdk-17-jre-headless_17.0.15+6-1~deb12u1_amd64.deb ...
+Unpacking openjdk-17-jre-headless:amd64 (17.0.15+6-1~deb12u1) ...
+Selecting previously unselected package unzip.
+Preparing to unpack .../19-unzip_6.0-28_amd64.deb ...
+Unpacking unzip (6.0-28) ...
+Setting up libgraphite2-3:amd64 (1.3.14-1) ...
+Setting up liblcms2-2:amd64 (2.14-2) ...
+Setting up libpsl5:amd64 (0.21.2-1) ...
+Setting up wget (1.21.3-1+deb12u1) ...
+Setting up java-common (0.74) ...
+Setting up libglib2.0-0:amd64 (2.74.6-2+deb12u6) ...
+No schema files found: doing nothing.
+Setting up unzip (6.0-28) ...
+Setting up libasound2-data (1.2.8-1) ...
+Setting up libnspr4:amd64 (2:4.35-1) ...
+Setting up libavahi-common-data:amd64 (0.8-10+deb12u1) ...
+Setting up libdbus-1-3:amd64 (1.14.10-1~deb12u1) ...
+Setting up libpcsclite1:amd64 (1.9.9-2) ...
+Setting up libasound2:amd64 (1.2.8-1+b1) ...
+Setting up libharfbuzz0b:amd64 (6.0.0+dfsg-3) ...
+Setting up ca-certificates-java (20230710~deb12u1) ...
+No JRE found. Skipping Java certificates setup.
+Setting up libavahi-common3:amd64 (0.8-10+deb12u1) ...
+Setting up libnss3:amd64 (2:3.87.1-1+deb12u1) ...
+Setting up libavahi-client3:amd64 (0.8-10+deb12u1) ...
+Setting up libcups2:amd64 (2.4.2-3+deb12u8) ...
+Setting up openjdk-17-jre-headless:amd64 (17.0.15+6-1~deb12u1) ...
+update-alternatives: using /usr/lib/jvm/java-17-openjdk-amd64/bin/java to provide /usr/bin/java (java) in auto mode
+update-alternatives: using /usr/lib/jvm/java-17-openjdk-amd64/bin/jpackage to provide /usr/bin/jpackage (jpackage) in auto mode
+update-alternatives: using /usr/lib/jvm/java-17-openjdk-amd64/bin/keytool to provide /usr/bin/keytool (keytool) in auto mode
+update-alternatives: using /usr/lib/jvm/java-17-openjdk-amd64/bin/rmiregistry to provide /usr/bin/rmiregistry (rmiregistry) in auto mode
+update-alternatives: using /usr/lib/jvm/java-17-openjdk-amd64/lib/jexec to provide /usr/bin/jexec (jexec) in auto mode
+Processing triggers for libc-bin (2.36-9+deb12u10) ...
+Processing triggers for ca-certificates-java (20230710~deb12u1) ...
+Adding debian:ACCVRAIZ1.pem
+Adding debian:AC_RAIZ_FNMT-RCM.pem
+Adding debian:AC_RAIZ_FNMT-RCM_SERVIDORES_SEGUROS.pem
+Adding debian:ANF_Secure_Server_Root_CA.pem
+Adding debian:Actalis_Authentication_Root_CA.pem
+Adding debian:AffirmTrust_Commercial.pem
+Adding debian:AffirmTrust_Networking.pem
+Adding debian:AffirmTrust_Premium.pem
+Adding debian:AffirmTrust_Premium_ECC.pem
+Adding debian:Amazon_Root_CA_1.pem
+Adding debian:Amazon_Root_CA_2.pem
+Adding debian:Amazon_Root_CA_3.pem
+Adding debian:Amazon_Root_CA_4.pem
+Adding debian:Atos_TrustedRoot_2011.pem
+Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068_2.pem
+Adding debian:Baltimore_CyberTrust_Root.pem
+Adding debian:Buypass_Class_2_Root_CA.pem
+Adding debian:Buypass_Class_3_Root_CA.pem
+Adding debian:CA_Disig_Root_R2.pem
+Adding debian:CFCA_EV_ROOT.pem
+Adding debian:COMODO_Certification_Authority.pem
+Adding debian:COMODO_ECC_Certification_Authority.pem
+Adding debian:COMODO_RSA_Certification_Authority.pem
+Adding debian:Certainly_Root_E1.pem
+Adding debian:Certainly_Root_R1.pem
+Adding debian:Certigna.pem
+Adding debian:Certigna_Root_CA.pem
+Adding debian:Certum_EC-384_CA.pem
+Adding debian:Certum_Trusted_Network_CA.pem
+Adding debian:Certum_Trusted_Network_CA_2.pem
+Adding debian:Certum_Trusted_Root_CA.pem
+Adding debian:Comodo_AAA_Services_root.pem
+Adding debian:D-TRUST_BR_Root_CA_1_2020.pem
+Adding debian:D-TRUST_EV_Root_CA_1_2020.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+Adding debian:DigiCert_Assured_ID_Root_CA.pem
+Adding debian:DigiCert_Assured_ID_Root_G2.pem
+Adding debian:DigiCert_Assured_ID_Root_G3.pem
+Adding debian:DigiCert_Global_Root_CA.pem
+Adding debian:DigiCert_Global_Root_G2.pem
+Adding debian:DigiCert_Global_Root_G3.pem
+Adding debian:DigiCert_High_Assurance_EV_Root_CA.pem
+Adding debian:DigiCert_TLS_ECC_P384_Root_G5.pem
+Adding debian:DigiCert_TLS_RSA4096_Root_G5.pem
+Adding debian:DigiCert_Trusted_Root_G4.pem
+Adding debian:E-Tugra_Certification_Authority.pem
+Adding debian:E-Tugra_Global_Root_CA_ECC_v3.pem
+Adding debian:E-Tugra_Global_Root_CA_RSA_v3.pem
+Adding debian:Entrust.net_Premium_2048_Secure_Server_CA.pem
+Adding debian:Entrust_Root_Certification_Authority.pem
+Adding debian:Entrust_Root_Certification_Authority_-_EC1.pem
+Adding debian:Entrust_Root_Certification_Authority_-_G2.pem
+Adding debian:Entrust_Root_Certification_Authority_-_G4.pem
+Adding debian:GDCA_TrustAUTH_R5_ROOT.pem
+Adding debian:GLOBALTRUST_2020.pem
+Adding debian:GTS_Root_R1.pem
+Adding debian:GTS_Root_R2.pem
+Adding debian:GTS_Root_R3.pem
+Adding debian:GTS_Root_R4.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R4.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R5.pem
+Adding debian:GlobalSign_Root_CA.pem
+Adding debian:GlobalSign_Root_CA_-_R3.pem
+Adding debian:GlobalSign_Root_CA_-_R6.pem
+Adding debian:GlobalSign_Root_E46.pem
+Adding debian:GlobalSign_Root_R46.pem
+Adding debian:Go_Daddy_Class_2_CA.pem
+Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+Adding debian:HARICA_TLS_ECC_Root_CA_2021.pem
+Adding debian:HARICA_TLS_RSA_Root_CA_2021.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
+Adding debian:HiPKI_Root_CA_-_G1.pem
+Adding debian:Hongkong_Post_Root_CA_1.pem
+Adding debian:Hongkong_Post_Root_CA_3.pem
+Adding debian:ISRG_Root_X1.pem
+Adding debian:ISRG_Root_X2.pem
+Adding debian:IdenTrust_Commercial_Root_CA_1.pem
+Adding debian:IdenTrust_Public_Sector_Root_CA_1.pem
+Adding debian:Izenpe.com.pem
+Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+Adding debian:Microsoft_ECC_Root_Certificate_Authority_2017.pem
+Adding debian:Microsoft_RSA_Root_Certificate_Authority_2017.pem
+Adding debian:NAVER_Global_Root_Certification_Authority.pem
+Adding debian:NetLock_Arany_=Class_Gold=_Főtanúsítvány.pem
+Adding debian:OISTE_WISeKey_Global_Root_GB_CA.pem
+Adding debian:OISTE_WISeKey_Global_Root_GC_CA.pem
+Adding debian:QuoVadis_Root_CA_1_G3.pem
+Adding debian:QuoVadis_Root_CA_2.pem
+Adding debian:QuoVadis_Root_CA_2_G3.pem
+Adding debian:QuoVadis_Root_CA_3.pem
+Adding debian:QuoVadis_Root_CA_3_G3.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_ECC.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_RSA_R2.pem
+Adding debian:SSL.com_Root_Certification_Authority_ECC.pem
+Adding debian:SSL.com_Root_Certification_Authority_RSA.pem
+Adding debian:SZAFIR_ROOT_CA2.pem
+Adding debian:Sectigo_Public_Server_Authentication_Root_E46.pem
+Adding debian:Sectigo_Public_Server_Authentication_Root_R46.pem
+Adding debian:SecureSign_RootCA11.pem
+Adding debian:SecureTrust_CA.pem
+Adding debian:Secure_Global_CA.pem
+Adding debian:Security_Communication_ECC_RootCA1.pem
+Adding debian:Security_Communication_RootCA2.pem
+Adding debian:Security_Communication_RootCA3.pem
+Adding debian:Security_Communication_Root_CA.pem
+Adding debian:Starfield_Class_2_CA.pem
+Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+Adding debian:SwissSign_Gold_CA_-_G2.pem
+Adding debian:SwissSign_Silver_CA_-_G2.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_2.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+Adding debian:TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.pem
+Adding debian:TWCA_Global_Root_CA.pem
+Adding debian:TWCA_Root_Certification_Authority.pem
+Adding debian:TeliaSonera_Root_CA_v1.pem
+Adding debian:Telia_Root_CA_v2.pem
+Adding debian:TrustCor_ECA-1.pem
+Adding debian:TrustCor_RootCert_CA-1.pem
+Adding debian:TrustCor_RootCert_CA-2.pem
+Adding debian:Trustwave_Global_Certification_Authority.pem
+Adding debian:Trustwave_Global_ECC_P256_Certification_Authority.pem
+Adding debian:Trustwave_Global_ECC_P384_Certification_Authority.pem
+Adding debian:TunTrust_Root_CA.pem
+Adding debian:UCA_Extended_Validation_Root.pem
+Adding debian:UCA_Global_G2_Root.pem
+Adding debian:USERTrust_ECC_Certification_Authority.pem
+Adding debian:USERTrust_RSA_Certification_Authority.pem
+Adding debian:XRamp_Global_CA_Root.pem
+Adding debian:certSIGN_ROOT_CA.pem
+Adding debian:certSIGN_Root_CA_G2.pem
+Adding debian:e-Szigno_Root_CA_2017.pem
+Adding debian:ePKI_Root_Certification_Authority.pem
+Adding debian:emSign_ECC_Root_CA_-_C3.pem
+Adding debian:emSign_ECC_Root_CA_-_G3.pem
+Adding debian:emSign_Root_CA_-_C1.pem
+Adding debian:emSign_Root_CA_-_G1.pem
+Adding debian:vTrus_ECC_Root_CA.pem
+Adding debian:vTrus_Root_CA.pem
+done.
++ wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
++ unzip -q sonar-scanner-cli-5.0.1.3006-linux.zip
++ cd flask_app
++ ../sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner -Dsonar.projectKey=rss-devops-course-tasks_flask-app -Dsonar.organization=rss-devops-course-tasks -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=**** -Dsonar.python.coverage.reportPaths=coverage.xml
+INFO: Scanner configuration file: /home/jenkins/agent/workspace/flask-app-pipeline/sonar-scanner-5.0.1.3006-linux/conf/sonar-scanner.properties
+INFO: Project root configuration file: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app/sonar-project.properties
+INFO: SonarScanner 5.0.1.3006
+INFO: Java 17.0.7 Eclipse Adoptium (64-bit)
+INFO: Linux 5.15.167.4-microsoft-standard-WSL2 amd64
+INFO: User cache: /root/.sonar/cache
+INFO: Analyzing on SonarCloud
+INFO: Default locale: "en_US", source code encoding: "UTF-8"
+INFO: Load global settings
+INFO: Load global settings (done) | time=497ms
+INFO: Server id: 1BD809FA-AWHW8ct9-T_TB3XqouNu
+INFO: Loading required plugins
+INFO: Load plugins index
+INFO: Load plugins index (done) | time=175ms
+INFO: Load/download plugins
+INFO: Load/download plugins (done) | time=19186ms
+INFO: Found an active CI vendor: 'Jenkins'
+INFO: Load project settings for component key: 'rss-devops-course-tasks_flask-app'
+INFO: Load project settings for component key: 'rss-devops-course-tasks_flask-app' (done) | time=342ms
+INFO: Process project properties
+INFO: Project key: rss-devops-course-tasks_flask-app
+INFO: Base dir: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app
+INFO: Working dir: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app/.scannerwork
+INFO: Load project branches
+INFO: Load project branches (done) | time=176ms
+INFO: Check ALM binding of project 'rss-devops-course-tasks_flask-app'
+INFO: Detected project binding: NOT_BOUND
+INFO: Check ALM binding of project 'rss-devops-course-tasks_flask-app' (done) | time=100ms
+INFO: Load project pull requests
+INFO: Load project pull requests (done) | time=141ms
+INFO: Load branch configuration
+INFO: Load branch configuration (done) | time=12ms
+INFO: Load quality profiles
+INFO: Load quality profiles (done) | time=383ms
+INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
+INFO: Load active rules
+INFO: Load active rules (done) | time=2478ms
+INFO: Organization key: rss-devops-course-tasks
+WARN: The property 'sonar.login' is deprecated and will be removed in the future. Please use the 'sonar.token' property instead when passing a token.
+INFO: Preprocessing files...
+INFO: 4 languages detected in 28 preprocessed files (done) | time=380ms
+INFO: 0 files ignored because of inclusion/exclusion patterns
+INFO: 4 files ignored because of scm ignore settings
+INFO: Loading plugins for detected languages
+INFO: Load/download plugins
+INFO: Load/download plugins (done) | time=30393ms
+INFO: Load metrics repository
+INFO: Load metrics repository (done) | time=105ms
+INFO: Sensor cache enabled
+INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
+INFO: Load sensor cache
+INFO: Load sensor cache (15 KB) | time=999ms
+INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
+INFO: Load project repositories
+INFO: Load project repositories (done) | time=228ms
+INFO: Indexing files...
+INFO: Project configuration:
+INFO:   Excluded sources: **/build-wrapper-dump.json
+INFO: 28 files indexed (done) | time=35ms
+INFO: Quality profile for docker: Sonar way
+INFO: Quality profile for py: Sonar way
+INFO: Quality profile for xml: Sonar way
+INFO: Quality profile for yaml: Sonar way
+INFO: ------------- Run sensors on module Flask App
+INFO: Sensor Python Sensor [python]
+WARN: Your code is analyzed as compatible with all Python 3 versions by default. You can get a more precise analysis by setting the exact Python version in your configuration via the parameter "sonar.python.version"
+INFO: Starting global symbols computation
+INFO: 2 source files to be analyzed
+INFO: 2/2 source files have been analyzed
+INFO: Finished step global symbols computation in 6595ms
+INFO: Starting rules execution
+INFO: 2 source files to be analyzed
+INFO: 0/2 files analyzed, current file: main.py
+INFO: 0/2 files analyzed, current file: main.py
+INFO: 0/2 files analyzed, current file: main.py
+INFO: 2/2 source files have been analyzed
+INFO: Finished step rules execution in 36778ms
+INFO: The Python analyzer was able to leverage cached data from previous analyses for 0 out of 2 files. These files were not parsed.
+INFO: Sensor Python Sensor [python] (done) | time=44218ms
+INFO: Sensor Cobertura Sensor for Python coverage [python]
+INFO: Python test coverage
+INFO: Parsing report '/home/jenkins/agent/workspace/flask-app-pipeline/flask_app/coverage.xml'
+INFO: Sensor Cobertura Sensor for Python coverage [python] (done) | time=248ms
+INFO: Sensor PythonXUnitSensor [python]
+WARN: No report was found for sonar.python.xunit.reportPath using pattern pytest-report.xml
+INFO: Sensor PythonXUnitSensor [python] (done) | time=83ms
+INFO: Sensor Python Dependency Sensor [python]
+INFO: Sensor Python Dependency Sensor [python] (done) | time=7ms
+INFO: Sensor JaCoCo XML Report Importer [jacoco]
+INFO: 'sonar.coverage.jacoco.xmlReportPaths' is not defined. Using default locations: target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml,build/reports/jacoco/test/jacocoTestReport.xml
+INFO: No report imported, no coverage information will be imported by JaCoCo XML Report Importer
+INFO: Sensor JaCoCo XML Report Importer [jacoco] (done) | time=2ms
+INFO: Sensor IaC Ansible Sensor [iacenterprise]
+INFO: 0 source files to be analyzed
+INFO: 0/0 source files have been analyzed
+INFO: Sensor IaC Ansible Sensor [iacenterprise] (done) | time=180ms
+INFO: Sensor IaC CloudFormation Sensor [iac]
+INFO: 0 source files to be analyzed
+INFO: 0/0 source files have been analyzed
+INFO: Sensor IaC CloudFormation Sensor [iac] (done) | time=124ms
+INFO: Sensor IaC Kubernetes Sensor [iac]
+INFO: 11 source files to be parsed
+INFO: 11/11 source files have been parsed
+INFO: 11 source files to be analyzed
+INFO: 11/11 source files have been analyzed
+INFO: 11 source files to be checked
+INFO: 11/11 source files have been checked
+INFO: Sensor IaC Kubernetes Sensor [iac] (done) | time=1821ms
+INFO: Sensor Java Config Sensor [iac]
+INFO: 0 source files to be analyzed
+INFO: 0/0 source files have been analyzed
+INFO: Sensor Java Config Sensor [iac] (done) | time=11ms
+INFO: Sensor JavaScript inside YAML analysis [javascript]
+INFO: No input files found for analysis
+INFO: Hit the cache for 0 out of 0
+INFO: Miss the cache for 0 out of 0
+INFO: Sensor JavaScript inside YAML analysis [javascript] (done) | time=31ms
+INFO: Sensor CSS Rules [javascript]
+INFO: No CSS, PHP, HTML or VueJS files are found in the project. CSS analysis is skipped.
+INFO: Sensor CSS Rules [javascript] (done) | time=0ms
+INFO: Sensor Python HTML templates processing [securitypythonfrontend]
+INFO: Sensor Python HTML templates processing [securitypythonfrontend] (done) | time=21ms
+INFO: Sensor XML Sensor [xml]
+INFO: 1 source file to be analyzed
+INFO: 1/1 source file has been analyzed
+INFO: Sensor XML Sensor [xml] (done) | time=133ms
+INFO: Sensor IaC Docker Sensor [iac]
+INFO: 1 source file to be analyzed
+INFO: 1/1 source file has been analyzed
+INFO: Sensor IaC Docker Sensor [iac] (done) | time=273ms
+INFO: Sensor Serverless configuration file sensor [security]
+INFO: 0 Serverless function entries were found in the project
+INFO: 0 Serverless function handlers were kept as entrypoints
+INFO: Sensor Serverless configuration file sensor [security] (done) | time=2ms
+INFO: Sensor AWS SAM template file sensor [security]
+INFO: Sensor AWS SAM template file sensor [security] (done) | time=7ms
+INFO: Sensor AWS SAM Inline template file sensor [security]
+INFO: Sensor AWS SAM Inline template file sensor [security] (done) | time=9ms
+INFO: Sensor javabugs [dbd]
+INFO: No IR files have been included for analysis.
+INFO: Sensor javabugs [dbd] (done) | time=6ms
+INFO: Sensor pythonbugs [dbd]
+INFO: Analyzing 5/46 functions to detect bugs.
+INFO: Sensor pythonbugs [dbd] (done) | time=1481ms
+INFO: Sensor EnterpriseTextAndSecretsSensor [textenterprise]
+INFO: Available processors: 8
+INFO: Using 8 threads for analysis.
+INFO: The property "sonar.tests" is not set. To improve the analysis accuracy, we categorize a file as a test file if any of the following is true:
+  * The filename starts with "test"
+  * The filename contains "test." or "tests."
+  * Any directory in the file path is named: "doc", "docs", "test" or "tests"
+  * Any directory in the file path has a name ending in "test" or "tests"
+
+INFO: Start fetching files for the text and secrets analysis
+INFO: Using JGit to retrieve untracked files
+INFO: Retrieving language associated files and files included via "sonar.text.inclusions" that are tracked by git
+INFO: Starting the text and secrets analysis
+INFO: 22 source files to be analyzed for the text and secrets analysis
+WARN: Invalid character encountered in file /home/jenkins/agent/workspace/flask-app-pipeline/flask_app/.coverage at line 3 for encoding UTF-8. Please fix file content or configure the encoding to be used using property 'sonar.sourceEncoding'.
+WARN: The file '.coverage' contains binary data and will not be included in the text and secrets analysis.
+WARN: Please check this file and/or remove the extension from the 'sonar.text.inclusions' property.
+INFO: 22/22 source files have been analyzed for the text and secrets analysis
+INFO: Start fetching files for the binary file analysis
+INFO: There are no files to be analyzed for the binary file analysis
+INFO: Sensor EnterpriseTextAndSecretsSensor [textenterprise] (done) | time=6294ms
+INFO: Sensor JavaSecuritySensor [security]
+INFO: 27 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: java security sensor: Begin: 2025-07-21T03:14:09.453689101Z, End: 2025-07-21T03:14:09.460380136Z, Duration: 00:00:00.006
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.456727578Z, End: 2025-07-21T03:14:09.457977456Z, Duration: 00:00:00.001
+    Load type hierarchy: Begin: 2025-07-21T03:14:09.456740988Z, End: 2025-07-21T03:14:09.457493777Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:09.457762888Z, End: 2025-07-21T03:14:09.457830541Z, Duration: 00:00:00.000
+INFO: java security sensor peak memory: 319 MB
+INFO: Sensor JavaSecuritySensor [security] (done) | time=11ms
+INFO: Sensor CSharpSecuritySensor [security]
+INFO: 26 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: csharp security sensor: Begin: 2025-07-21T03:14:09.462125802Z, End: 2025-07-21T03:14:09.463175923Z, Duration: 00:00:00.001
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.462491988Z, End: 2025-07-21T03:14:09.462811438Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T03:14:09.462495291Z, End: 2025-07-21T03:14:09.462644908Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:09.462729874Z, End: 2025-07-21T03:14:09.462758096Z, Duration: 00:00:00.000
+INFO: csharp security sensor peak memory: 319 MB
+INFO: Sensor CSharpSecuritySensor [security] (done) | time=2ms
+INFO: Sensor PhpSecuritySensor [security]
+INFO: 18 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: php security sensor: Begin: 2025-07-21T03:14:09.464346639Z, End: 2025-07-21T03:14:09.465376545Z, Duration: 00:00:00.001
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.464620553Z, End: 2025-07-21T03:14:09.464921789Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T03:14:09.464623055Z, End: 2025-07-21T03:14:09.464716829Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:09.464828616Z, End: 2025-07-21T03:14:09.464857639Z, Duration: 00:00:00.000
+INFO: php security sensor peak memory: 319 MB
+INFO: Sensor PhpSecuritySensor [security] (done) | time=2ms
+INFO: Sensor PythonSecuritySensor [security]
+INFO: 21 taint analysis rules enabled.
+INFO: Analyzing 4401 UCFGs to detect vulnerabilities.
+INFO: No entry points found.
+INFO: python security sensor: Begin: 2025-07-21T03:14:09.466857604Z, End: 2025-07-21T03:14:12.937191193Z, Duration: 00:00:03.470
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.467156738Z, End: 2025-07-21T03:14:11.253284912Z, Duration: 00:00:01.786
+    Load type hierarchy: Begin: 2025-07-21T03:14:09.467160040Z, End: 2025-07-21T03:14:09.678593367Z, Duration: 00:00:00.211
+    Load UCFGs: Begin: 2025-07-21T03:14:09.678708557Z, End: 2025-07-21T03:14:11.253194341Z, Duration: 00:00:01.574
+  Check cache: Begin: 2025-07-21T03:14:11.253471958Z, End: 2025-07-21T03:14:11.253866967Z, Duration: 00:00:00.000
+    Load cache: Begin: 2025-07-21T03:14:11.253482166Z, End: 2025-07-21T03:14:11.253505284Z, Duration: 00:00:00.000
+  Create runtime call graph: Begin: 2025-07-21T03:14:11.253906799Z, End: 2025-07-21T03:14:11.760585726Z, Duration: 00:00:00.506
+    Variable Type Analysis #1: Begin: 2025-07-21T03:14:11.254686609Z, End: 2025-07-21T03:14:11.396723439Z, Duration: 00:00:00.142
+      Create runtime type propagation graph: Begin: 2025-07-21T03:14:11.256154857Z, End: 2025-07-21T03:14:11.332150116Z, Duration: 00:00:00.075
+      Run SCC (Tarjan) on 9394 nodes: Begin: 2025-07-21T03:14:11.332540722Z, End: 2025-07-21T03:14:11.350068736Z, Duration: 00:00:00.017
+      Propagate runtime types to strongly connected components: Begin: 2025-07-21T03:14:11.350217653Z, End: 2025-07-21T03:14:11.396666995Z, Duration: 00:00:00.046
+    Variable Type Analysis #2: Begin: 2025-07-21T03:14:11.419985839Z, End: 2025-07-21T03:14:11.754706326Z, Duration: 00:00:00.334
+      Create runtime type propagation graph: Begin: 2025-07-21T03:14:11.419996047Z, End: 2025-07-21T03:14:11.523282559Z, Duration: 00:00:00.103
+      Run SCC (Tarjan) on 9353 nodes: Begin: 2025-07-21T03:14:11.523360420Z, End: 2025-07-21T03:14:11.551848109Z, Duration: 00:00:00.028
+      Propagate runtime types to strongly connected components: Begin: 2025-07-21T03:14:11.551913861Z, End: 2025-07-21T03:14:11.754619758Z, Duration: 00:00:00.202
+  Load config: Begin: 2025-07-21T03:14:11.760633464Z, End: 2025-07-21T03:14:12.770510946Z, Duration: 00:00:01.009
+  Compute entry points: Begin: 2025-07-21T03:14:12.770579574Z, End: 2025-07-21T03:14:12.936598755Z, Duration: 00:00:00.166
+INFO: python security sensor peak memory: 392 MB
+INFO: Sensor PythonSecuritySensor [security] (done) | time=3473ms
+INFO: Sensor JsSecuritySensor [security]
+INFO: 15 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: js security sensor: Begin: 2025-07-21T03:14:12.947143491Z, End: 2025-07-21T03:14:12.956192525Z, Duration: 00:00:00.009
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.954580678Z, End: 2025-07-21T03:14:12.954858989Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T03:14:12.954583779Z, End: 2025-07-21T03:14:12.954720734Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:12.954806368Z, End: 2025-07-21T03:14:12.954821675Z, Duration: 00:00:00.000
+INFO: js security sensor peak memory: 390 MB
+INFO: Sensor JsSecuritySensor [security] (done) | time=15ms
+INFO: Sensor KotlinSecuritySensor [security]
+INFO: 26 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: kotlin security sensor: Begin: 2025-07-21T03:14:12.958243649Z, End: 2025-07-21T03:14:12.960395913Z, Duration: 00:00:00.002
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.958584486Z, End: 2025-07-21T03:14:12.958790068Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T03:14:12.958587187Z, End: 2025-07-21T03:14:12.958678223Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:12.958721041Z, End: 2025-07-21T03:14:12.958740248Z, Duration: 00:00:00.000
+INFO: kotlin security sensor peak memory: 390 MB
+INFO: Sensor KotlinSecuritySensor [security] (done) | time=4ms
+INFO: Sensor GoSecuritySensor [security]
+INFO: 9 taint analysis rules enabled.
+INFO: No UCFGs have been included for analysis.
+INFO: go security sensor: Begin: 2025-07-21T03:14:12.962928130Z, End: 2025-07-21T03:14:12.966305987Z, Duration: 00:00:00.003
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.963702341Z, End: 2025-07-21T03:14:12.964469450Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T03:14:12.963705943Z, End: 2025-07-21T03:14:12.963821489Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T03:14:12.964388117Z, End: 2025-07-21T03:14:12.964445740Z, Duration: 00:00:00.000
+INFO: go security sensor peak memory: 391 MB
+INFO: Sensor GoSecuritySensor [security] (done) | time=9ms
+INFO: ------------- Run sensors on project
+INFO: Sensor PythonArchitectureSensor [architecture]
+INFO: * Protobuf reading starting | memory total=800 | free=395 | used=404 (MB)
+INFO: * Reading SonarArchitecture IR data from directory "/home/jenkins/agent/workspace/flask-app-pipeline/flask_app/.scannerwork/architecture/py"
+INFO: * Protobuf reading complete | memory total=800 | free=394 | used=405 (MB)
+INFO: * Build file hiGraphs complete | memory total=800 | free=394 | used=405 (MB)
+INFO: * Slicing complete | memory total=800 | free=394 | used=405 (MB)
+INFO: * Export complete | memory total=800 | free=392 | used=407 (MB)
+INFO: Sensor PythonArchitectureSensor [architecture] (done) | time=324ms
+INFO: Sensor Zero Coverage Sensor
+INFO: Sensor Zero Coverage Sensor (done) | time=1ms
+INFO: ------------- Gather SCA dependencies on project
+INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
+INFO: Checking if SCA is enabled for organization rss-devops-course-tasks
+INFO: Dependency analysis skipped
+INFO: SCM Publisher SCM provider for this project is: git
+INFO: SCM Publisher 1 source file to be analyzed
+INFO: SCM Publisher 0/1 source files have been analyzed (done) | time=93ms
+WARN: Missing blame information for the following files:
+WARN:   * coverage.xml
+WARN: This may lead to missing/broken features in SonarCloud
+INFO: CPD Executor Calculating CPD for 2 files
+INFO: CPD Executor CPD calculation finished (done) | time=6ms
+INFO: Analysis report generated in 451ms, dir size=342 KB
+INFO: Analysis report compressed in 64ms, zip size=83 KB
+INFO: Analysis report uploaded in 487ms
+INFO: ANALYSIS SUCCESSFUL, you can find the results at: https://sonarcloud.io/dashboard?id=rss-devops-course-tasks_flask-app
+INFO: Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
+INFO: More about the report processing at https://sonarcloud.io/api/ce/task?id=AZgq-ZgSHMpP0ceq9TlO
+INFO: Sensor cache published successfully
+INFO: Analysis total time: 1:45.387 s
+INFO: ------------------------------------------------------------------------
+INFO: EXECUTION SUCCESS
+INFO: ------------------------------------------------------------------------
+INFO: Total time: 2:17.201s
+INFO: Final Memory: 221M/757M
+INFO: ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Docker Build and Push)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] dir
+Running in /home/jenkins/agent/workspace/flask-app-pipeline/flask_app
+[Pipeline] {
+[Pipeline] sh
++ echo ****
++ docker login -u sunsundr --password-stdin
+
+WARNING! Your credentials are stored unencrypted in '/root/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
++ docker build -t sunsundr/flask-app:17 .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 355B 0.1s done
+#1 DONE 0.3s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.0b4-alpine3.22
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.0b4-alpine3.22
+#2 DONE 1.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.2s
+
+#5 [1/5] FROM docker.io/library/python:3.14.0b4-alpine3.22@sha256:f4acee82f7c4d0f1f1fc5c16aa80fcf249ed07287813b4ec6385c4ea34881ea2
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 1.50MB 3.5s done
+#6 DONE 3.7s
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY requirements.txt .
+#8 CACHED
+
+#9 [4/5] RUN apk add --no-cache --virtual .build-deps gcc musl-dev &&     pip install --no-cache-dir -r requirements.txt &&     apk del .build-deps
+#9 CACHED
+
+#10 [5/5] COPY . .
+#10 DONE 5.7s
+
+#11 exporting to image
+#11 exporting layers
+#11 exporting layers 0.9s done
+#11 writing image sha256:b755cdd64412fe3d9d70519f45ed41dc86324c3b55ff911f53923a005e1b86a5 done
+#11 naming to docker.io/sunsundr/flask-app:17 0.0s done
+#11 DONE 1.1s
++ docker tag sunsundr/flask-app:17 sunsundr/flask-app:latest
++ docker push sunsundr/flask-app:17
+The push refers to repository [docker.io/sunsundr/flask-app]
+418dccb7d85a: Preparing
+1230349d07bd: Waiting
+7a07f961966f: Waiting
+480f6e59795d: Waiting
+418dccb7d85a: Waiting
+42c3aac8be19: Layer already exists
+418dccb7d85a: Layer already exists
+a3d039699bd8: Pushed
+17: digest: sha256:649431387346266f10df86798471ed1d4db0055fb14b53a5f4ac68a4fb902a35 size: 1992
++ docker push sunsundr/flask-app:latest
+The push refers to repository [docker.io/sunsundr/flask-app]
+a3d039699bd8: Preparing
+418dccb7d85a: Preparing
+1230349d07bd: Waiting
+480f6e59795d: Waiting
+418dccb7d85a: Waiting
+7a07f961966f: Layer already exists
+42c3aac8be19: Layer already exists
+14e6dae3b08c: Layer already exists
+418dccb7d85a: Layer already exists
+latest: digest: sha256:649431387346266f10df86798471ed1d4db0055fb14b53a5f4ac68a4fb902a35 size: 1992
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Install Helm)
+[Pipeline] sh
++ curl -LO https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  5 17.0M    5 1007k    0     0   939k      0  0:00:18  0:00:01  0:00:17  940k
+ 34 17.0M   34 6063k    0     0  2925k      0  0:00:05  0:00:02  0:00:03 2928k
+ 64 17.0M   64 11.0M    0     0  3665k      0  0:00:04  0:00:03  0:00:01 3667k
+ 95 17.0M   95 16.2M    0     0  4093k      0  0:00:04  0:00:04 --:--:-- 4095k
+100 17.0M  100 17.0M    0     0  4142k      0  0:00:04  0:00:04 --:--:-- 4224k
++ tar -zxvf helm-v3.18.4-linux-amd64.tar.gz
+linux-amd64/
+linux-amd64/README.md
+linux-amd64/helm
+linux-amd64/LICENSE
++ mv linux-amd64/helm ./helm
++ chmod +x ./helm
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+[Pipeline] sh
++ ./helm upgrade --install flask-app ./flask_app/helm-chart/flask-app --create-namespace --namespace flask-app -f ./flask_app/helm-chart/flask-app/values-minikube.yaml --set image.repository=sunsundr/flask-app --set image.tag=17 --set image.pullPolicy=IfNotPresent --timeout=300s
+Release "flask-app" has been upgraded. Happy Helming!
+NAME: flask-app
+LAST DEPLOYED: Mon Jul 21 03:15:13 2025
+NAMESPACE: flask-app
+STATUS: deployed
+REVISION: 2
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace flask-app -l "app.kubernetes.io/name=flask-app,app.kubernetes.io/instance=flask-app" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace flask-app $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace flask-app port-forward $POD_NAME 8080:$CONTAINER_PORT
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Verify Deployment)
+[Pipeline] sh
++ echo Deployment completed. To verify manually, run:
+Deployment completed. To verify manually, run:
++ echo kubectl get pods -n flask-app
+kubectl get pods -n flask-app
++ echo kubectl get svc -n flask-app
+kubectl get svc -n flask-app
++ echo kubectl port-forward svc/flask-app 8080:8080 -n flask-app
+kubectl port-forward svc/flask-app 8080:8080 -n flask-app
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Pipeline execution completed
+[Pipeline] echo
+Pipeline succeeded
+[Pipeline] mail
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+Finished: SUCCESS
