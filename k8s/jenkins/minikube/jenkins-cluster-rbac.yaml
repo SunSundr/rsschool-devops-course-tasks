@@ -1,0 +1,27 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-deploy-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "secrets", "configmaps", "namespaces", "serviceaccounts"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-deploy-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins-deploy-role
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: jenkins
