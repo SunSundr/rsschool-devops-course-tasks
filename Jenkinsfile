@@ -179,11 +179,39 @@ spec:
         stage('Verify Deployment') {
             steps {
                 sh '''
-                    # Simple verification
-                    echo "Deployment completed. To verify manually, run:"
-                    echo "kubectl get pods -n flask-app"
-                    echo "kubectl get svc -n flask-app"
-                    echo "kubectl port-forward svc/flask-app 8080:8080 -n flask-app"
+                    # Install kubectl if needed
+                    if ! command -v kubectl &> /dev/null; then
+                        curl -LO "https://dl.k8s.io/release/stable.txt"
+                        KUBECTL_VERSION=$(cat stable.txt)
+                        curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        mkdir -p $HOME/bin
+                        mv kubectl $HOME/bin/
+                        export PATH=$HOME/bin:$PATH
+                    fi
+                    
+                    # Check if pods are running
+                    echo "\nChecking pod status:"
+                    ./helm status flask-app -n flask-app
+                    kubectl get pods -n flask-app || echo "Could not get pods"
+                    
+                    # Kill any existing port-forward processes
+                    echo "\nSetting up port forwarding..."
+                    pkill -f "port-forward.*flask-app" || echo "No existing port-forward to kill"
+                    
+                    # Start port forwarding in the background
+                    kubectl port-forward svc/flask-app 8080:8080 -n flask-app &
+                    PORT_FORWARD_PID=$!
+                    
+                    # Give it a moment to establish
+                    sleep 3
+                    
+                    # Try to access the service via port-forward
+                    echo "\nAttempting to access the service via port-forward..."
+                    curl -v http://localhost:8080/ || echo "Service not accessible via port-forward"
+                    
+                    # Clean up port-forward
+                    kill $PORT_FORWARD_PID || echo "Could not kill port-forward process"
                 '''
             }
         }
@@ -195,9 +223,22 @@ spec:
         }
         success {
             echo 'Pipeline succeeded'
-            mail to: 'art.dizigner@gmail.com',
-                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                 body: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+            emailext (
+                to: 'art.dizigner@gmail.com',
+                subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: """<html>
+                    <body>
+                        <h2>✅ Build Successful!</h2>
+                        <p>Job: <b>${env.JOB_NAME}</b></p>
+                        <p>Build Number: <b>#${env.BUILD_NUMBER}</b></p>
+                        <p>Build URL: <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p>
+                        <p>Deployed Image: <b>${DOCKERHUB_CREDENTIALS_USR}/${IMAGE_NAME}:${IMAGE_TAG}</b></p>
+                        <hr>
+                        <p>Check the <a href='${env.BUILD_URL}console'>Console Output</a> for more details.</p>
+                    </body>
+                </html>""",
+                mimeType: 'text/html'
+            )
         }
         failure {
             echo 'Pipeline failed'
@@ -210,7 +251,9 @@ spec:
                     KUBECTL_VERSION=$(cat stable.txt)
                     curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
                     chmod +x kubectl
-                    mv kubectl /usr/local/bin/
+                    mkdir -p $HOME/bin
+                    mv kubectl $HOME/bin/
+                    export PATH=$HOME/bin:$PATH
                 fi
                 
                 # Check if namespace exists and clean up
@@ -223,9 +266,21 @@ spec:
                 fi
             '''
             
-            mail to: 'art.dizigner@gmail.com',
-                 subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                 body: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+            emailext (
+                to: 'art.dizigner@gmail.com',
+                subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: """<html>
+                    <body>
+                        <h2>❌ Build Failed!</h2>
+                        <p>Job: <b>${env.JOB_NAME}</b></p>
+                        <p>Build Number: <b>#${env.BUILD_NUMBER}</b></p>
+                        <p>Build URL: <a href='${env.BUILD_URL}'>${env.BUILD_URL}</a></p>
+                        <hr>
+                        <p>Check the <a href='${env.BUILD_URL}console'>Console Output</a> for more details.</p>
+                    </body>
+                </html>""",
+                mimeType: 'text/html'
+            )
         }
     }
 }

@@ -4,29 +4,29 @@ Obtained Jenkinsfile from git https://github.com/SunSundr/rsschool-devops-course
 [Pipeline] podTemplate
 [Pipeline] {
 [Pipeline] node
-Created Pod: kubernetes jenkins/flask-app-pipeline-17-8mzw9-lfm0n-ww3q6
-[PodInfo] jenkins/flask-app-pipeline-17-8mzw9-lfm0n-ww3q6
+[PodInfo] jenkins/flask-app-pipeline-28-xj4nj-bb1wf-gftzc
 	Container [docker] waiting [ContainerCreating] No message
 	Container [jnlp] waiting [ContainerCreating] No message
 	Container [python] waiting [ContainerCreating] No message
 	Pod [Pending][ContainersNotReady] containers with unready status: [jnlp python docker]
-Agent flask-app-pipeline-17-8mzw9-lfm0n-ww3q6 is provisioned from template flask-app-pipeline_17-8mzw9-lfm0n
+Created Pod: kubernetes jenkins/flask-app-pipeline-28-xj4nj-bb1wf-gftzc
+Agent flask-app-pipeline-28-xj4nj-bb1wf-gftzc is provisioned from template flask-app-pipeline_28-xj4nj-bb1wf
 ---
 apiVersion: "v1"
 kind: "Pod"
 metadata:
   annotations:
-    kubernetes.jenkins.io/last-refresh: "1753067232911"
-    buildUrl: "http://jenkins.jenkins.svc.cluster.local:8080/job/flask-app-pipeline/17/"
-    runUrl: "job/flask-app-pipeline/17/"
+    kubernetes.jenkins.io/last-refresh: "1753110851296"
+    buildUrl: "http://jenkins.jenkins.svc.cluster.local:8080/job/flask-app-pipeline/28/"
+    runUrl: "job/flask-app-pipeline/28/"
   labels:
     app: "jenkins-agent"
     version: "v1"
     jenkins/jenkins-jenkins-agent: "true"
-    jenkins/label-digest: "0c308410bebaa23cfaa0af087a14a636d309dd0b"
-    jenkins/label: "flask-app-pipeline_17-8mzw9"
+    jenkins/label-digest: "dcf57a1b75dd95249e77a50937896fa8cceb5a7d"
+    jenkins/label: "flask-app-pipeline_28-xj4nj"
     kubernetes.jenkins.io/controller: "http___jenkins_jenkins_svc_cluster_local_8080x"
-  name: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+  name: "flask-app-pipeline-28-xj4nj-bb1wf-gftzc"
   namespace: "jenkins"
 spec:
   containers:
@@ -36,11 +36,11 @@ spec:
     - name: "JENKINS_TUNNEL"
       value: "jenkins-agent.jenkins.svc.cluster.local:50000"
     - name: "JENKINS_AGENT_NAME"
-      value: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+      value: "flask-app-pipeline-28-xj4nj-bb1wf-gftzc"
     - name: "REMOTING_OPTS"
       value: "-noReconnectAfter 1d"
     - name: "JENKINS_NAME"
-      value: "flask-app-pipeline-17-8mzw9-lfm0n-ww3q6"
+      value: "flask-app-pipeline-28-xj4nj-bb1wf-gftzc"
     - name: "JENKINS_AGENT_WORKDIR"
       value: "/home/jenkins/agent"
     - name: "JENKINS_URL"
@@ -87,7 +87,7 @@ spec:
       medium: ""
     name: "workspace-volume"
 
-Running on flask-app-pipeline-17-8mzw9-lfm0n-ww3q6 in /home/jenkins/agent/workspace/flask-app-pipeline
+Running on flask-app-pipeline-28-xj4nj-bb1wf-gftzc in /home/jenkins/agent/workspace/flask-app-pipeline
 [Pipeline] {
 [Pipeline] stage
 [Pipeline] { (Declarative: Checkout SCM)
@@ -105,12 +105,12 @@ Fetching upstream changes from https://github.com/SunSundr/rsschool-devops-cours
  > git config remote.origin.url https://github.com/SunSundr/rsschool-devops-course-tasks.git # timeout=10
  > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
 Avoid second fetch
-Checking out Revision c1568078247c4b1fdba1ded92b39d772c9ebb815 (refs/remotes/origin/rss-task-6)
+Checking out Revision 2dc47558df0ac35da2b0492a29291bf047cf68e6 (refs/remotes/origin/rss-task-6)
+Commit message: "docs: update README.md, add JENKINS_PIPELINE_README.md"
  > git rev-parse refs/remotes/origin/rss-task-6^{commit} # timeout=10
  > git config core.sparsecheckout # timeout=10
- > git checkout -f c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
-Commit message: "fix: update Jenkinsfile 25"
- > git rev-list --no-walk c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
+ > git checkout -f 2dc47558df0ac35da2b0492a29291bf047cf68e6 # timeout=10
+ > git rev-list --no-walk 2dc47558df0ac35da2b0492a29291bf047cf68e6 # timeout=10
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] withEnv
@@ -127,24 +127,24 @@ Selected Git installation does not exist. Using Default
 The recommended git tool is: NONE
 No credentials specified
 Fetching changes from the remote Git repository
+Checking out Revision 2dc47558df0ac35da2b0492a29291bf047cf68e6 (refs/remotes/origin/rss-task-6)
+Commit message: "docs: update README.md, add JENKINS_PIPELINE_README.md"
+[Pipeline] }
+[Pipeline] // stage
  > git rev-parse --resolve-git-dir /home/jenkins/agent/workspace/flask-app-pipeline/.git # timeout=10
  > git config remote.origin.url https://github.com/SunSundr/rsschool-devops-course-tasks.git # timeout=10
 Fetching upstream changes from https://github.com/SunSundr/rsschool-devops-course-tasks.git
  > git --version # timeout=10
  > git --version # 'git version 2.39.5'
  > git fetch --tags --force --progress -- https://github.com/SunSundr/rsschool-devops-course-tasks.git +refs/heads/*:refs/remotes/origin/* # timeout=10
-Checking out Revision c1568078247c4b1fdba1ded92b39d772c9ebb815 (refs/remotes/origin/rss-task-6)
-Commit message: "fix: update Jenkinsfile 25"
-[Pipeline] }
-[Pipeline] // stage
+ > git rev-parse refs/remotes/origin/rss-task-6^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 2dc47558df0ac35da2b0492a29291bf047cf68e6 # timeout=10
 [Pipeline] stage
 [Pipeline] { (Build Application)
 [Pipeline] container
 [Pipeline] {
 [Pipeline] sh
- > git rev-parse refs/remotes/origin/rss-task-6^{commit} # timeout=10
- > git config core.sparsecheckout # timeout=10
- > git checkout -f c1568078247c4b1fdba1ded92b39d772c9ebb815 # timeout=10
 + apt-get update
 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
@@ -152,7 +152,7 @@ Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB
 Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8793 kB]
 Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [756 B]
 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [272 kB]
-Fetched 9320 kB in 8s (1160 kB/s)
+Fetched 9320 kB in 4s (2525 kB/s)
 Reading package lists...
 + apt-get install -y gcc python3-dev
 Reading package lists...
@@ -302,7 +302,7 @@ Get:96 http://deb.debian.org/debian bookworm/main amd64 python3-lib2to3 all 3.11
 Get:97 http://deb.debian.org/debian bookworm/main amd64 python3-distutils all 3.11.2-3 [131 kB]
 Get:98 http://deb.debian.org/debian bookworm/main amd64 python3-dev amd64 3.11.2-1+b1 [26.2 kB]
 debconf: delaying package configuration, since apt-utils is not installed
-Fetched 82.5 MB in 11s (7798 kB/s)
+Fetched 82.5 MB in 11s (7844 kB/s)
 Selecting previously unselected package libpython3.11-minimal:amd64.
 (Reading database ... 
 (Reading database ... 5%
@@ -812,7 +812,7 @@ Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
 Downloading MarkupSafe-3.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (23 kB)
 Downloading packaging-25.0-py3-none-any.whl (66 kB)
 Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 7.3 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 7.5 MB/s eta 0:00:00
 Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
 Installing collected packages: pygments, pluggy, packaging, markupsafe, itsdangerous, iniconfig, coverage, click, blinker, werkzeug, pytest, jinja2, pytest-cov, Flask
 
@@ -852,7 +852,7 @@ test_app.py ...                                                          [100%]
 _______________ coverage: platform linux, python 3.13.5-final-0 ________________
 
 Coverage XML written to file coverage.xml
-============================== 3 passed in 0.42s ===============================
+============================== 3 passed in 0.39s ===============================
 [Pipeline] }
 [Pipeline] // dir
 [Pipeline] }
@@ -964,22 +964,22 @@ Downloading filelock-3.16.1-py3-none-any.whl (16 kB)
 Downloading psutil-6.1.1-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (287 kB)
 Downloading pydantic-2.9.2-py3-none-any.whl (434 kB)
 Downloading pydantic_core-2.23.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 3.3 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 11.2 MB/s eta 0:00:00
 Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
 Downloading authlib-1.6.1-py2.py3-none-any.whl (239 kB)
 Downloading dparse-0.6.4-py3-none-any.whl (11 kB)
 Downloading marshmallow-4.0.0-py3-none-any.whl (48 kB)
 Downloading nltk-3.9.1-py3-none-any.whl (1.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 3.3 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 6.0 MB/s eta 0:00:00
 Downloading PyYAML-6.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (759 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 759.5/759.5 kB 590.0 kB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 759.5/759.5 kB 8.0 MB/s eta 0:00:00
 Downloading regex-2024.11.6-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (796 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 796.9/796.9 kB 76.3 kB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 796.9/796.9 kB 11.2 MB/s eta 0:00:00
 Downloading ruamel.yaml-0.18.14-py3-none-any.whl (118 kB)
 Downloading ruamel.yaml.clib-0.2.12-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (745 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 745.1/745.1 kB 1.7 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 745.1/745.1 kB 10.3 MB/s eta 0:00:00
 Downloading setuptools-80.9.0-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 2.8 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 14.4 MB/s eta 0:00:00
 Downloading stevedore-5.4.1-py3-none-any.whl (49 kB)
 Downloading pbr-6.1.1-py2.py3-none-any.whl (108 kB)
 Downloading typer-0.16.0-py3-none-any.whl (46 kB)
@@ -989,7 +989,7 @@ Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
 Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
 Downloading typing_extensions-4.14.1-py3-none-any.whl (43 kB)
 Downloading cryptography-45.0.5-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 3.4 MB/s eta 0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 6.9 MB/s eta 0:00:00
 Downloading cffi-1.17.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479 kB)
 Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
 Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
@@ -1025,7 +1025,7 @@ Running Bandit security scan...
 + echo Running Safety dependency scan...
 Running Safety dependency scan...
 + cd flask_app
-/home/jenkins/agent/workspace/flask-app-pipeline@tmp/durable-188a7150/script.sh.copy: 11: cd: can't cd to flask_app
+/home/jenkins/agent/workspace/flask-app-pipeline@tmp/durable-beb9c335/script.sh.copy: 11: cd: can't cd to flask_app
 + true
 [Pipeline] archiveArtifacts
 Archiving artifacts
@@ -1093,7 +1093,7 @@ Get:18 http://deb.debian.org/debian bookworm/main amd64 libpcsclite1 amd64 1.9.9
 Get:19 http://deb.debian.org/debian bookworm/main amd64 openjdk-17-jre-headless amd64 17.0.15+6-1~deb12u1 [43.8 MB]
 Get:20 http://deb.debian.org/debian bookworm/main amd64 unzip amd64 6.0-28 [166 kB]
 debconf: delaying package configuration, since apt-utils is not installed
-Fetched 51.1 MB in 7s (7418 kB/s)
+Fetched 51.1 MB in 7s (7430 kB/s)
 Selecting previously unselected package libpsl5:amd64.
 (Reading database ... 
 (Reading database ... 5%
@@ -1361,56 +1361,56 @@ INFO: User cache: /root/.sonar/cache
 INFO: Analyzing on SonarCloud
 INFO: Default locale: "en_US", source code encoding: "UTF-8"
 INFO: Load global settings
-INFO: Load global settings (done) | time=497ms
+INFO: Load global settings (done) | time=454ms
 INFO: Server id: 1BD809FA-AWHW8ct9-T_TB3XqouNu
 INFO: Loading required plugins
 INFO: Load plugins index
-INFO: Load plugins index (done) | time=175ms
+INFO: Load plugins index (done) | time=142ms
 INFO: Load/download plugins
-INFO: Load/download plugins (done) | time=19186ms
+INFO: Load/download plugins (done) | time=4659ms
 INFO: Found an active CI vendor: 'Jenkins'
 INFO: Load project settings for component key: 'rss-devops-course-tasks_flask-app'
-INFO: Load project settings for component key: 'rss-devops-course-tasks_flask-app' (done) | time=342ms
+INFO: Load project settings for component key: 'rss-devops-course-tasks_flask-app' (done) | time=396ms
 INFO: Process project properties
 INFO: Project key: rss-devops-course-tasks_flask-app
 INFO: Base dir: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app
 INFO: Working dir: /home/jenkins/agent/workspace/flask-app-pipeline/flask_app/.scannerwork
 INFO: Load project branches
-INFO: Load project branches (done) | time=176ms
+INFO: Load project branches (done) | time=171ms
 INFO: Check ALM binding of project 'rss-devops-course-tasks_flask-app'
 INFO: Detected project binding: NOT_BOUND
-INFO: Check ALM binding of project 'rss-devops-course-tasks_flask-app' (done) | time=100ms
+INFO: Check ALM binding of project 'rss-devops-course-tasks_flask-app' (done) | time=94ms
 INFO: Load project pull requests
-INFO: Load project pull requests (done) | time=141ms
+INFO: Load project pull requests (done) | time=103ms
 INFO: Load branch configuration
-INFO: Load branch configuration (done) | time=12ms
+INFO: Load branch configuration (done) | time=2ms
 INFO: Load quality profiles
-INFO: Load quality profiles (done) | time=383ms
+INFO: Load quality profiles (done) | time=343ms
 INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
 INFO: Load active rules
-INFO: Load active rules (done) | time=2478ms
+INFO: Load active rules (done) | time=1878ms
 INFO: Organization key: rss-devops-course-tasks
 WARN: The property 'sonar.login' is deprecated and will be removed in the future. Please use the 'sonar.token' property instead when passing a token.
 INFO: Preprocessing files...
-INFO: 4 languages detected in 28 preprocessed files (done) | time=380ms
+INFO: 4 languages detected in 28 preprocessed files (done) | time=163ms
 INFO: 0 files ignored because of inclusion/exclusion patterns
 INFO: 4 files ignored because of scm ignore settings
 INFO: Loading plugins for detected languages
 INFO: Load/download plugins
-INFO: Load/download plugins (done) | time=30393ms
+INFO: Load/download plugins (done) | time=26328ms
 INFO: Load metrics repository
-INFO: Load metrics repository (done) | time=105ms
+INFO: Load metrics repository (done) | time=89ms
 INFO: Sensor cache enabled
 INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
 INFO: Load sensor cache
-INFO: Load sensor cache (15 KB) | time=999ms
+INFO: Load sensor cache (15 KB) | time=820ms
 INFO: Inferred api base url 'https://api.sonarcloud.io' from host url 'https://sonarcloud.io'.
 INFO: Load project repositories
-INFO: Load project repositories (done) | time=228ms
+INFO: Load project repositories (done) | time=121ms
 INFO: Indexing files...
 INFO: Project configuration:
 INFO:   Excluded sources: **/build-wrapper-dump.json
-INFO: 28 files indexed (done) | time=35ms
+INFO: 28 files indexed (done) | time=20ms
 INFO: Quality profile for docker: Sonar way
 INFO: Quality profile for py: Sonar way
 INFO: Quality profile for xml: Sonar way
@@ -1421,25 +1421,22 @@ WARN: Your code is analyzed as compatible with all Python 3 versions by default.
 INFO: Starting global symbols computation
 INFO: 2 source files to be analyzed
 INFO: 2/2 source files have been analyzed
-INFO: Finished step global symbols computation in 6595ms
+INFO: Finished step global symbols computation in 1700ms
 INFO: Starting rules execution
 INFO: 2 source files to be analyzed
-INFO: 0/2 files analyzed, current file: main.py
-INFO: 0/2 files analyzed, current file: main.py
-INFO: 0/2 files analyzed, current file: main.py
 INFO: 2/2 source files have been analyzed
-INFO: Finished step rules execution in 36778ms
+INFO: Finished step rules execution in 5831ms
 INFO: The Python analyzer was able to leverage cached data from previous analyses for 0 out of 2 files. These files were not parsed.
-INFO: Sensor Python Sensor [python] (done) | time=44218ms
+INFO: Sensor Python Sensor [python] (done) | time=7691ms
 INFO: Sensor Cobertura Sensor for Python coverage [python]
 INFO: Python test coverage
 INFO: Parsing report '/home/jenkins/agent/workspace/flask-app-pipeline/flask_app/coverage.xml'
-INFO: Sensor Cobertura Sensor for Python coverage [python] (done) | time=248ms
+INFO: Sensor Cobertura Sensor for Python coverage [python] (done) | time=456ms
 INFO: Sensor PythonXUnitSensor [python]
 WARN: No report was found for sonar.python.xunit.reportPath using pattern pytest-report.xml
-INFO: Sensor PythonXUnitSensor [python] (done) | time=83ms
+INFO: Sensor PythonXUnitSensor [python] (done) | time=1208ms
 INFO: Sensor Python Dependency Sensor [python]
-INFO: Sensor Python Dependency Sensor [python] (done) | time=7ms
+INFO: Sensor Python Dependency Sensor [python] (done) | time=11ms
 INFO: Sensor JaCoCo XML Report Importer [jacoco]
 INFO: 'sonar.coverage.jacoco.xmlReportPaths' is not defined. Using default locations: target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml,build/reports/jacoco/test/jacocoTestReport.xml
 INFO: No report imported, no coverage information will be imported by JaCoCo XML Report Importer
@@ -1447,11 +1444,11 @@ INFO: Sensor JaCoCo XML Report Importer [jacoco] (done) | time=2ms
 INFO: Sensor IaC Ansible Sensor [iacenterprise]
 INFO: 0 source files to be analyzed
 INFO: 0/0 source files have been analyzed
-INFO: Sensor IaC Ansible Sensor [iacenterprise] (done) | time=180ms
+INFO: Sensor IaC Ansible Sensor [iacenterprise] (done) | time=107ms
 INFO: Sensor IaC CloudFormation Sensor [iac]
 INFO: 0 source files to be analyzed
 INFO: 0/0 source files have been analyzed
-INFO: Sensor IaC CloudFormation Sensor [iac] (done) | time=124ms
+INFO: Sensor IaC CloudFormation Sensor [iac] (done) | time=18ms
 INFO: Sensor IaC Kubernetes Sensor [iac]
 INFO: 11 source files to be parsed
 INFO: 11/11 source files have been parsed
@@ -1459,16 +1456,16 @@ INFO: 11 source files to be analyzed
 INFO: 11/11 source files have been analyzed
 INFO: 11 source files to be checked
 INFO: 11/11 source files have been checked
-INFO: Sensor IaC Kubernetes Sensor [iac] (done) | time=1821ms
+INFO: Sensor IaC Kubernetes Sensor [iac] (done) | time=2469ms
 INFO: Sensor Java Config Sensor [iac]
 INFO: 0 source files to be analyzed
 INFO: 0/0 source files have been analyzed
-INFO: Sensor Java Config Sensor [iac] (done) | time=11ms
+INFO: Sensor Java Config Sensor [iac] (done) | time=12ms
 INFO: Sensor JavaScript inside YAML analysis [javascript]
 INFO: No input files found for analysis
 INFO: Hit the cache for 0 out of 0
 INFO: Miss the cache for 0 out of 0
-INFO: Sensor JavaScript inside YAML analysis [javascript] (done) | time=31ms
+INFO: Sensor JavaScript inside YAML analysis [javascript] (done) | time=21ms
 INFO: Sensor CSS Rules [javascript]
 INFO: No CSS, PHP, HTML or VueJS files are found in the project. CSS analysis is skipped.
 INFO: Sensor CSS Rules [javascript] (done) | time=0ms
@@ -1477,25 +1474,25 @@ INFO: Sensor Python HTML templates processing [securitypythonfrontend] (done) | 
 INFO: Sensor XML Sensor [xml]
 INFO: 1 source file to be analyzed
 INFO: 1/1 source file has been analyzed
-INFO: Sensor XML Sensor [xml] (done) | time=133ms
+INFO: Sensor XML Sensor [xml] (done) | time=205ms
 INFO: Sensor IaC Docker Sensor [iac]
 INFO: 1 source file to be analyzed
 INFO: 1/1 source file has been analyzed
-INFO: Sensor IaC Docker Sensor [iac] (done) | time=273ms
+INFO: Sensor IaC Docker Sensor [iac] (done) | time=794ms
 INFO: Sensor Serverless configuration file sensor [security]
 INFO: 0 Serverless function entries were found in the project
 INFO: 0 Serverless function handlers were kept as entrypoints
-INFO: Sensor Serverless configuration file sensor [security] (done) | time=2ms
+INFO: Sensor Serverless configuration file sensor [security] (done) | time=12ms
 INFO: Sensor AWS SAM template file sensor [security]
-INFO: Sensor AWS SAM template file sensor [security] (done) | time=7ms
+INFO: Sensor AWS SAM template file sensor [security] (done) | time=69ms
 INFO: Sensor AWS SAM Inline template file sensor [security]
-INFO: Sensor AWS SAM Inline template file sensor [security] (done) | time=9ms
+INFO: Sensor AWS SAM Inline template file sensor [security] (done) | time=58ms
 INFO: Sensor javabugs [dbd]
 INFO: No IR files have been included for analysis.
-INFO: Sensor javabugs [dbd] (done) | time=6ms
+INFO: Sensor javabugs [dbd] (done) | time=49ms
 INFO: Sensor pythonbugs [dbd]
 INFO: Analyzing 5/46 functions to detect bugs.
-INFO: Sensor pythonbugs [dbd] (done) | time=1481ms
+INFO: Sensor pythonbugs [dbd] (done) | time=609ms
 INFO: Sensor EnterpriseTextAndSecretsSensor [textenterprise]
 INFO: Available processors: 8
 INFO: Using 8 threads for analysis.
@@ -1516,93 +1513,93 @@ WARN: Please check this file and/or remove the extension from the 'sonar.text.in
 INFO: 22/22 source files have been analyzed for the text and secrets analysis
 INFO: Start fetching files for the binary file analysis
 INFO: There are no files to be analyzed for the binary file analysis
-INFO: Sensor EnterpriseTextAndSecretsSensor [textenterprise] (done) | time=6294ms
+INFO: Sensor EnterpriseTextAndSecretsSensor [textenterprise] (done) | time=10842ms
 INFO: Sensor JavaSecuritySensor [security]
 INFO: 27 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: java security sensor: Begin: 2025-07-21T03:14:09.453689101Z, End: 2025-07-21T03:14:09.460380136Z, Duration: 00:00:00.006
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.456727578Z, End: 2025-07-21T03:14:09.457977456Z, Duration: 00:00:00.001
-    Load type hierarchy: Begin: 2025-07-21T03:14:09.456740988Z, End: 2025-07-21T03:14:09.457493777Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:09.457762888Z, End: 2025-07-21T03:14:09.457830541Z, Duration: 00:00:00.000
-INFO: java security sensor peak memory: 319 MB
-INFO: Sensor JavaSecuritySensor [security] (done) | time=11ms
+INFO: java security sensor: Begin: 2025-07-21T15:17:33.011562314Z, End: 2025-07-21T15:17:33.017923789Z, Duration: 00:00:00.006
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:33.014305519Z, End: 2025-07-21T15:17:33.015517610Z, Duration: 00:00:00.001
+    Load type hierarchy: Begin: 2025-07-21T15:17:33.014321420Z, End: 2025-07-21T15:17:33.015155182Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:33.015345897Z, End: 2025-07-21T15:17:33.015410702Z, Duration: 00:00:00.000
+INFO: java security sensor peak memory: 316 MB
+INFO: Sensor JavaSecuritySensor [security] (done) | time=12ms
 INFO: Sensor CSharpSecuritySensor [security]
 INFO: 26 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: csharp security sensor: Begin: 2025-07-21T03:14:09.462125802Z, End: 2025-07-21T03:14:09.463175923Z, Duration: 00:00:00.001
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.462491988Z, End: 2025-07-21T03:14:09.462811438Z, Duration: 00:00:00.000
-    Load type hierarchy: Begin: 2025-07-21T03:14:09.462495291Z, End: 2025-07-21T03:14:09.462644908Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:09.462729874Z, End: 2025-07-21T03:14:09.462758096Z, Duration: 00:00:00.000
-INFO: csharp security sensor peak memory: 319 MB
-INFO: Sensor CSharpSecuritySensor [security] (done) | time=2ms
+INFO: csharp security sensor: Begin: 2025-07-21T15:17:33.020308967Z, End: 2025-07-21T15:17:33.022784352Z, Duration: 00:00:00.002
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:33.022091Z, End: 2025-07-21T15:17:33.022497931Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T15:17:33.022095101Z, End: 2025-07-21T15:17:33.022240512Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:33.022362221Z, End: 2025-07-21T15:17:33.022393323Z, Duration: 00:00:00.000
+INFO: csharp security sensor peak memory: 316 MB
+INFO: Sensor CSharpSecuritySensor [security] (done) | time=4ms
 INFO: Sensor PhpSecuritySensor [security]
 INFO: 18 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: php security sensor: Begin: 2025-07-21T03:14:09.464346639Z, End: 2025-07-21T03:14:09.465376545Z, Duration: 00:00:00.001
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.464620553Z, End: 2025-07-21T03:14:09.464921789Z, Duration: 00:00:00.000
-    Load type hierarchy: Begin: 2025-07-21T03:14:09.464623055Z, End: 2025-07-21T03:14:09.464716829Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:09.464828616Z, End: 2025-07-21T03:14:09.464857639Z, Duration: 00:00:00.000
-INFO: php security sensor peak memory: 319 MB
-INFO: Sensor PhpSecuritySensor [security] (done) | time=2ms
+INFO: php security sensor: Begin: 2025-07-21T15:17:33.023784627Z, End: 2025-07-21T15:17:33.024535183Z, Duration: 00:00:00.000
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:33.023963740Z, End: 2025-07-21T15:17:33.024223960Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T15:17:33.023965641Z, End: 2025-07-21T15:17:33.024074149Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:33.024145654Z, End: 2025-07-21T15:17:33.024163455Z, Duration: 00:00:00.000
+INFO: php security sensor peak memory: 316 MB
+INFO: Sensor PhpSecuritySensor [security] (done) | time=1ms
 INFO: Sensor PythonSecuritySensor [security]
 INFO: 21 taint analysis rules enabled.
 INFO: Analyzing 4401 UCFGs to detect vulnerabilities.
 INFO: No entry points found.
-INFO: python security sensor: Begin: 2025-07-21T03:14:09.466857604Z, End: 2025-07-21T03:14:12.937191193Z, Duration: 00:00:03.470
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:09.467156738Z, End: 2025-07-21T03:14:11.253284912Z, Duration: 00:00:01.786
-    Load type hierarchy: Begin: 2025-07-21T03:14:09.467160040Z, End: 2025-07-21T03:14:09.678593367Z, Duration: 00:00:00.211
-    Load UCFGs: Begin: 2025-07-21T03:14:09.678708557Z, End: 2025-07-21T03:14:11.253194341Z, Duration: 00:00:01.574
-  Check cache: Begin: 2025-07-21T03:14:11.253471958Z, End: 2025-07-21T03:14:11.253866967Z, Duration: 00:00:00.000
-    Load cache: Begin: 2025-07-21T03:14:11.253482166Z, End: 2025-07-21T03:14:11.253505284Z, Duration: 00:00:00.000
-  Create runtime call graph: Begin: 2025-07-21T03:14:11.253906799Z, End: 2025-07-21T03:14:11.760585726Z, Duration: 00:00:00.506
-    Variable Type Analysis #1: Begin: 2025-07-21T03:14:11.254686609Z, End: 2025-07-21T03:14:11.396723439Z, Duration: 00:00:00.142
-      Create runtime type propagation graph: Begin: 2025-07-21T03:14:11.256154857Z, End: 2025-07-21T03:14:11.332150116Z, Duration: 00:00:00.075
-      Run SCC (Tarjan) on 9394 nodes: Begin: 2025-07-21T03:14:11.332540722Z, End: 2025-07-21T03:14:11.350068736Z, Duration: 00:00:00.017
-      Propagate runtime types to strongly connected components: Begin: 2025-07-21T03:14:11.350217653Z, End: 2025-07-21T03:14:11.396666995Z, Duration: 00:00:00.046
-    Variable Type Analysis #2: Begin: 2025-07-21T03:14:11.419985839Z, End: 2025-07-21T03:14:11.754706326Z, Duration: 00:00:00.334
-      Create runtime type propagation graph: Begin: 2025-07-21T03:14:11.419996047Z, End: 2025-07-21T03:14:11.523282559Z, Duration: 00:00:00.103
-      Run SCC (Tarjan) on 9353 nodes: Begin: 2025-07-21T03:14:11.523360420Z, End: 2025-07-21T03:14:11.551848109Z, Duration: 00:00:00.028
-      Propagate runtime types to strongly connected components: Begin: 2025-07-21T03:14:11.551913861Z, End: 2025-07-21T03:14:11.754619758Z, Duration: 00:00:00.202
-  Load config: Begin: 2025-07-21T03:14:11.760633464Z, End: 2025-07-21T03:14:12.770510946Z, Duration: 00:00:01.009
-  Compute entry points: Begin: 2025-07-21T03:14:12.770579574Z, End: 2025-07-21T03:14:12.936598755Z, Duration: 00:00:00.166
-INFO: python security sensor peak memory: 392 MB
-INFO: Sensor PythonSecuritySensor [security] (done) | time=3473ms
+INFO: python security sensor: Begin: 2025-07-21T15:17:33.025414349Z, End: 2025-07-21T15:17:36.275419491Z, Duration: 00:00:03.250
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:33.025610163Z, End: 2025-07-21T15:17:35.159349826Z, Duration: 00:00:02.133
+    Load type hierarchy: Begin: 2025-07-21T15:17:33.025612163Z, End: 2025-07-21T15:17:33.177661720Z, Duration: 00:00:00.152
+    Load UCFGs: Begin: 2025-07-21T15:17:33.177731025Z, End: 2025-07-21T15:17:35.159270020Z, Duration: 00:00:01.981
+  Check cache: Begin: 2025-07-21T15:17:35.159476435Z, End: 2025-07-21T15:17:35.160115983Z, Duration: 00:00:00.000
+    Load cache: Begin: 2025-07-21T15:17:35.159483236Z, End: 2025-07-21T15:17:35.159501237Z, Duration: 00:00:00.000
+  Create runtime call graph: Begin: 2025-07-21T15:17:35.160167787Z, End: 2025-07-21T15:17:35.465119663Z, Duration: 00:00:00.304
+    Variable Type Analysis #1: Begin: 2025-07-21T15:17:35.160932944Z, End: 2025-07-21T15:17:35.366007360Z, Duration: 00:00:00.205
+      Create runtime type propagation graph: Begin: 2025-07-21T15:17:35.161619695Z, End: 2025-07-21T15:17:35.271579108Z, Duration: 00:00:00.109
+      Run SCC (Tarjan) on 9394 nodes: Begin: 2025-07-21T15:17:35.272500577Z, End: 2025-07-21T15:17:35.321417530Z, Duration: 00:00:00.048
+      Propagate runtime types to strongly connected components: Begin: 2025-07-21T15:17:35.321588843Z, End: 2025-07-21T15:17:35.365935455Z, Duration: 00:00:00.044
+    Variable Type Analysis #2: Begin: 2025-07-21T15:17:35.367720888Z, End: 2025-07-21T15:17:35.461209771Z, Duration: 00:00:00.093
+      Create runtime type propagation graph: Begin: 2025-07-21T15:17:35.367737090Z, End: 2025-07-21T15:17:35.403786482Z, Duration: 00:00:00.036
+      Run SCC (Tarjan) on 9353 nodes: Begin: 2025-07-21T15:17:35.403860988Z, End: 2025-07-21T15:17:35.414820906Z, Duration: 00:00:00.010
+      Propagate runtime types to strongly connected components: Begin: 2025-07-21T15:17:35.414883411Z, End: 2025-07-21T15:17:35.461158567Z, Duration: 00:00:00.046
+  Load config: Begin: 2025-07-21T15:17:35.465167666Z, End: 2025-07-21T15:17:36.229043928Z, Duration: 00:00:00.763
+  Compute entry points: Begin: 2025-07-21T15:17:36.229089831Z, End: 2025-07-21T15:17:36.275004560Z, Duration: 00:00:00.045
+INFO: python security sensor peak memory: 365 MB
+INFO: Sensor PythonSecuritySensor [security] (done) | time=3251ms
 INFO: Sensor JsSecuritySensor [security]
 INFO: 15 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: js security sensor: Begin: 2025-07-21T03:14:12.947143491Z, End: 2025-07-21T03:14:12.956192525Z, Duration: 00:00:00.009
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.954580678Z, End: 2025-07-21T03:14:12.954858989Z, Duration: 00:00:00.000
-    Load type hierarchy: Begin: 2025-07-21T03:14:12.954583779Z, End: 2025-07-21T03:14:12.954720734Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:12.954806368Z, End: 2025-07-21T03:14:12.954821675Z, Duration: 00:00:00.000
-INFO: js security sensor peak memory: 390 MB
-INFO: Sensor JsSecuritySensor [security] (done) | time=15ms
+INFO: js security sensor: Begin: 2025-07-21T15:17:36.277681260Z, End: 2025-07-21T15:17:36.281470443Z, Duration: 00:00:00.003
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:36.278539524Z, End: 2025-07-21T15:17:36.278691636Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T15:17:36.278542824Z, End: 2025-07-21T15:17:36.278632031Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:36.278669634Z, End: 2025-07-21T15:17:36.278679635Z, Duration: 00:00:00.000
+INFO: js security sensor peak memory: 270 MB
+INFO: Sensor JsSecuritySensor [security] (done) | time=5ms
 INFO: Sensor KotlinSecuritySensor [security]
 INFO: 26 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: kotlin security sensor: Begin: 2025-07-21T03:14:12.958243649Z, End: 2025-07-21T03:14:12.960395913Z, Duration: 00:00:00.002
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.958584486Z, End: 2025-07-21T03:14:12.958790068Z, Duration: 00:00:00.000
-    Load type hierarchy: Begin: 2025-07-21T03:14:12.958587187Z, End: 2025-07-21T03:14:12.958678223Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:12.958721041Z, End: 2025-07-21T03:14:12.958740248Z, Duration: 00:00:00.000
-INFO: kotlin security sensor peak memory: 390 MB
-INFO: Sensor KotlinSecuritySensor [security] (done) | time=4ms
+INFO: kotlin security sensor: Begin: 2025-07-21T15:17:36.283846121Z, End: 2025-07-21T15:17:36.285286828Z, Duration: 00:00:00.001
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:36.284549373Z, End: 2025-07-21T15:17:36.284857596Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T15:17:36.284554073Z, End: 2025-07-21T15:17:36.284752688Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:36.284807192Z, End: 2025-07-21T15:17:36.284827994Z, Duration: 00:00:00.000
+INFO: kotlin security sensor peak memory: 270 MB
+INFO: Sensor KotlinSecuritySensor [security] (done) | time=3ms
 INFO: Sensor GoSecuritySensor [security]
 INFO: 9 taint analysis rules enabled.
 INFO: No UCFGs have been included for analysis.
-INFO: go security sensor: Begin: 2025-07-21T03:14:12.962928130Z, End: 2025-07-21T03:14:12.966305987Z, Duration: 00:00:00.003
-  Load type hierarchy and UCFGs: Begin: 2025-07-21T03:14:12.963702341Z, End: 2025-07-21T03:14:12.964469450Z, Duration: 00:00:00.000
-    Load type hierarchy: Begin: 2025-07-21T03:14:12.963705943Z, End: 2025-07-21T03:14:12.963821489Z, Duration: 00:00:00.000
-    Load UCFGs: Begin: 2025-07-21T03:14:12.964388117Z, End: 2025-07-21T03:14:12.964445740Z, Duration: 00:00:00.000
-INFO: go security sensor peak memory: 391 MB
-INFO: Sensor GoSecuritySensor [security] (done) | time=9ms
+INFO: go security sensor: Begin: 2025-07-21T15:17:36.287135766Z, End: 2025-07-21T15:17:36.287882022Z, Duration: 00:00:00.000
+  Load type hierarchy and UCFGs: Begin: 2025-07-21T15:17:36.287385785Z, End: 2025-07-21T15:17:36.287572099Z, Duration: 00:00:00.000
+    Load type hierarchy: Begin: 2025-07-21T15:17:36.287389685Z, End: 2025-07-21T15:17:36.287494793Z, Duration: 00:00:00.000
+    Load UCFGs: Begin: 2025-07-21T15:17:36.287539096Z, End: 2025-07-21T15:17:36.287557198Z, Duration: 00:00:00.000
+INFO: go security sensor peak memory: 270 MB
+INFO: Sensor GoSecuritySensor [security] (done) | time=2ms
 INFO: ------------- Run sensors on project
 INFO: Sensor PythonArchitectureSensor [architecture]
-INFO: * Protobuf reading starting | memory total=800 | free=395 | used=404 (MB)
+INFO: * Protobuf reading starting | memory total=480 | free=194 | used=285 (MB)
 INFO: * Reading SonarArchitecture IR data from directory "/home/jenkins/agent/workspace/flask-app-pipeline/flask_app/.scannerwork/architecture/py"
-INFO: * Protobuf reading complete | memory total=800 | free=394 | used=405 (MB)
-INFO: * Build file hiGraphs complete | memory total=800 | free=394 | used=405 (MB)
-INFO: * Slicing complete | memory total=800 | free=394 | used=405 (MB)
-INFO: * Export complete | memory total=800 | free=392 | used=407 (MB)
-INFO: Sensor PythonArchitectureSensor [architecture] (done) | time=324ms
+INFO: * Protobuf reading complete | memory total=480 | free=194 | used=285 (MB)
+INFO: * Build file hiGraphs complete | memory total=480 | free=194 | used=285 (MB)
+INFO: * Slicing complete | memory total=480 | free=194 | used=285 (MB)
+INFO: * Export complete | memory total=480 | free=192 | used=287 (MB)
+INFO: Sensor PythonArchitectureSensor [architecture] (done) | time=115ms
 INFO: Sensor Zero Coverage Sensor
 INFO: Sensor Zero Coverage Sensor (done) | time=1ms
 INFO: ------------- Gather SCA dependencies on project
@@ -1611,25 +1608,25 @@ INFO: Checking if SCA is enabled for organization rss-devops-course-tasks
 INFO: Dependency analysis skipped
 INFO: SCM Publisher SCM provider for this project is: git
 INFO: SCM Publisher 1 source file to be analyzed
-INFO: SCM Publisher 0/1 source files have been analyzed (done) | time=93ms
+INFO: SCM Publisher 0/1 source files have been analyzed (done) | time=85ms
 WARN: Missing blame information for the following files:
 WARN:   * coverage.xml
 WARN: This may lead to missing/broken features in SonarCloud
 INFO: CPD Executor Calculating CPD for 2 files
 INFO: CPD Executor CPD calculation finished (done) | time=6ms
-INFO: Analysis report generated in 451ms, dir size=342 KB
-INFO: Analysis report compressed in 64ms, zip size=83 KB
-INFO: Analysis report uploaded in 487ms
+INFO: Analysis report generated in 366ms, dir size=342 KB
+INFO: Analysis report compressed in 205ms, zip size=83 KB
+INFO: Analysis report uploaded in 1251ms
 INFO: ANALYSIS SUCCESSFUL, you can find the results at: https://sonarcloud.io/dashboard?id=rss-devops-course-tasks_flask-app
 INFO: Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
-INFO: More about the report processing at https://sonarcloud.io/api/ce/task?id=AZgq-ZgSHMpP0ceq9TlO
+INFO: More about the report processing at https://sonarcloud.io/api/ce/task?id=AZgtj9wMTF3baHbfnpAw
 INFO: Sensor cache published successfully
-INFO: Analysis total time: 1:45.387 s
+INFO: Analysis total time: 1:05.959 s
 INFO: ------------------------------------------------------------------------
 INFO: EXECUTION SUCCESS
 INFO: ------------------------------------------------------------------------
-INFO: Total time: 2:17.201s
-INFO: Final Memory: 221M/757M
+INFO: Total time: 1:18.389s
+INFO: Final Memory: 221M/480M
 INFO: ------------------------------------------------------------------------
 [Pipeline] }
 [Pipeline] // withCredentials
@@ -1653,67 +1650,78 @@ Configure a credential helper to remove this warning. See
 https://docs.docker.com/go/credential-store/
 
 Login Succeeded
-+ docker build -t sunsundr/flask-app:17 .
++ docker build -t sunsundr/flask-app:28 .
 #0 building with "default" instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
 #1 transferring dockerfile:
-#1 transferring dockerfile: 355B 0.1s done
-#1 DONE 0.3s
+#1 transferring dockerfile: 355B 0.0s done
+#1 DONE 0.2s
 
 #2 [internal] load metadata for docker.io/library/python:3.14.0b4-alpine3.22
-#2 ...
+#2 DONE 0.0s
 
-#3 [auth] library/python:pull token for registry-1.docker.io
-#3 DONE 0.0s
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.1s
 
-#2 [internal] load metadata for docker.io/library/python:3.14.0b4-alpine3.22
-#2 DONE 1.5s
+#4 [1/5] FROM docker.io/library/python:3.14.0b4-alpine3.22
+#4 DONE 0.0s
 
-#4 [internal] load .dockerignore
-#4 transferring context: 2B done
-#4 DONE 0.2s
+#5 [internal] load build context
+#5 transferring context: 1.50MB 0.9s done
+#5 DONE 1.0s
 
-#5 [1/5] FROM docker.io/library/python:3.14.0b4-alpine3.22@sha256:f4acee82f7c4d0f1f1fc5c16aa80fcf249ed07287813b4ec6385c4ea34881ea2
-#5 DONE 0.0s
+#6 [2/5] WORKDIR /app
+#6 CACHED
 
-#6 [internal] load build context
-#6 transferring context: 1.50MB 3.5s done
-#6 DONE 3.7s
-
-#7 [2/5] WORKDIR /app
+#7 [3/5] COPY requirements.txt .
 #7 CACHED
 
-#8 [3/5] COPY requirements.txt .
+#8 [4/5] RUN apk add --no-cache --virtual .build-deps gcc musl-dev &&     pip install --no-cache-dir -r requirements.txt &&     apk del .build-deps
 #8 CACHED
 
-#9 [4/5] RUN apk add --no-cache --virtual .build-deps gcc musl-dev &&     pip install --no-cache-dir -r requirements.txt &&     apk del .build-deps
-#9 CACHED
+#9 [5/5] COPY . .
+#9 DONE 2.3s
 
-#10 [5/5] COPY . .
-#10 DONE 5.7s
-
-#11 exporting to image
-#11 exporting layers
-#11 exporting layers 0.9s done
-#11 writing image sha256:b755cdd64412fe3d9d70519f45ed41dc86324c3b55ff911f53923a005e1b86a5 done
-#11 naming to docker.io/sunsundr/flask-app:17 0.0s done
-#11 DONE 1.1s
-+ docker tag sunsundr/flask-app:17 sunsundr/flask-app:latest
-+ docker push sunsundr/flask-app:17
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 0.7s done
+#10 writing image sha256:6c2d0db44589b5d8f6479c4fe4b75664abcc8ff396d907abe4eed1e6ec4b3cea done
+#10 naming to docker.io/sunsundr/flask-app:28 0.0s done
+#10 DONE 0.8s
++ docker tag sunsundr/flask-app:28 sunsundr/flask-app:latest
++ docker push sunsundr/flask-app:28
 The push refers to repository [docker.io/sunsundr/flask-app]
+cd13871418c3: Preparing
+14e6dae3b08c: Preparing
+42c3aac8be19: Preparing
+b8a332b5ff2d: Preparing
+7a07f961966f: Preparing
+1230349d07bd: Preparing
+480f6e59795d: Preparing
 418dccb7d85a: Preparing
 1230349d07bd: Waiting
-7a07f961966f: Waiting
 480f6e59795d: Waiting
 418dccb7d85a: Waiting
+b8a332b5ff2d: Layer already exists
+7a07f961966f: Layer already exists
 42c3aac8be19: Layer already exists
+14e6dae3b08c: Layer already exists
+1230349d07bd: Layer already exists
 418dccb7d85a: Layer already exists
-a3d039699bd8: Pushed
-17: digest: sha256:649431387346266f10df86798471ed1d4db0055fb14b53a5f4ac68a4fb902a35 size: 1992
+480f6e59795d: Layer already exists
+cd13871418c3: Pushed
+28: digest: sha256:488429cccda787e5ee175e56720cdf82fb303bdf78e053cc78e1c7fa007549c3 size: 1992
 + docker push sunsundr/flask-app:latest
 The push refers to repository [docker.io/sunsundr/flask-app]
-a3d039699bd8: Preparing
+cd13871418c3: Preparing
+14e6dae3b08c: Preparing
+42c3aac8be19: Preparing
+b8a332b5ff2d: Preparing
+7a07f961966f: Preparing
+1230349d07bd: Preparing
+480f6e59795d: Preparing
 418dccb7d85a: Preparing
 1230349d07bd: Waiting
 480f6e59795d: Waiting
@@ -1721,8 +1729,12 @@ a3d039699bd8: Preparing
 7a07f961966f: Layer already exists
 42c3aac8be19: Layer already exists
 14e6dae3b08c: Layer already exists
+b8a332b5ff2d: Layer already exists
+cd13871418c3: Layer already exists
 418dccb7d85a: Layer already exists
-latest: digest: sha256:649431387346266f10df86798471ed1d4db0055fb14b53a5f4ac68a4fb902a35 size: 1992
+480f6e59795d: Layer already exists
+1230349d07bd: Layer already exists
+latest: digest: sha256:488429cccda787e5ee175e56720cdf82fb303bdf78e053cc78e1c7fa007549c3 size: 1992
 [Pipeline] }
 [Pipeline] // dir
 [Pipeline] }
@@ -1738,11 +1750,9 @@ latest: digest: sha256:649431387346266f10df86798471ed1d4db0055fb14b53a5f4ac68a4f
 
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-  5 17.0M    5 1007k    0     0   939k      0  0:00:18  0:00:01  0:00:17  940k
- 34 17.0M   34 6063k    0     0  2925k      0  0:00:05  0:00:02  0:00:03 2928k
- 64 17.0M   64 11.0M    0     0  3665k      0  0:00:04  0:00:03  0:00:01 3667k
- 95 17.0M   95 16.2M    0     0  4093k      0  0:00:04  0:00:04 --:--:-- 4095k
-100 17.0M  100 17.0M    0     0  4142k      0  0:00:04  0:00:04 --:--:-- 4224k
+ 28 17.0M   28 4879k    0     0  3032k      0  0:00:05  0:00:01  0:00:04 3032k
+ 70 17.0M   70 11.9M    0     0  4708k      0  0:00:03  0:00:02  0:00:01 4709k
+100 17.0M  100 17.0M    0     0  5531k      0  0:00:03  0:00:03 --:--:-- 5535k
 + tar -zxvf helm-v3.18.4-linux-amd64.tar.gz
 linux-amd64/
 linux-amd64/README.md
@@ -1755,13 +1765,13 @@ linux-amd64/LICENSE
 [Pipeline] stage
 [Pipeline] { (Deploy to Kubernetes)
 [Pipeline] sh
-+ ./helm upgrade --install flask-app ./flask_app/helm-chart/flask-app --create-namespace --namespace flask-app -f ./flask_app/helm-chart/flask-app/values-minikube.yaml --set image.repository=sunsundr/flask-app --set image.tag=17 --set image.pullPolicy=IfNotPresent --timeout=300s
++ ./helm upgrade --install flask-app ./flask_app/helm-chart/flask-app --create-namespace --namespace flask-app -f ./flask_app/helm-chart/flask-app/values-minikube.yaml --set image.repository=sunsundr/flask-app --set image.tag=28 --set image.pullPolicy=IfNotPresent --timeout=300s
 Release "flask-app" has been upgraded. Happy Helming!
 NAME: flask-app
-LAST DEPLOYED: Mon Jul 21 03:15:13 2025
+LAST DEPLOYED: Mon Jul 21 15:19:02 2025
 NAMESPACE: flask-app
 STATUS: deployed
-REVISION: 2
+REVISION: 3
 NOTES:
 1. Get the application URL by running these commands:
   export POD_NAME=$(kubectl get pods --namespace flask-app -l "app.kubernetes.io/name=flask-app,app.kubernetes.io/instance=flask-app" -o jsonpath="{.items[0].metadata.name}")
@@ -1773,14 +1783,149 @@ NOTES:
 [Pipeline] stage
 [Pipeline] { (Verify Deployment)
 [Pipeline] sh
-+ echo Deployment completed. To verify manually, run:
-Deployment completed. To verify manually, run:
-+ echo kubectl get pods -n flask-app
-kubectl get pods -n flask-app
-+ echo kubectl get svc -n flask-app
-kubectl get svc -n flask-app
-+ echo kubectl port-forward svc/flask-app 8080:8080 -n flask-app
-kubectl port-forward svc/flask-app 8080:8080 -n flask-app
++ 
++ curl -LO https://dl.k8s.io/release/stable.txt
++ command -v kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   138  100   138    0     0     55      0  0:00:02  0:00:02 --:--:--    55
+100   138  100   138    0     0     55      0  0:00:02  0:00:02 --:--:--    55
+
+100     7  100     7    0     0      2      0  0:00:03  0:00:03 --:--:--     2
++ cat stable.txt
++ KUBECTL_VERSION=v1.33.3
++ curl -LO https://dl.k8s.io/release/v1.33.3/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   138  100   138    0     0    479      0 --:--:-- --:--:-- --:--:--   479
+
+  7 57.3M    7 4321k    0     0  4302k      0  0:00:13  0:00:01  0:00:12 4302k
+ 21 57.3M   21 12.1M    0     0  6219k      0  0:00:09  0:00:02  0:00:07 8140k
+ 35 57.3M   35 20.0M    0     0  6847k      0  0:00:08  0:00:03  0:00:05 8125k
+ 48 57.3M   48 27.9M    0     0  7148k      0  0:00:08  0:00:04  0:00:04 8100k
+ 62 57.3M   62 35.7M    0     0  7324k      0  0:00:08  0:00:05  0:00:03 8083k
+ 76 57.3M   76 43.6M    0     0  7443k      0  0:00:07  0:00:06  0:00:01 8074k
+ 89 57.3M   89 51.4M    0     0  7528k      0  0:00:07  0:00:07 --:--:-- 8053k
+100 57.3M  100 57.3M    0     0  7574k      0  0:00:07  0:00:07 --:--:-- 8034k
++ chmod +x kubectl
++ mkdir -p /home/jenkins/bin
++ mv kubectl /home/jenkins/bin/
++ export PATH=/home/jenkins/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++ echo 
+Checking pod status:
+
+Checking pod status:
++ ./helm status flask-app -n flask-app
+NAME: flask-app
+LAST DEPLOYED: Mon Jul 21 15:19:02 2025
+NAMESPACE: flask-app
+STATUS: deployed
+REVISION: 3
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace flask-app -l "app.kubernetes.io/name=flask-app,app.kubernetes.io/instance=flask-app" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace flask-app $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace flask-app port-forward $POD_NAME 8080:$CONTAINER_PORT
++ kubectl get pods -n flask-app
+NAME                         READY   STATUS    RESTARTS   AGE
+flask-app-7894448d67-4rw7n   0/1     Running   0          12s
+flask-app-78c9fcccd4-8xz77   1/1     Running   0          18m
++ echo 
+Setting up port forwarding...
+
+Setting up port forwarding...
++ pkill -f port-forward.*flask-app
+/home/jenkins/agent/workspace/flask-app-pipeline@tmp/durable-edb5c816/script.sh.copy: 22: pkill: not found
++ echo No existing port-forward to kill
+No existing port-forward to kill
++ PORT_FORWARD_PID=279
++ sleep 3
++ kubectl port-forward svc/flask-app 8080:8080 -n flask-app
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
++ echo 
+Attempting to access the service via port-forward...
+
+Attempting to access the service via port-forward...
++ curl -v http://localhost:8080/
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:8080...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET / HTTP/1.1
+> Host: localhost:8080
+>Handling connection for 8080
+ User-Agent: curl/7.88.1
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: Werkzeug/3.1.3 Python/3.14.0b4
+< Date: Mon, 21 Jul 2025 15:19:18 GMT
+< Content-Type: text/html; charset=utf-8
+< Content-Length: 2464
+< Connection: close
+< 
+{ [2464 bytes data]
+
+100  2464  100  2464    0     0  41924      0 --:--:-- --:--:-- --:--:-- 42482
+* Closing connection 0
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Flask App - K3s Deployment</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .header { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 20px; margin-bottom: 30px; }
+            .info { background: #ecf0f1; padding: 15px; border-radius: 5px; margin: 10px 0; }
+            .success { color: #27ae60; font-weight: bold; }
+            .links { margin-top: 30px; }
+            .links a { display: inline-block; margin: 10px 15px 10px 0; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; }
+            .links a:hover { background: #2980b9; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🚀 Flask App</h1>
+                <p class="success">✅ K3s Kubernetes Cluster • ✅ Helm Chart • ✅ Docker Container</p>
+            </div>
+            
+            <div class="info">
+                <h3>📊 Deployment Information</h3>
+                <p><strong>Hostname:</strong> flask-app-78c9fcccd4-8xz77</p>
+                <p><strong>Timestamp:</strong> 2025-07-21 15:19:18 UTC</p>
+                <p><strong>Environment:</strong> AWS Cloud (K3s)</p>
+                <p><strong>Container:</strong> Python 3.14 Alpine</p>
+            </div>
+            
+            <div class="info">
+                <h3>🏗️ Infrastructure Stack</h3>
+                <p>• <strong>Infrastructure:</strong> Terraform (AWS VPC, EC2, Security Groups)</p>
+                <p>• <strong>Kubernetes:</strong> K3s Cluster (Master + Worker nodes)</p>
+                <p>• <strong>Deployment:</strong> Helm Chart with custom values</p>
+                <p>• <strong>Networking:</strong> NodePort service with port-forward</p>
+                <p>• <strong>Registry:</strong> DockerHub (sunsundr/flask-app)</p>
+            </div>
+            
+            <div class="links">
+                <a href="/health">Health Check</a>
+                <a href="/info">System Info</a>
+                <a href="https://github.com/SunSundr/rsschool-devops-course-tasks" target="_blank">GitHub Repo</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    + kill 279
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] stage
@@ -1789,7 +1934,8 @@ kubectl port-forward svc/flask-app 8080:8080 -n flask-app
 Pipeline execution completed
 [Pipeline] echo
 Pipeline succeeded
-[Pipeline] mail
+[Pipeline] emailext
+Sending email to: art.dizigner@gmail.com
 [Pipeline] }
 [Pipeline] // stage
 [Pipeline] }
