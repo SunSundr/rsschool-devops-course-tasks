@@ -1,5 +1,5 @@
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-from flask import Response
+from flask import Response, request
 import time
 
 # Prometheus metrics
@@ -14,8 +14,8 @@ def init_metrics(app):
     @app.after_request
     def after_request(response):
         REQUEST_COUNT.labels(
-            method=app.request.method,
-            endpoint=app.request.endpoint or 'unknown',
+            method=request.method,
+            endpoint=request.endpoint or 'unknown',
             status=response.status_code
         ).inc()
         
