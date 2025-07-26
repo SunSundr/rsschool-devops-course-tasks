@@ -32,14 +32,30 @@ controller:
   # Install Kubernetes plugin for agents
   installPlugins:
     - kubernetes:4358.vcfd9c5a_0a_f51
-    - workflow-aggregator:608.v67378e9d3db_1
     - git:5.7.0
     - configuration-as-code:1971.vf9280461ea_89
-    - credentials:1415.v831096eb_5534 # is default ?
+    - credentials:1415.v831096eb_5534
     - job-dsl:1.93
-    - structs:350.v3b_30f09f2363 # is default ?
-    - script-security:1373.vb_b_4a_a_c26fa_00 # is default ?
-    - eddsa-api:0.3.0.1-19.vc432d923e5ee # is default ?
+    - structs:350.v3b_30f09f2363
+    - script-security:1373.vb_b_4a_a_c26fa_00
+    - eddsa-api:0.3.0.1-19.vc432d923e5ee
+    - pipeline-groovy-lib:752.vdddedf804e72
+    - pipeline-model-extensions:2.2255.v56a_15e805f12
+    - pipeline-model-definition:2.2255.v56a_15e805f12
+    - workflow-cps:4168.v7ea_f89c358b_d
+    - pipeline-groovy-lib:752.vdddedf804e72
+    - workflow-multibranch:806.vb_b_688f609ee9
+    - workflow-aggregator:608.v67378e9d3db_1
+    - credentials-binding:696.v256688029804
+    - docker-workflow:621.va_73f881d9232
+    - pipeline-stage-view:2.38
+    - blueocean:1.27.21
+    - sonar:2.18
+    - email-ext:1916.vc954a_f86ff21
+    - aws-credentials:248.v78a_dcfc9db_ff
+    - amazon-ecr:1.151.vb_ca_71ddd0b_cf
+    - kubernetes-cli:1.364.vadef8cb8b823
+    - htmlpublisher:427
 
   numExecutors: 0
   executorMode: "NORMAL"

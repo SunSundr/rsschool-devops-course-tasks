@@ -44,6 +44,19 @@ if [ "$DEPLOYMENT_TYPE" = "minikube" ]; then
     echo "Jenkins installation started! Checking status..."
     echo "Wait for Jenkins to be ready (this may take a few minutes):"
     echo "kubectl get pods -n jenkins -w"
+    
+    # Wait for Jenkins to be ready
+    echo "Waiting for Jenkins to be ready..."
+    kubectl wait --for=condition=ready pod -l app.kubernetes.io/component=jenkins-controller --timeout=300s -n jenkins
+    
+    # # Apply custom configuration
+    # echo "Applying custom Jenkins configuration..."
+    # kubectl create configmap jenkins-pipeline-job --from-file=k8s/jenkins/base/jenkins-pipeline-job.yaml -n jenkins --dry-run=client -o yaml | kubectl apply -f -
+    
+    # # Restart Jenkins to apply configuration
+    # echo "Restarting Jenkins to apply configuration..."
+    # kubectl rollout restart statefulset/jenkins -n jenkins
+    
     echo ""
     echo "Once ready, access Jenkins via (keep terminal open):"
     echo "minikube service jenkins --namespace jenkins"
