@@ -13,14 +13,11 @@ helm repo update
 echo "Creating monitoring namespace..."
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
 
-# Install Prometheus using community chart
+# Install Prometheus using community chart with values file
 echo "Installing Prometheus..."
 helm install prometheus prometheus-community/kube-prometheus-stack \
     --namespace monitoring \
-    --set prometheus.service.type=NodePort \
-    --set prometheus.service.nodePort=30090 \
-    --set grafana.enabled=false \
-    --set alertmanager.enabled=false \
+    --values k8s/prometheus/minikube/values-minikube-stack.yaml \
     --wait \
     --timeout=600s
 

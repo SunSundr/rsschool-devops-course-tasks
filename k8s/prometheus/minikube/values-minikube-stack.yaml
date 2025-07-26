@@ -1,0 +1,37 @@
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30090
+  
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
+    
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+grafana:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+nodeExporter:
+  enabled: true
+  
+kubeStateMetrics:
+  enabled: true
+
+pushgateway:
+  enabled: false
