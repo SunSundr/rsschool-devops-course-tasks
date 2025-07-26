@@ -46,7 +46,7 @@ module "compute" {
 
 # Now create the NAT route (only if NAT instance exists)
 resource "aws_route" "private_nat" {
-  count                  = module.compute.nat_instance_eni_id != null ? 1 : 0
+  # count                  = module.compute.nat_instance_eni_id != null ? 1 : 0
   route_table_id         = module.networking.private_route_table_id
   destination_cidr_block = "0.0.0.0/0"
   network_interface_id   = module.compute.nat_instance_eni_id
