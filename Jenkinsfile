@@ -190,27 +190,38 @@ spec:
                         export PATH=$HOME/bin:$PATH
                     fi
                     
-                    # Check if pods are running
-                    echo "\nChecking pod status:"
+                    # Wait for pods to be ready
+                    echo "\nWaiting for pods to be ready..."
+                    kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=flask-app -n flask-app --timeout=120s
+                    
+                    # Check deployment status
+                    echo "\nChecking deployment status:"
                     ./helm status flask-app -n flask-app
-                    kubectl get pods -n flask-app || echo "Could not get pods"
+                    kubectl get pods -n flask-app
                     
-                    # Kill any existing port-forward processes
-                    echo "\nSetting up port forwarding..."
-                    pkill -f "port-forward.*flask-app" || echo "No existing port-forward to kill"
-                    
-                    # Start port forwarding in the background
+                    # Test application and metrics
+                    echo "\nTesting application and metrics..."
                     kubectl port-forward svc/flask-app 8080:8080 -n flask-app &
                     PORT_FORWARD_PID=$!
+                    sleep 5
                     
-                    # Give it a moment to establish
-                    sleep 3
+                    # Test main endpoint
+                    echo "Testing main endpoint:"
+                    curl -s http://localhost:8080/ | head -5
                     
-                    # Try to access the service via port-forward
-                    echo "\nAttempting to access the service via port-forward..."
-                    curl -v http://localhost:8080/ || echo "Service not accessible via port-forward"
+                    # Test metrics endpoint
+                    echo "\nTesting metrics endpoint:"
+                    curl -s http://localhost:8080/metrics | head -10
                     
-                    # Clean up port-forward
+                    # Generate requests and check metrics
+                    echo "\nGenerating requests..."
+                    curl -s http://localhost:8080/health > /dev/null
+                    curl -s http://localhost:8080/info > /dev/null
+                    
+                    echo "\nUpdated metrics:"
+                    curl -s http://localhost:8080/metrics | grep flask_requests_total || echo "No flask metrics found yet"
+                    
+                    # Clean up
                     kill $PORT_FORWARD_PID || echo "Could not kill port-forward process"
                 '''
             }
