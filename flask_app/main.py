@@ -4,8 +4,10 @@ import sys
 import socket
 from datetime import datetime
 import importlib.metadata
+from metrics import init_metrics
 
 app = Flask(__name__)
+init_metrics(app)
 
 @app.route('/')
 def hello():
