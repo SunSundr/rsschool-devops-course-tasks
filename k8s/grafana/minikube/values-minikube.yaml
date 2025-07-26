@@ -1,0 +1,28 @@
+service:
+  type: NodePort
+  nodePorts:
+    grafana: 30030
+
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: standard
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+admin:
+  user: ${GRAFANA_ADMIN_USER}
+  password: ${GRAFANA_ADMIN_PASSWORD}
+
+config:
+  useGrafanaIniFile: true
+  grafanaIniConfigMap: grafana-config
+
+datasources:
+  secretName: grafana-datasources
