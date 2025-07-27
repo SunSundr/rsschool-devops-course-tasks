@@ -53,6 +53,7 @@ This repository provides a Terraform configuration designed to deploy and manage
     - [Troubleshooting](#troubleshooting-1)
       - [Common Issues](#common-issues)
     - [Jenkins Pipeline](#jenkins-pipeline)
+  - [Prometheus and Grafana Monitoring Setup](#prometheus-and-grafana-monitoring-setup)
     - [Cloud Deployment](#cloud-deployment)
     - [File Structure](#file-structure)
   - [Security Considerations](#security-considerations)
@@ -111,18 +112,21 @@ The infrastructure created by this project includes:
 The project includes a fully functional K3s Kubernetes cluster deployed in private subnets:
 
 - **Cluster Architecture**:
+
   - K3s master node in private subnet (AZ1)
   - K3s worker node in private subnet (AZ2)
   - Both nodes use Amazon Linux 2 for consistency
   - IMDSv2 enabled for enhanced security
 
 - **Network Configuration**:
+
   - Cluster nodes communicate through private networking
   - Internet access via custom NAT instance for downloading K3s
   - Security groups configured for K3s API (6443), Flannel VXLAN (8472), and Kubelet (10250)
   - Access from bastion host for cluster management
 
 - **Cluster Features**:
+
   - Automatic node joining with token-based authentication
   - kubectl access configured on bastion host
   - Ready to deploy workloads and services
@@ -289,12 +293,14 @@ For production deployment, the Flask app can be served through CloudFront CDN wi
 ### Infrastructure Components
 
 - **CloudFront Distribution**:
+
   - Custom domain alias configuration
   - SSL certificate integration
   - Origin pointing to bastion host (port 8080)
   - Cache policies optimized for dynamic content
 
 - **SSL Certificate (ACM)**:
+
   - Domain validation via DNS
   - Automatic renewal
   - Must be created in us-east-1 region for CloudFront compatibility
@@ -542,6 +548,7 @@ If the automated cloud configuration doesn't work, configure manually:
 
 1. **Go to**: Manage Jenkins → Clouds → Add a new cloud → Kubernetes
 2. **Configure**:
+
    - **Name**: `kubernetes`
    - **Kubernetes URL**: `https://kubernetes.default`
    - **Kubernetes Namespace**: `jenkins`
@@ -549,6 +556,7 @@ If the automated cloud configuration doesn't work, configure manually:
    - **Jenkins tunnel**: `jenkins-agent-nodeport.jenkins.svc.cluster.local:50000`
 
 3. **Pod Template**:
+
    - **Name**: `default`
    - **Namespace**: `jenkins`
    - **Labels**: `jenkins-agent`
@@ -662,6 +670,14 @@ A complete CI/CD pipeline for Flask application deployment has been implemented 
 
 For detailed instructions on setting up and using the Jenkins pipeline, see [JENKINS_PIPELINE_README.md](JENKINS_PIPELINE_README.md).
 
+## Prometheus and Grafana Monitoring Setup
+
+This project includes comprehensive monitoring setup with Prometheus for metrics collection and Grafana for visualization and alerting. All scripts are designed for deployment and testing in Minikube environment. Separate scripts for cloud deployment will be created in the future.
+
+**Important**: The Flask application has been updated with Prometheus metrics support. Before setting up monitoring, redeploy the Flask application through the Jenkins pipeline (see [JENKINS_PIPELINE_README.md](JENKINS_PIPELINE_README.md) for details).
+
+For detailed setup instructions, configuration, and usage, see [PROMETHEUS_GRAFANA_README.md](PROMETHEUS_GRAFANA_README.md).
+
 ### Cloud Deployment
 
 **Note**: Cloud deployment configuration is included but not tested. The setup includes:
@@ -679,19 +695,33 @@ For detailed instructions on setting up and using the Jenkins pipeline, see [JEN
 ### File Structure
 
 ```
-k8s/jenkins/
-├── base/
-│   ├── values.yaml                # Main Jenkins configuration
-│   └── rbac.yaml                  # RBAC permissions
-├── minikube/
-│   ├── values-minikube.yaml       # Minikube-specific overrides
-│   ├── pv.yaml                    # Custom persistent volume (4Gi)
-│   ├── storage-class.yaml         # Custom storage class (jenkins-storage)
-│   └── jenkins-cluster-rbac.yaml  # RBAC configuration for Jenkins Pipeline    
-└── cloud/
-    ├── values-cloud.yaml          # Cloud-specific overrides (untested)
-    ├── pv.yaml                    # Cloud persistent volume (untested)
-    └── storage-class-cloud.yaml   # Cloud storage class (untested)
+k8s/
+├── common/
+│   └── namespace.yaml                     # Common namespace definitions
+├── grafana/
+│   ├── minikube/
+│   │   ├── flask-app-dashboard.json       # Flask application monitoring dashboard
+│   │   ├── kubernetes-dashboard.json      # Kubernetes cluster monitoring dashboard
+│   │   └── values-minikube.yaml           # Grafana Helm values for Minikube
+│   └── provisioning/
+│       ├── alert-rules.yaml               # Prometheus alert rules configuration
+│       └── contact-points.yaml            # Grafana contact points and policies
+├── jenkins/
+│   ├── base/
+│   │   ├── rbac.yaml                      # RBAC permissions
+│   │   └── values.yaml                    # Main Jenkins configuration
+│   ├── minikube/
+│   │   ├── jenkins-cluster-rbac.yaml      # RBAC configuration for Jenkins Pipeline
+│   │   ├── pv.yaml                        # Custom persistent volume (4Gi)
+│   │   ├── storage-class.yaml             # Custom storage class (jenkins-storage)
+│   │   └── values-minikube.yaml           # Minikube-specific overrides
+│   └── cloud/
+│       ├── pv.yaml                        # Cloud persistent volume (untested)
+│       ├── storage-class-cloud.yaml       # Cloud storage class (untested)
+│       └── values-cloud.yaml              # Cloud-specific overrides (untested)
+└── prometheus/
+    └── minikube/
+        └── values-minikube-stack.yaml     # Prometheus stack configuration
 ```
 
 ## Security Considerations
