@@ -1,0 +1,151 @@
+apiVersion: 1
+
+groups:
+  - name: kubernetes-alerts
+    orgId: 1
+    folder: alerts
+    interval: 1m
+    rules:
+      - uid: high-cpu-alert
+        title: High CPU Usage
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              expr: 'avg(1 - rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100'
+              refId: A
+            datasourceUid: '${PROMETHEUS_DATASOURCE_UID}'
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            model:
+              expression: A
+              conditions:
+                - evaluator:
+                    params: [80]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              refId: C
+              type: threshold
+            datasourceUid: __expr__
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: 'CPU usage is above 80% for more than 5 minutes'
+          summary: 'High CPU usage detected on Kubernetes cluster'
+        labels:
+          severity: warning
+          team: devops
+
+      - uid: high-memory-alert
+        title: High Memory Usage
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              expr: '(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100'
+              refId: A
+            datasourceUid: '${PROMETHEUS_DATASOURCE_UID}'
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            model:
+              expression: A
+              conditions:
+                - evaluator:
+                    params: [85]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              refId: C
+              type: threshold
+            datasourceUid: __expr__
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: 'Memory usage is above 85% for more than 5 minutes'
+          summary: 'High memory usage detected on Kubernetes cluster'
+        labels:
+          severity: warning
+          team: devops
+
+      - uid: low-cpu-test-alert
+        title: Low CPU Test Alert
+        condition: C
+        data:
+          - refId: A
+            queryType: ''
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              expr: 'avg(1 - rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100'
+              refId: A
+            datasourceUid: '${PROMETHEUS_DATASOURCE_UID}'
+          - refId: C
+            queryType: ''
+            relativeTimeRange:
+              from: 0
+              to: 0
+            model:
+              expression: A
+              conditions:
+                - evaluator:
+                    params: [10]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              refId: C
+              type: threshold
+            datasourceUid: __expr__
+        noDataState: NoData
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          description: 'CPU usage is above 10% for testing purposes'
+          summary: 'Test CPU alert triggered'
+        labels:
+          severity: info
+          team: devops
