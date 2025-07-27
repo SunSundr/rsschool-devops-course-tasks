@@ -170,7 +170,6 @@ Contains:
 Contains:
 - **High CPU Alert**: Production threshold (80% for 5 minutes)
 - **High Memory Alert**: Production threshold (85% for 5 minutes)
-- **Low CPU Test Alert**: Testing threshold (10% for 1 minute)
 - Proper Grafana API format with datasource UIDs
 - Expression queries for threshold evaluation
 - Annotations and labels for alert context
