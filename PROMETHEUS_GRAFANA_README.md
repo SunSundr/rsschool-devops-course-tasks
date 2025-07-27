@@ -300,4 +300,50 @@ k8s/grafana/
 4. **Set Up Log Aggregation**: Add ELK stack or Loki for log monitoring
 5. **Implement SLOs**: Define and monitor Service Level Objectives
 
+## Jenkins Pipeline Deployment
+
+For automated deployment of the monitoring stack using Jenkins, a dedicated pipeline is available:
+
+**Pipeline File**: [Jenkinsfile-monitoring](Jenkinsfile-monitoring)
+
+### Pipeline Features
+
+- **Automated Helm Deployment**: Uses Helm charts for Prometheus and Grafana installation
+- **Environment Support**: Configurable for both Minikube and cloud environments
+- **Component Selection**: Optional installation of Prometheus, Grafana, and alert rules
+- **SMTP Integration**: Automatic SMTP configuration for email alerts
+- **Alert Rules Setup**: Creates working CPU and memory alerts via Grafana API
+- **Cleanup Support**: Uninstall option for complete stack removal
+
+### Required Jenkins Credentials
+
+```
+kubeconfig                 # Kubernetes cluster access
+grafana-admin-user         # Grafana admin username
+grafana-admin-password     # Grafana admin password
+smtp-host                  # SMTP server hostname
+smtp-port                  # SMTP server port
+smtp-user                  # SMTP username
+smtp-password              # SMTP password/app password
+smtp-from-address          # Email from address
+smtp-from-name             # Email from name
+```
+
+### Pipeline Parameters
+
+- **ACTION**: `install` / `upgrade` / `uninstall`
+- **ENVIRONMENT**: `minikube` / `cloud`
+- **INSTALL_PROMETHEUS**: Enable Prometheus stack deployment
+- **INSTALL_GRAFANA**: Enable Grafana deployment with SMTP
+- **SETUP_ALERTS**: Configure alert rules and contact points
+
+### Usage
+
+1. **Configure Jenkins credentials** with all required values
+2. **Run pipeline** with desired parameters
+3. **Access services** using port-forward commands from pipeline output
+4. **Import dashboards** manually from `k8s/grafana/minikube/` directory
+
+The pipeline provides a complete automated alternative to the manual installation scripts, suitable for CI/CD environments and repeatable deployments.
+
 This monitoring setup provides a solid foundation for observability in your Kubernetes environment with comprehensive metrics, visualization, and alerting capabilities.
