@@ -53,6 +53,16 @@ kubectl delete pvc -n monitoring -l app.kubernetes.io/name=grafana 2>/dev/null |
 # Wait for cleanup
 sleep 10
 
+# Create Grafana admin secret
+echo "Creating Grafana admin secret..."
+kubectl create secret generic grafana-admin-secret \
+    --from-literal=username="$GRAFANA_ADMIN_USER" \
+    --from-literal=password="$GRAFANA_ADMIN_PASSWORD" \
+    --namespace monitoring \
+    --dry-run=client -o yaml | kubectl apply -f -
+
+echo "Grafana credentials configured from environment variables"
+
 # Install Grafana with environment variables
 echo "Installing Grafana..."
 envsubst < k8s/grafana/minikube/values-minikube.yaml | helm install grafana bitnami/grafana \

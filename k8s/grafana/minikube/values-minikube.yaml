@@ -4,21 +4,20 @@ service:
     grafana: 30030
 
 persistence:
-  enabled: true
-  size: 1Gi
-  storageClass: standard
+  enabled: false
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 50m
+    memory: 64Mi
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 200m
+    memory: 256Mi
 
 admin:
-  user: ${GRAFANA_ADMIN_USER}
-  password: ${GRAFANA_ADMIN_PASSWORD}
+  existingSecret: grafana-admin-secret
+  userKey: username
+  passwordKey: password
 
 config:
   useGrafanaIniFile: true
