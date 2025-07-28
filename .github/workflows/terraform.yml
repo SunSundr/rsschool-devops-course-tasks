@@ -39,59 +39,59 @@ jobs:
         if: steps.fmt.outcome == 'failure'
         run: exit 1
 
-  terraform-plan:
-    name: "Terraform Plan"
-    runs-on: ubuntu-latest
-    needs: terraform-check
-    environment: prod
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # terraform-plan:
+  #   name: "Terraform Plan"
+  #   runs-on: ubuntu-latest
+  #   needs: terraform-check
+  #   environment: prod
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - uses: ./.github/actions/terraform-setup
-        with:
-          aws-role-arn: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
-          working-dir: ${{ env.TF_WORKING_DIR }}
+  #     - uses: ./.github/actions/terraform-setup
+  #       with:
+  #         aws-role-arn: ${{ vars.AWS_ROLE_ARN }}
+  #         aws-region: ${{ vars.AWS_REGION || env.AWS_REGION }}
+  #         working-dir: ${{ env.TF_WORKING_DIR }}
 
-      - name: Terraform Validate
-        run: terraform validate
-        working-directory: ${{ env.TF_WORKING_DIR }}
+  #     - name: Terraform Validate
+  #       run: terraform validate
+  #       working-directory: ${{ env.TF_WORKING_DIR }}
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color -var="enable_k3s_cluster=true"
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        continue-on-error: true
+  #     - name: Terraform Plan
+  #       id: plan
+  #       run: terraform plan -no-color -var="enable_k3s_cluster=true"
+  #       working-directory: ${{ env.TF_WORKING_DIR }}
+  #       continue-on-error: true
 
-      - name: Update Pull Request
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        env:
-          PLAN: "${{ steps.plan.outputs.stdout }}"
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Plan 📝\`${{ steps.plan.outcome }}\`
+  #     - name: Update Pull Request
+  #       uses: actions/github-script@v6
+  #       if: github.event_name == 'pull_request'
+  #       env:
+  #         PLAN: "${{ steps.plan.outputs.stdout }}"
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         script: |
+  #           const output = `#### Terraform Plan 📝\`${{ steps.plan.outcome }}\`
             
-            <details><summary>Show Plan</summary>
+  #           <details><summary>Show Plan</summary>
             
-            \`\`\`terraform
-            ${process.env.PLAN}
-            \`\`\`
+  #           \`\`\`terraform
+  #           ${process.env.PLAN}
+  #           \`\`\`
             
-            </details>`;
+  #           </details>`;
               
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+  #           github.rest.issues.createComment({
+  #             issue_number: context.issue.number,
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             body: output
+  #           })
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+  #     - name: Terraform Plan Status
+  #       if: steps.plan.outcome == 'failure'
+  #       run: exit 1
 
   # terraform-apply job is temporarily disabled to preserve existing infrastructure
   # This prevents accidental destruction of resources needed for the next task

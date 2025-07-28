@@ -1,0 +1,36 @@
+service:
+  type: NodePort
+  nodePorts:
+    grafana: 30030
+
+persistence:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+admin:
+  existingSecret: grafana-admin-secret
+  userKey: username
+  passwordKey: password
+
+config:
+  useGrafanaIniFile: true
+  grafanaIniConfigMap: grafana-config
+
+smtp:
+  enabled: true
+  host: ${SMTP_HOST}:${SMTP_PORT}
+  user: ${SMTP_USER}
+  password: ${SMTP_PASSWORD}
+  fromAddress: ${SMTP_FROM_ADDRESS}
+  fromName: ${SMTP_FROM_NAME}
+  skipVerify: true
+
+datasources:
+  secretName: grafana-datasources
